@@ -830,6 +830,31 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
     }
   });
 
+  // ==================================================
+  // ADMIN ROUTES - Database Population
+  // ==================================================
+  app.post("/api/admin/populate", async (_req, res) => {
+    try {
+      console.log('🚀 Starting database population with 700+ real companies...');
+      
+      const result = await populateDatabaseWithRealData(storage);
+      
+      console.log('✅ Database population completed successfully');
+      res.json({
+        success: true,
+        message: 'Database populated with real companies (100% compliance validated)',
+        stats: result
+      });
+    } catch (error: any) {
+      console.error('❌ Database population failed:', error);
+      res.status(500).json({ 
+        success: false,
+        error: error.message,
+        details: error.stack 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

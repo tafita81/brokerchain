@@ -56,11 +56,11 @@ export function HeroCarousel() {
       </div>
 
       {/* Content */}
-      <div className="relative z-20 max-w-7xl mx-auto px-6 py-24 min-h-[90vh] flex items-center">
+      <div className="relative z-20 max-w-7xl mx-auto px-6 pt-8 pb-24 min-h-[90vh] flex items-center">
         <div className="w-full">
           {/* Content */}
-          <div className="max-w-5xl mx-auto space-y-8 text-white">
-            <div className="space-y-6">
+          <div className="max-w-5xl mx-auto space-y-6 text-white">
+            <div className="space-y-4">
               {/* 🎯 TAGLINE REVOLUCIONÁRIO - DOURADO GIGANTE */}
               <div className="space-y-4 mb-6">
                 <div className="flex items-center gap-3 md:gap-4">
