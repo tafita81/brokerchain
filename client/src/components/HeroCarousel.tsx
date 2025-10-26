@@ -206,11 +206,7 @@ export function HeroCarousel() {
             </div>
 
             {/* 🏆 TRUST INDICATORS - HIPNOSE DE AUTORIDADE */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 pt-8 border-t border-white/20">
-              <div className="flex items-center gap-2 text-white bg-white/5 backdrop-blur-sm rounded-lg p-3 border border-white/10">
-                <Shield className="w-5 h-5 md:w-6 md:h-6 text-blue-300 flex-shrink-0" />
-                <span className="font-semibold text-sm md:text-base">NMSDC Certified MBE</span>
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-8 border-t border-white/20">
               <div className="flex items-center gap-2 text-white bg-white/5 backdrop-blur-sm rounded-lg p-3 border border-white/10">
                 <Factory className="w-5 h-5 md:w-6 md:h-6 text-green-300 flex-shrink-0" />
                 <span className="font-semibold text-sm md:text-base">SAM.gov Registered</span>

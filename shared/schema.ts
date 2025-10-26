@@ -89,17 +89,21 @@ export const generatedContent = pgTable("generated_content", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Digital Product Passports (DPP) for EUDR compliance
+// Digital Product Passports (DPP) for EUDR compliance + GS1 + QR tracking
 export const digitalProductPassports = pgTable("digital_product_passports", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   supplierId: text("supplier_id").notNull(),
   productName: text("product_name").notNull(),
-  productType: text("product_type").notNull(), // coffee, soy, palm oil, wood, etc.
-  geospatialData: jsonb("geospatial_data").notNull(), // polygon coordinates
-  harvestDate: timestamp("harvest_date").notNull(),
+  productType: text("product_type").notNull(), // coffee, soy, palm oil, wood, packaging, steel, etc.
+  framework: text("framework").notNull(), // pfas, buyamerica, eudr
+  gs1Barcode: text("gs1_barcode").unique(), // GS1 Global Trade Item Number (GTIN)
+  qrCodeData: text("qr_code_data"), // QR code content (link to this DPP)
+  geospatialData: jsonb("geospatial_data"), // polygon coordinates (EUDR)
+  harvestDate: timestamp("harvest_date"),
   certifications: jsonb("certifications").notNull().default([]),
   chainOfCustody: jsonb("chain_of_custody").notNull().default([]),
-  deforestationFree: boolean("deforestation_free").notNull().default(true),
+  complianceProof: jsonb("compliance_proof").notNull().default({}), // framework-specific proofs
+  deforestationFree: boolean("deforestation_free"),
   pdfUrl: text("pdf_url"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

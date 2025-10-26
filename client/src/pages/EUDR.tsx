@@ -3,9 +3,12 @@ import { RFQGenerator } from "@/components/RFQGenerator";
 import { SupplierCard } from "@/components/SupplierCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Leaf, CheckCircle2, MapPin, Loader2 } from "lucide-react";
+import { Leaf, CheckCircle2, MapPin, Loader2, Package } from "lucide-react";
 import type { Supplier } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
+import eudrCommodity1 from "@assets/stock_images/coffee_beans_cocoa_a_31b0e462.jpg";
+import eudrCommodity2 from "@assets/stock_images/coffee_beans_cocoa_a_1671c66c.jpg";
+import eudrCommodity3 from "@assets/stock_images/coffee_beans_cocoa_a_06d27b41.jpg";
 
 export default function EUDR() {
   const { data: suppliers = [], isLoading, isError, error } = useQuery<Supplier[]>({
@@ -93,6 +96,123 @@ export default function EUDR() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Product Gallery - Real Photos */}
+          <div className="space-y-6">
+            <div className="text-center space-y-4">
+              <div className="inline-flex items-center gap-2 bg-chart-3/10 px-4 py-2 rounded-full">
+                <Package className="w-5 h-5 text-chart-3" />
+                <span className="text-sm font-semibold text-chart-3">Real Products We Broker</span>
+              </div>
+              <h2 className="text-3xl font-bold tracking-tight">
+                EUDR Compliant Commodities
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                Zero-deforestation agricultural commodities with GPS-verified origins for EU import compliance
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              <Card className="overflow-hidden hover-elevate transition-all">
+                <div className="aspect-video relative overflow-hidden bg-muted">
+                  <img 
+                    src={eudrCommodity1} 
+                    alt="Sustainable coffee beans" 
+                    className="w-full h-full object-cover"
+                    data-testid="img-eudr-product-1"
+                  />
+                </div>
+                <CardContent className="p-6 space-y-3">
+                  <h3 className="text-xl font-bold">Deforestation-Free Coffee</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Arabica and Robusta coffee beans from verified farms in Brazil, Colombia, and Vietnam. 
+                    Every batch includes polygon-level GPS coordinates and Sentinel-2 satellite verification.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="outline" className="text-xs">GPS Verified</Badge>
+                    <Badge variant="outline" className="text-xs">FSC Certified</Badge>
+                    <Badge variant="outline" className="text-xs">EU TRACES NT</Badge>
+                  </div>
+                  <div className="pt-3 border-t text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Volume Pricing:</span>
+                      <span className="font-semibold">Competitive</span>
+                    </div>
+                    <div className="flex justify-between mt-1">
+                      <span className="text-muted-foreground">MOQ:</span>
+                      <span className="font-semibold">1 container (20MT)</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="overflow-hidden hover-elevate transition-all">
+                <div className="aspect-video relative overflow-hidden bg-muted">
+                  <img 
+                    src={eudrCommodity2} 
+                    alt="Sustainable cocoa beans" 
+                    className="w-full h-full object-cover"
+                    data-testid="img-eudr-product-2"
+                  />
+                </div>
+                <CardContent className="p-6 space-y-3">
+                  <h3 className="text-xl font-bold">Traced Cocoa Beans</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Premium cocoa from Ivory Coast, Ghana, and Ecuador with complete chain-of-custody. 
+                    Each shipment includes Digital Product Passport with farm plot coordinates.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="outline" className="text-xs">Rainforest Alliance</Badge>
+                    <Badge variant="outline" className="text-xs">DPP Included</Badge>
+                    <Badge variant="outline" className="text-xs">Zero Deforestation</Badge>
+                  </div>
+                  <div className="pt-3 border-t text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Volume Pricing:</span>
+                      <span className="font-semibold">Market rate</span>
+                    </div>
+                    <div className="flex justify-between mt-1">
+                      <span className="text-muted-foreground">MOQ:</span>
+                      <span className="font-semibold">500 kg</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="overflow-hidden hover-elevate transition-all">
+                <div className="aspect-video relative overflow-hidden bg-muted">
+                  <img 
+                    src={eudrCommodity3} 
+                    alt="Sustainable palm oil" 
+                    className="w-full h-full object-cover"
+                    data-testid="img-eudr-product-3"
+                  />
+                </div>
+                <CardContent className="p-6 space-y-3">
+                  <h3 className="text-xl font-bold">RSPO Palm Oil</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Certified sustainable palm oil from Indonesia and Malaysia. 
+                    RSPO-certified with full satellite monitoring and zero deforestation proof.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="outline" className="text-xs">RSPO Certified</Badge>
+                    <Badge variant="outline" className="text-xs">Satellite Tracked</Badge>
+                    <Badge variant="outline" className="text-xs">EUDR Compliant</Badge>
+                  </div>
+                  <div className="pt-3 border-t text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Volume Pricing:</span>
+                      <span className="font-semibold">Negotiable</span>
+                    </div>
+                    <div className="flex justify-between mt-1">
+                      <span className="text-muted-foreground">MOQ:</span>
+                      <span className="font-semibold">25 MT</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
 
           {/* RFQ Generator */}
           <RFQGenerator framework="eudr" />

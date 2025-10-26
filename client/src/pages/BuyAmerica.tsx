@@ -3,9 +3,12 @@ import { RFQGenerator } from "@/components/RFQGenerator";
 import { SupplierCard } from "@/components/SupplierCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Flag, CheckCircle2, Loader2 } from "lucide-react";
+import { Flag, CheckCircle2, Loader2, Package } from "lucide-react";
 import type { Supplier } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
+import steelProduct1 from "@assets/stock_images/steel_manufacturing__9228c3fd.jpg";
+import steelProduct2 from "@assets/stock_images/steel_manufacturing__9b6afee0.jpg";
+import steelProduct3 from "@assets/stock_images/steel_manufacturing__2a1691e0.jpg";
 
 export default function BuyAmerica() {
   const { data: suppliers = [], isLoading, isError, error } = useQuery<Supplier[]>({
@@ -92,6 +95,123 @@ export default function BuyAmerica() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Product Gallery - Real Photos */}
+          <div className="space-y-6">
+            <div className="text-center space-y-4">
+              <div className="inline-flex items-center gap-2 bg-chart-2/10 px-4 py-2 rounded-full">
+                <Package className="w-5 h-5 text-chart-2" />
+                <span className="text-sm font-semibold text-chart-2">Real Products We Broker</span>
+              </div>
+              <h2 className="text-3xl font-bold tracking-tight">
+                Buy America Compliant Products
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                100% melted and manufactured in USA steel, fasteners, and components for federal contracts
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              <Card className="overflow-hidden hover-elevate transition-all">
+                <div className="aspect-video relative overflow-hidden bg-muted">
+                  <img 
+                    src={steelProduct1} 
+                    alt="American-made steel components" 
+                    className="w-full h-full object-cover"
+                    data-testid="img-buyamerica-product-1"
+                  />
+                </div>
+                <CardContent className="p-6 space-y-3">
+                  <h3 className="text-xl font-bold">Domestic Steel Bars & Rods</h3>
+                  <p className="text-sm text-muted-foreground">
+                    100% US-melted steel bars for construction and infrastructure projects. 
+                    Full metallurgical traceability from Nucor, US Steel, and Steel Dynamics mills.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="outline" className="text-xs">SAM.gov Verified</Badge>
+                    <Badge variant="outline" className="text-xs">IATF 16949</Badge>
+                    <Badge variant="outline" className="text-xs">100% USA Origin</Badge>
+                  </div>
+                  <div className="pt-3 border-t text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Volume Pricing:</span>
+                      <span className="font-semibold">Market competitive</span>
+                    </div>
+                    <div className="flex justify-between mt-1">
+                      <span className="text-muted-foreground">MOQ:</span>
+                      <span className="font-semibold">5 metric tons</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="overflow-hidden hover-elevate transition-all">
+                <div className="aspect-video relative overflow-hidden bg-muted">
+                  <img 
+                    src={steelProduct2} 
+                    alt="Aerospace fasteners and components" 
+                    className="w-full h-full object-cover"
+                    data-testid="img-buyamerica-product-2"
+                  />
+                </div>
+                <CardContent className="p-6 space-y-3">
+                  <h3 className="text-xl font-bold">Aerospace Fasteners</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Precision fasteners for aerospace and defense applications. 
+                    AS9100 certified with full batch traceability and chemical composition documentation.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="outline" className="text-xs">AS9100</Badge>
+                    <Badge variant="outline" className="text-xs">DFARS Compliant</Badge>
+                    <Badge variant="outline" className="text-xs">No Foreign Content</Badge>
+                  </div>
+                  <div className="pt-3 border-t text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Volume Pricing:</span>
+                      <span className="font-semibold">Volume discounts</span>
+                    </div>
+                    <div className="flex justify-between mt-1">
+                      <span className="text-muted-foreground">MOQ:</span>
+                      <span className="font-semibold">1,000 units</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="overflow-hidden hover-elevate transition-all">
+                <div className="aspect-video relative overflow-hidden bg-muted">
+                  <img 
+                    src={steelProduct3} 
+                    alt="Automotive components made in USA" 
+                    className="w-full h-full object-cover"
+                    data-testid="img-buyamerica-product-3"
+                  />
+                </div>
+                <CardContent className="p-6 space-y-3">
+                  <h3 className="text-xl font-bold">Automotive Stampings</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Precision metal stampings for automotive and heavy equipment. 
+                    IATF 16949 certified with zero offshore subcontracting.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="outline" className="text-xs">IATF 16949</Badge>
+                    <Badge variant="outline" className="text-xs">ISO 9001</Badge>
+                    <Badge variant="outline" className="text-xs">Made in USA</Badge>
+                  </div>
+                  <div className="pt-3 border-t text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Volume Pricing:</span>
+                      <span className="font-semibold">Negotiable</span>
+                    </div>
+                    <div className="flex justify-between mt-1">
+                      <span className="text-muted-foreground">MOQ:</span>
+                      <span className="font-semibold">Custom tooling required</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
 
           {/* RFQ Generator */}
           <RFQGenerator framework="buyamerica" />

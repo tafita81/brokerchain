@@ -14,7 +14,8 @@ export default function Home() {
   });
 
   const supplierCount = suppliers.length;
-  const countries = [...new Set(suppliers.map(s => s.country))].length;
+  const uniqueCountries = new Set(suppliers.map(s => s.country));
+  const countries = Array.from(uniqueCountries).length;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -23,6 +24,200 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section with 4K Carousel */}
         <HeroCarousel />
+
+        {/* 🎯 SERVIÇOS CLAROS - O QUE FAZEMOS */}
+        <section className="w-full py-20 bg-gradient-to-b from-background via-muted/30 to-background">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center space-y-4 mb-16">
+              <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full mb-4">
+                <Shield className="w-5 h-5 text-primary" />
+                <span className="text-sm font-semibold text-primary">Pure Broker Model - Zero Inventory Risk</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tight">
+                How BrokerChain Works
+              </h2>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                We connect buyers with verified suppliers. You get compliant materials, we earn commission. 
+                <span className="font-bold text-foreground"> No inventory, no capital investment, no risk.</span>
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
+              {/* PFAS - Sustainable Packaging */}
+              <div className="bg-card border-2 border-blue-500/20 rounded-2xl p-8 hover-elevate transition-all">
+                <div className="w-16 h-16 rounded-xl bg-blue-500/10 flex items-center justify-center mb-6">
+                  <Leaf className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-2xl font-bold mb-3">PFAS-Free Packaging</h3>
+                <p className="text-muted-foreground mb-6">
+                  Compostable containers, biodegradable films, recycled materials for food service and retail.
+                </p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="font-semibold">BPI Certified</div>
+                      <div className="text-sm text-muted-foreground">Verified compostable materials</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="font-semibold">20+ State Compliant</div>
+                      <div className="text-sm text-muted-foreground">CA, WA, NY, CO regulations covered</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="font-semibold">30% Below Market</div>
+                      <div className="text-sm text-muted-foreground">Surplus and secondary materials</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Buy America - Steel & Components */}
+              <div className="bg-card border-2 border-orange-500/20 rounded-2xl p-8 hover-elevate transition-all">
+                <div className="w-16 h-16 rounded-xl bg-orange-500/10 flex items-center justify-center mb-6">
+                  <Shield className="w-8 h-8 text-orange-600 dark:text-orange-400" />
+                </div>
+                <h3 className="text-2xl font-bold mb-3">Buy America Steel</h3>
+                <p className="text-muted-foreground mb-6">
+                  100% domestic steel, fasteners, components for federal contracts and infrastructure.
+                </p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="font-semibold">SAM.gov Verified</div>
+                      <div className="text-sm text-muted-foreground">Registered federal suppliers</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="font-semibold">Metallurgical Proof</div>
+                      <div className="text-sm text-muted-foreground">Full traceability to US mills</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="font-semibold">IATF 16949</div>
+                      <div className="text-sm text-muted-foreground">Automotive quality certified</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* EUDR - Agricultural Commodities */}
+              <div className="bg-card border-2 border-green-500/20 rounded-2xl p-8 hover-elevate transition-all">
+                <div className="w-16 h-16 rounded-xl bg-green-500/10 flex items-center justify-center mb-6">
+                  <Leaf className="w-8 h-8 text-green-600 dark:text-green-400" />
+                </div>
+                <h3 className="text-2xl font-bold mb-3">EUDR Commodities</h3>
+                <p className="text-muted-foreground mb-6">
+                  Zero-deforestation coffee, cocoa, palm oil with GPS-verified origin data.
+                </p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="font-semibold">GPS Coordinates</div>
+                      <div className="text-sm text-muted-foreground">Polygon-level farm traceability</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="font-semibold">Satellite Verified</div>
+                      <div className="text-sm text-muted-foreground">Sentinel-2 imagery confirmation</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="font-semibold">EU TRACES NT</div>
+                      <div className="text-sm text-muted-foreground">Digital Product Passport ready</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* GS1 + DPP + QR Code Tracking */}
+            <div className="bg-gradient-to-r from-primary/10 via-chart-2/10 to-chart-3/10 border-2 border-primary/30 rounded-3xl p-8 md:p-12">
+              <div className="text-center space-y-4 mb-8">
+                <div className="inline-flex items-center gap-2 bg-background/80 px-4 py-2 rounded-full">
+                  <Zap className="w-5 h-5 text-primary" />
+                  <span className="text-sm font-semibold">World's First Circular Compliance Broker</span>
+                </div>
+                <h3 className="text-3xl md:text-4xl font-black">
+                  GS1 + Digital Product Passport + QR Tracking
+                </h3>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                  Every product has a unique GS1 barcode, DPP with full compliance documentation, and QR code for instant verification.
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-4 gap-6">
+                <div className="bg-background/80 rounded-xl p-6 text-center">
+                  <div className="text-4xl font-black text-primary mb-2">GS1</div>
+                  <div className="text-sm font-semibold">Global Barcode</div>
+                  <div className="text-xs text-muted-foreground mt-1">Unique product ID</div>
+                </div>
+                <div className="bg-background/80 rounded-xl p-6 text-center">
+                  <div className="text-4xl font-black text-chart-2 mb-2">DPP</div>
+                  <div className="text-sm font-semibold">Digital Passport</div>
+                  <div className="text-xs text-muted-foreground mt-1">Full compliance docs</div>
+                </div>
+                <div className="bg-background/80 rounded-xl p-6 text-center">
+                  <div className="text-4xl font-black text-chart-3 mb-2">QR</div>
+                  <div className="text-sm font-semibold">Instant Scan</div>
+                  <div className="text-xs text-muted-foreground mt-1">Mobile verification</div>
+                </div>
+                <div className="bg-background/80 rounded-xl p-6 text-center">
+                  <div className="text-4xl font-black text-chart-4 mb-2">100%</div>
+                  <div className="text-sm font-semibold">Traceable</div>
+                  <div className="text-xs text-muted-foreground mt-1">Origin to delivery</div>
+                </div>
+              </div>
+
+              <div className="mt-8 bg-background/80 rounded-xl p-6">
+                <div className="flex flex-col md:flex-row items-center gap-6">
+                  <div className="flex-1">
+                    <h4 className="text-xl font-bold mb-3">How It Works:</h4>
+                    <ol className="space-y-2 text-sm">
+                      <li className="flex items-start gap-2">
+                        <span className="font-bold text-primary">1.</span>
+                        <span>Supplier registers product with GS1 barcode</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="font-bold text-primary">2.</span>
+                        <span>We create Digital Product Passport with all certifications</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="font-bold text-primary">3.</span>
+                        <span>QR code generated linking to DPP</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="font-bold text-primary">4.</span>
+                        <span>Buyer scans QR → sees complete compliance history</span>
+                      </li>
+                    </ol>
+                  </div>
+                  <div className="w-48 h-48 bg-background rounded-xl flex items-center justify-center border-2 border-border">
+                    <div className="text-center">
+                      <div className="text-6xl mb-2">📱</div>
+                      <div className="text-xs text-muted-foreground">Scan to verify</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* 🚀 LEAD CAPTURE - ENGENHARIA DE ATENÇÃO EXTREMA */}
         <section className="w-full py-20 bg-gradient-to-b from-muted/50 via-background to-muted/50 relative overflow-hidden">
