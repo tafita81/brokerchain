@@ -1264,7 +1264,7 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
   // DOCUSIGN TEST ENVELOPE
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  const { sendTestEnvelope } = await import('./services/docusign-contracts.js');
+  const { sendTestEnvelope, getEnvelopeStatus } = await import('./services/docusign-contracts.js');
 
   // POST /api/docusign/test/send
   // Send a test envelope to verify DocuSign integration
@@ -1293,6 +1293,23 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
       res.status(500).json({ 
         error: error.message,
         details: 'Make sure DocuSign is connected via /settings page' 
+      });
+    }
+  });
+
+  // GET /api/docusign/envelope/:envelopeId/status
+  // Get envelope status and signing information
+  app.get("/api/docusign/envelope/:envelopeId/status", async (req, res) => {
+    try {
+      const { envelopeId } = req.params;
+
+      const status = await getEnvelopeStatus(envelopeId);
+
+      res.json(status);
+    } catch (error: any) {
+      console.error("❌ Error getting envelope status:", error);
+      res.status(500).json({ 
+        error: error.message 
       });
     }
   });

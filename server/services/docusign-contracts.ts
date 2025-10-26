@@ -627,3 +627,54 @@ export async function sendTestEnvelope(recipientEmail: string, recipientName: st
     throw new Error(`DocuSign test failed: ${error.message}`);
   }
 }
+
+/**
+ * GET ENVELOPE STATUS
+ * 
+ * Retrieves the current status of an envelope including signing information
+ */
+export async function getEnvelopeStatus(envelopeId: string): Promise<any> {
+  try {
+    console.log(`📋 Fetching envelope status: ${envelopeId}`);
+    
+    const authData = await authenticateDocuSign();
+    const accountId = authData.accountId;
+    
+    const client = getDocuSignClient();
+    const envelopesApi = new docusign.EnvelopesApi(client);
+    
+    // Get envelope details
+    const envelope = await envelopesApi.getEnvelope(accountId, envelopeId);
+    
+    // Get recipient information
+    const recipients = await envelopesApi.listRecipients(accountId, envelopeId);
+    
+    console.log(`✅ Envelope status retrieved:`);
+    console.log(`   Status: ${envelope.status}`);
+    console.log(`   Created: ${envelope.createdDateTime}`);
+    console.log(`   Sent: ${envelope.sentDateTime}`);
+    console.log(`   Completed: ${envelope.completedDateTime || 'Not completed yet'}`);
+    
+    return {
+      envelopeId,
+      status: envelope.status,
+      emailSubject: envelope.emailSubject,
+      createdDateTime: envelope.createdDateTime,
+      sentDateTime: envelope.sentDateTime,
+      deliveredDateTime: envelope.deliveredDateTime,
+      completedDateTime: envelope.completedDateTime,
+      statusChangedDateTime: envelope.statusChangedDateTime,
+      recipients: recipients.signers?.map(signer => ({
+        name: signer.name,
+        email: signer.email,
+        status: signer.status,
+        signedDateTime: signer.signedDateTime,
+        deliveredDateTime: signer.deliveredDateTime,
+      })),
+    };
+    
+  } catch (error: any) {
+    console.error('❌ Failed to get envelope status:', error);
+    throw new Error(`Failed to get envelope status: ${error.message}`);
+  }
+}
