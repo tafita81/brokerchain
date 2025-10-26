@@ -505,6 +505,60 @@ export const PFAS_EPR_BROKERS: CompetitorAnalysis[] = [
       'Alto custo de entrada',
       'Sem automação de RFQ'
     ]
+  },
+  {
+    name: 'Circular.co',
+    url: 'https://circular.co',
+    region: 'USA/Europe',
+    framework: 'PFAS/EPR',
+    businessModel: 'Plataforma de economia circular com marketplace',
+    navigation: ['Platform', 'Marketplace', 'Resources', 'Companies', 'Login'],
+    ctas: ['Join Platform', 'List Materials', 'Find Resources'],
+    certifications: ['Circular Economy Certified', 'B Corp'],
+    uniqueFeatures: [
+      'Marketplace de materiais secundários',
+      'Tracking de resíduos',
+      'Network de empresas circulares',
+      'Analytics de circularidade'
+    ],
+    contentStrategy: 'Circular economy case studies + material marketplace',
+    monetization: 'Subscription $200-1000/mês + transaction fees',
+    identifiedGaps: [
+      'Foco amplo (não especializado em compliance)',
+      'Não cobre Buy America ou EUDR',
+      'Sem RFQ automatizado com AI',
+      'Verificação de conformidade básica',
+      'Sem multilíngue completo',
+      'Alto custo para PMEs'
+    ]
+  },
+  {
+    name: 'Sourceful',
+    url: 'https://sourceful.com',
+    region: 'UK/Europe',
+    framework: 'PFAS/EPR',
+    businessModel: 'Plataforma digital de sourcing de embalagens sustentáveis',
+    navigation: ['Platform', 'Suppliers', 'Materials', 'Pricing', 'Login'],
+    ctas: ['Request Demo', 'Find Suppliers', 'Get Quote'],
+    certifications: ['Certified B Corporation', 'Carbon Neutral'],
+    uniqueFeatures: [
+      'Sourcing engine com AI',
+      'Comparação de fornecedores',
+      'Calculadora de impacto ambiental',
+      'Design to delivery platform',
+      'Material library digital'
+    ],
+    contentStrategy: 'Sustainability reports + supplier spotlights + material guides',
+    monetization: 'Platform fee + transaction commission 5-10%',
+    identifiedGaps: [
+      'Foco apenas em embalagens (não metais para Buy America)',
+      'Não cobre EUDR commodities',
+      'Geografia limitada (UK/Europa)',
+      'Sem integração com SAM.gov ou TRACES NT',
+      'Sem conversação AI multilíngue',
+      'Sem Digital Product Passports',
+      'Interface complexa para novos usuários'
+    ]
   }
 ];
 
