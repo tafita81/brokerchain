@@ -38,8 +38,7 @@ export default function Home() {
                 How BrokerChain Works
               </h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                We connect buyers with verified suppliers. You get compliant materials, we earn commission. 
-                <span className="font-bold text-foreground"> No inventory, no capital investment, no risk.</span>
+                We connect buyers with verified suppliers. You get compliant materials, we earn commission.
               </p>
             </div>
 

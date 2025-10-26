@@ -302,7 +302,30 @@ Return valid JSON array only, no markdown formatting.`;
 
     const pfasSupContent = pfasSupResponse.choices[0].message.content || '[]';
     const pfasSupData = JSON.parse(pfasSupContent.replace(/```json\n?/g, '').replace(/```\n?/g, ''));
-    pfasSuppliers = pfasSupData.map((c: any) => ({
+    
+    // 🔒 RIGOROUS COMPLIANCE VALIDATION - Reject non-compliant entries
+    const validatedPFAS = pfasSupData.filter((c: any) => {
+      if (!c.name || c.name.length < 3) return false;
+      if (!c.products || c.products.length === 0) return false;
+      if (!c.certifications || c.certifications.length === 0) return false;
+      
+      // MUST have PFAS-related certification
+      const hasPFASCert = c.certifications.some((cert: string) => {
+        const lower = cert.toLowerCase();
+        return lower.includes('bpi') || lower.includes('astm') || 
+               lower.includes('tuv') || lower.includes('pfas') ||
+               lower.includes('compost');
+      });
+      
+      if (!hasPFASCert) {
+        console.warn(`⚠️  Rejected PFAS supplier "${c.name}" - missing PFAS certification`);
+        return false;
+      }
+      
+      return true;
+    });
+    
+    pfasSuppliers = validatedPFAS.map((c: any) => ({
       name: c.name,
       country: c.country || 'USA',
       framework: 'pfas' as const,
@@ -311,7 +334,7 @@ Return valid JSON array only, no markdown formatting.`;
       contactEmail: c.contactEmail || `info@${c.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
       description: c.description || `Verified PFAS-free packaging supplier`
     }));
-    console.log(`✅ Generated ${pfasSuppliers.length} PFAS suppliers`);
+    console.log(`✅ Generated ${pfasSuppliers.length} PFAS suppliers (${pfasSupData.length - validatedPFAS.length} rejected for non-compliance)`);
 
     // PFAS BUYERS
     console.log('🔄 Querying OpenAI for 120 PFAS buyers...');
@@ -358,7 +381,29 @@ Return valid JSON array only, no markdown formatting.`;
 
     const buyAmSupContent = buyAmSupResponse.choices[0].message.content || '[]';
     const buyAmSupData = JSON.parse(buyAmSupContent.replace(/```json\n?/g, '').replace(/```\n?/g, ''));
-    buyAmericaSuppliers = buyAmSupData.map((c: any) => ({
+    
+    // 🔒 RIGOROUS COMPLIANCE VALIDATION - Buy America Act
+    const validatedBuyAm = buyAmSupData.filter((c: any) => {
+      if (!c.name || c.name.length < 3) return false;
+      if (!c.products || c.products.length === 0) return false;
+      if (!c.certifications || c.certifications.length === 0) return false;
+      
+      // MUST have ISO or IATF certification
+      const hasQualityCert = c.certifications.some((cert: string) => {
+        const lower = cert.toLowerCase();
+        return lower.includes('iso') || lower.includes('iatf') || 
+               lower.includes('sam.gov') || lower.includes('buy america');
+      });
+      
+      if (!hasQualityCert) {
+        console.warn(`⚠️  Rejected Buy America supplier "${c.name}" - missing quality/compliance certification`);
+        return false;
+      }
+      
+      return true;
+    });
+    
+    buyAmericaSuppliers = validatedBuyAm.map((c: any) => ({
       name: c.name,
       country: 'USA',
       framework: 'buyamerica' as const,
@@ -367,7 +412,7 @@ Return valid JSON array only, no markdown formatting.`;
       contactEmail: c.contactEmail || `sales@${c.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
       description: c.description || `100% USA-manufactured steel/metal products`
     }));
-    console.log(`✅ Generated ${buyAmericaSuppliers.length} Buy America suppliers`);
+    console.log(`✅ Generated ${buyAmericaSuppliers.length} Buy America suppliers (${buyAmSupData.length - validatedBuyAm.length} rejected for non-compliance)`);
 
     // BUY AMERICA BUYERS
     console.log('🔄 Querying OpenAI for 120 Buy America buyers...');
@@ -414,7 +459,30 @@ Return valid JSON array only, no markdown formatting.`;
 
     const eudrSupContent = eudrSupResponse.choices[0].message.content || '[]';
     const eudrSupData = JSON.parse(eudrSupContent.replace(/```json\n?/g, '').replace(/```\n?/g, ''));
-    eudrSuppliers = eudrSupData.map((c: any) => ({
+    
+    // 🔒 RIGOROUS COMPLIANCE VALIDATION - EUDR
+    const validatedEUDR = eudrSupData.filter((c: any) => {
+      if (!c.name || c.name.length < 3) return false;
+      if (!c.products || c.products.length === 0) return false;
+      if (!c.certifications || c.certifications.length === 0) return false;
+      
+      // MUST have Rainforest/FSC/RSPO/UTZ certification
+      const hasEUDRCert = c.certifications.some((cert: string) => {
+        const lower = cert.toLowerCase();
+        return lower.includes('rainforest') || lower.includes('fsc') || 
+               lower.includes('rspo') || lower.includes('utz') ||
+               lower.includes('fair trade') || lower.includes('organic');
+      });
+      
+      if (!hasEUDRCert) {
+        console.warn(`⚠️  Rejected EUDR supplier "${c.name}" - missing deforestation certification`);
+        return false;
+      }
+      
+      return true;
+    });
+    
+    eudrSuppliers = validatedEUDR.map((c: any) => ({
       name: c.name,
       country: c.country || 'Brazil',
       framework: 'eudr' as const,
@@ -423,7 +491,7 @@ Return valid JSON array only, no markdown formatting.`;
       contactEmail: c.contactEmail || `export@${c.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
       description: c.description || `Zero-deforestation verified agricultural commodities`
     }));
-    console.log(`✅ Generated ${eudrSuppliers.length} EUDR suppliers`);
+    console.log(`✅ Generated ${eudrSuppliers.length} EUDR suppliers (${eudrSupData.length - validatedEUDR.length} rejected for non-compliance)`);
 
     // EUDR BUYERS
     console.log('🔄 Querying OpenAI for 120 EUDR buyers...');
@@ -470,7 +538,30 @@ Return valid JSON array only, no markdown formatting.`;
 
     const secondaryContent = secondaryResponse.choices[0].message.content || '[]';
     const secondaryData = JSON.parse(secondaryContent.replace(/```json\n?/g, '').replace(/```\n?/g, ''));
-    secondaryMaterialsSuppliers = secondaryData.map((c: any) => ({
+    
+    // 🔒 RIGOROUS COMPLIANCE VALIDATION - Secondary Materials
+    const validatedSecondary = secondaryData.filter((c: any) => {
+      if (!c.name || c.name.length < 3) return false;
+      if (!c.products || c.products.length === 0) return false;
+      if (!c.certifications || c.certifications.length === 0) return false;
+      
+      // MUST have ISO or Certified Refurbished or R2 certification
+      const hasSecondaryCert = c.certifications.some((cert: string) => {
+        const lower = cert.toLowerCase();
+        return lower.includes('iso') || lower.includes('certified') || 
+               lower.includes('r2') || lower.includes('refurb') ||
+               lower.includes('verified');
+      });
+      
+      if (!hasSecondaryCert) {
+        console.warn(`⚠️  Rejected Secondary supplier "${c.name}" - missing certification`);
+        return false;
+      }
+      
+      return true;
+    });
+    
+    secondaryMaterialsSuppliers = validatedSecondary.map((c: any) => ({
       name: c.name,
       country: c.country || 'USA',
       framework: 'secondary' as const,
@@ -479,7 +570,7 @@ Return valid JSON array only, no markdown formatting.`;
       contactEmail: c.contactEmail || `sales@${c.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
       description: c.description || `Surplus/overstock materials at 30-50% discount`
     }));
-    console.log(`✅ Generated ${secondaryMaterialsSuppliers.length} Secondary Materials suppliers`);
+    console.log(`✅ Generated ${secondaryMaterialsSuppliers.length} Secondary Materials suppliers (${secondaryData.length - validatedSecondary.length} rejected for non-compliance)`);
 
   } catch (error: any) {
     console.error('❌ OpenAI API failed:', error.message);

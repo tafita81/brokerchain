@@ -833,8 +833,20 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
   // ==================================================
   // ADMIN ROUTES - Database Population
   // ==================================================
-  app.post("/api/admin/populate", async (_req, res) => {
+  app.post("/api/admin/populate", async (req, res) => {
     try {
+      // 🔒 SECURITY: Require admin token for database population
+      const adminToken = req.headers['x-admin-token'] || req.query.token;
+      const expectedToken = process.env.ADMIN_TOKEN || 'brokerchain_admin_2025';
+      
+      if (adminToken !== expectedToken) {
+        console.warn('⚠️  Unauthorized database population attempt');
+        return res.status(401).json({ 
+          success: false,
+          error: 'Unauthorized - admin token required' 
+        });
+      }
+      
       console.log('🚀 Starting database population with 700+ real companies...');
       
       const result = await populateDatabaseWithRealData(storage);
