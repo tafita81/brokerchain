@@ -70,13 +70,16 @@ ${params.requirements ? `- Special Requirements: ${params.requirements}` : ''}
 Generate a professional RFQ with:
 1. Subject line (max 10 words)
 2. Full RFQ content including:
+   - Professional header with buyer contact email (${params.email})
    - Professional greeting
    - Clear statement of need
    - Specific compliance requirements for ${params.framework}
    - Technical specifications based on product type
    - Quantity and delivery expectations
+   ${params.timeline ? `- Timeline urgency (${params.timeline})` : ''}
    - Certification requirements
    - Request for supplier credentials
+   - Footer with reply-to email (${params.email})
    - Timeline for response
    - Professional closing
 

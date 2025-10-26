@@ -192,6 +192,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 TO: Qualified ${template.name} Suppliers
 FROM: ${buyerName} - Procurement Department
+CONTACT: ${email}
 DATE: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
 SUBJECT: ${productType} Supply - ${template.name}
 
@@ -207,6 +208,7 @@ Product/Material: ${productType}
 Estimated Quantity: ${quantity || 'To be determined based on quote'}
 Industry Application: ${industry || 'General'}
 Compliance Framework: ${template.name}
+${timeline ? `Timeline Required: ${timeline}` : ''}
 
 ${requirements ? `\nADDITIONAL REQUIREMENTS:\n${requirements}\n` : ''}
 
@@ -257,6 +259,8 @@ Deadline: 7 business days from receipt
 Format: PDF with all supporting documentation
 Evaluation Criteria: Compliance (40%), Price (30%), Quality (20%), Delivery (10%)
 
+REPLY TO: ${email}
+
 All quotes will be evaluated by our technical and procurement teams. Suppliers meeting our requirements will be contacted for follow-up discussions.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -274,15 +278,15 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
         };
       }
 
-      // Create or get buyer
-      let buyer = (await storage.getAllBuyers()).find(b => b.name === buyerName);
+      // Create or get buyer (by email to avoid duplicates)
+      let buyer = (await storage.getAllBuyers()).find(b => b.contactEmail === email);
       if (!buyer) {
         buyer = await storage.createBuyer({
           name: buyerName,
           industry: industry || "General",
           country: "USA",
           framework,
-          contactEmail: "",
+          contactEmail: email,
         });
       }
 
