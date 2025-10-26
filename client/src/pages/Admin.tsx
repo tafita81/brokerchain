@@ -20,17 +20,8 @@ export default function Admin() {
         description: "This will take several minutes as we fetch 700+ real companies via OpenAI...",
       });
 
-      //  🔒 Include admin token for authentication
-      const adminToken = prompt("Enter admin token to populate database:");
-      if (!adminToken) {
-        throw new Error("Admin token required");
-      }
-
       const res = await fetch("/api/admin/populate", {
         method: "POST",
-        headers: {
-          "X-Admin-Token": adminToken,
-        },
       });
 
       if (!res.ok) {

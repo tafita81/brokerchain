@@ -1,5 +1,5 @@
 import { Navigation } from "@/components/Navigation";
-import { RFQListCard } from "@/components/RFQListCard";
+import { RFQTable } from "@/components/RFQTable";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -160,11 +160,7 @@ export default function AdminRFQs() {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="grid md:grid-cols-2 gap-6">
-                  {allRfqs.map((rfq) => (
-                    <RFQListCard key={rfq.id} rfq={rfq} />
-                  ))}
-                </div>
+                <RFQTable rfqs={allRfqs} />
               )}
             </TabsContent>
 
@@ -190,11 +186,7 @@ export default function AdminRFQs() {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="grid md:grid-cols-2 gap-6">
-                  {pfasRfqs.map((rfq) => (
-                    <RFQListCard key={rfq.id} rfq={rfq} />
-                  ))}
-                </div>
+                <RFQTable rfqs={pfasRfqs} />
               )}
             </TabsContent>
 
@@ -220,11 +212,7 @@ export default function AdminRFQs() {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="grid md:grid-cols-2 gap-6">
-                  {buyamericaRfqs.map((rfq) => (
-                    <RFQListCard key={rfq.id} rfq={rfq} />
-                  ))}
-                </div>
+                <RFQTable rfqs={buyamericaRfqs} />
               )}
             </TabsContent>
 
@@ -250,11 +238,7 @@ export default function AdminRFQs() {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="grid md:grid-cols-2 gap-6">
-                  {eudrRfqs.map((rfq) => (
-                    <RFQListCard key={rfq.id} rfq={rfq} />
-                  ))}
-                </div>
+                <RFQTable rfqs={eudrRfqs} />
               )}
             </TabsContent>
           </Tabs>

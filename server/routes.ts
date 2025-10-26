@@ -867,18 +867,6 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
   // ==================================================
   app.post("/api/admin/populate", async (req, res) => {
     try {
-      // 🔒 SECURITY: Require admin token for database population
-      const adminToken = req.headers['x-admin-token'] || req.query.token;
-      const expectedToken = process.env.ADMIN_TOKEN;
-      
-      if (!expectedToken || adminToken !== expectedToken) {
-        console.warn('⚠️  Unauthorized database population attempt');
-        return res.status(401).json({ 
-          success: false,
-          error: 'Unauthorized - admin token required (configure ADMIN_TOKEN environment variable)' 
-        });
-      }
-      
       console.log('🚀 Starting database population with 700+ real companies...');
       
       const result = await populateDatabaseWithRealData(storage);
@@ -904,18 +892,6 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
   // ==================================================
   app.post("/api/admin/scrape-sam-gov", async (req, res) => {
     try {
-      // 🔒 SECURITY: Require admin token for SAM.gov scraping
-      const adminToken = req.headers['x-admin-token'] || req.query.token;
-      const expectedToken = process.env.ADMIN_TOKEN;
-      
-      if (!expectedToken || adminToken !== expectedToken) {
-        console.warn('⚠️  Unauthorized SAM.gov scraping attempt');
-        return res.status(401).json({ 
-          success: false,
-          error: 'Unauthorized - admin token required (configure ADMIN_TOKEN environment variable)' 
-        });
-      }
-      
       const { limit = 10 } = req.body;
       
       console.log(`🔍 Scraping SAM.gov for ${limit} federal procurement opportunities...`);
