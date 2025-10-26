@@ -101,6 +101,20 @@ The codebase does not currently implement authentication/authorization mechanism
 - Intelligent quote parsing from supplier emails
 - Environment variables: `SMTP_HOST`, `SMTP_USER`, `SMTP_PASSWORD`
 
+**SAM.gov Automated RFQ Discovery (STEP ZERO)**:
+- Automatic scraping of federal procurement opportunities from SAM.gov API v2
+- Fetches opportunities from current day only (no historical data accumulation)
+- Pagination handling: Fetches in batches of 10 (SAM.gov API limitation)
+- Framework-based filtering: Only processes PFAS, Buy America Act, and EUDR opportunities (rejects non-relevant categories)
+- Intelligent keyword detection to classify opportunities by compliance framework
+- Anti-duplication: Verifies buyer (by email) and RFQ (by subject) before database insertion
+- Auto-creates buyer records from federal agency contact information
+- Auto-generates RFQs with solicitation details, NAICS codes, and compliance requirements
+- Scheduled execution: Runs every 6 hours to discover new opportunities
+- Manual trigger: POST /api/admin/scrape-sam-gov endpoint (admin token required)
+- Environment variable: `SAM_GOV_API_KEY` (obtain from https://open.gsa.gov/api/opportunities-api/)
+- Statistics tracking: Logs breakdown by framework (PFAS/Buy America/EUDR), duplicates skipped, and rejected opportunities
+
 **Database Service**: Neon PostgreSQL serverless database requiring `DATABASE_URL` environment variable
 
 **Google Fonts**: Inter and JetBrains Mono fonts loaded via Google Fonts CDN for consistent typography

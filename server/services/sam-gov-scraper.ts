@@ -83,65 +83,66 @@ interface SAMApiResponse {
 
 /**
  * Detecta framework de compliance baseado em keywords do RFQ
+ * RETORNA null se NÃO for uma das 3 frentes principais (PFAS, Buy America, EUDR)
  */
-function detectFramework(title: string, description: string): 'pfas' | 'buyamerica' | 'eudr' | 'secondary' {
+function detectFramework(title: string, description: string): 'pfas' | 'buyamerica' | 'eudr' | null {
   const text = `${title} ${description}`.toLowerCase();
   
-  // PFAS/EPR keywords
+  // PFAS/EPR keywords (FRENTE 1)
   if (
     text.includes('pfas') || 
     text.includes('packaging') || 
     text.includes('food service') ||
     text.includes('compostable') ||
-    text.includes('biodegradable')
+    text.includes('biodegradable') ||
+    text.includes('food contact') ||
+    text.includes('container') ||
+    text.includes('disposable')
   ) {
     return 'pfas';
   }
   
-  // Buy America keywords
+  // Buy America keywords (FRENTE 2) - mais restritivo
   if (
     text.includes('buy america') || 
+    text.includes('baba') ||
     text.includes('steel') || 
     text.includes('iron') ||
     text.includes('metal') ||
-    text.includes('manufacturing') ||
-    text.includes('domestic') ||
-    text.includes('infrastructure')
+    text.includes('rail') ||
+    text.includes('bridge') ||
+    text.includes('highway') ||
+    text.includes('infrastructure') ||
+    text.includes('transit') ||
+    text.includes('dot ')
   ) {
     return 'buyamerica';
   }
   
-  // EUDR keywords
+  // EUDR keywords (FRENTE 3)
   if (
     text.includes('deforestation') || 
     text.includes('palm oil') || 
     text.includes('soy') ||
     text.includes('timber') ||
+    text.includes('wood') ||
     text.includes('cocoa') ||
     text.includes('coffee') ||
-    text.includes('rubber')
+    text.includes('rubber') ||
+    text.includes('cattle') ||
+    text.includes('forest')
   ) {
     return 'eudr';
   }
   
-  // Secondary materials keywords
-  if (
-    text.includes('secondary') || 
-    text.includes('surplus') || 
-    text.includes('overstock') ||
-    text.includes('recycled')
-  ) {
-    return 'secondary';
-  }
-  
-  // Default to buyamerica for federal procurement
-  return 'buyamerica';
+  // NÃO é uma das 3 frentes - REJEITAR
+  return null;
 }
 
 /**
  * Extrai informações do buyer de um SAM.gov opportunity
  */
-function extractBuyerInfo(opportunity: SAMOpportunity): Partial<InsertBuyer> {
+function extractBuyerInfo(opportunity: SAMOpportunity, framework: 'pfas' | 'buyamerica' | 'eudr'): Partial<InsertBuyer> {
   const primaryContact = opportunity.pointOfContact.find(c => c.type === 'primary') || opportunity.pointOfContact[0];
   
   return {
@@ -149,18 +150,16 @@ function extractBuyerInfo(opportunity: SAMOpportunity): Partial<InsertBuyer> {
     country: 'USA',
     industry: `Federal Procurement - ${opportunity.naicsCode}`,
     contactEmail: primaryContact?.email || `procurement@${opportunity.department.toLowerCase().replace(/\s+/g, '')}.gov`,
-    framework: detectFramework(opportunity.title, opportunity.description),
+    framework,
   };
 }
 
 /**
  * Extrai informações do RFQ de um SAM.gov opportunity
+ * NOTE: buyerId will be set later when buyer is created
  */
-function extractRFQInfo(opportunity: SAMOpportunity, buyerId: string): Partial<InsertRFQ> {
-  const framework = detectFramework(opportunity.title, opportunity.description);
-  
+function extractRFQInfo(opportunity: SAMOpportunity, framework: 'pfas' | 'buyamerica' | 'eudr'): Omit<Partial<InsertRFQ>, 'buyerId'> {
   return {
-    buyerId,
     framework,
     status: 'draft',
     subject: `${opportunity.title} - Solicitation ${opportunity.solicitationNumber}`,
@@ -197,57 +196,83 @@ function extractRFQInfo(opportunity: SAMOpportunity, buyerId: string): Partial<I
 /**
  * Scrape federal procurement opportunities from SAM.gov API
  * 
- * @param limit - Number of opportunities to fetch (default: 10)
- * @param offset - Pagination offset (default: 0)
+ * SAM.gov API LIMIT: Maximum 10 records per request
+ * This function handles pagination automatically to fetch the desired total
+ * 
+ * @param totalLimit - Total number of opportunities to fetch (will be fetched in batches of 10)
  * @param naicsCode - Filter by NAICS code (optional)
  * @returns Array of SAM.gov opportunities
  */
 export async function scrapeSAMGovOpportunities(
-  limit: number = 10,
-  offset: number = 0,
+  totalLimit: number = 10,
   naicsCode?: string
 ): Promise<SAMOpportunity[]> {
   try {
-    // SAM.gov Contract Opportunities API endpoint
-    const baseUrl = 'https://api.sam.gov/opportunities/v2/search';
+    const allOpportunities: SAMOpportunity[] = [];
+    const batchSize = 10; // SAM.gov API limitation - maximum 10 per request
+    const numBatches = Math.ceil(totalLimit / batchSize);
     
-    // Build query parameters
-    const params = new URLSearchParams({
-      limit: limit.toString(),
-      offset: offset.toString(),
-      postedFrom: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Last 30 days
-      postedTo: new Date().toISOString().split('T')[0],
-      // API key is required for SAM.gov API
-      // NOTE: You'll need to register at https://open.gsa.gov/api/opportunities-api/
-      // and set SAM_GOV_API_KEY environment variable
-    });
+    console.log(`🔍 SAM.gov scraping: fetching ${totalLimit} opportunities in ${numBatches} batches of ${batchSize}...`);
     
-    if (naicsCode) {
-      params.set('naicsCode', naicsCode);
+    for (let i = 0; i < numBatches; i++) {
+      const offset = i * batchSize;
+      const limit = Math.min(batchSize, totalLimit - offset);
+      
+      // SAM.gov Contract Opportunities API endpoint
+      const baseUrl = 'https://api.sam.gov/opportunities/v2/search';
+      
+      // Build query parameters
+      // IMPORTANTE: Buscar apenas oportunidades DO DIA (não últimos 30 dias)
+      const today = new Date().toISOString().split('T')[0];
+      const params = new URLSearchParams({
+        limit: limit.toString(),
+        offset: offset.toString(),
+        postedFrom: today, // Apenas hoje
+        postedTo: today,   // Apenas hoje
+      });
+      
+      if (naicsCode) {
+        params.set('naicsCode', naicsCode);
+      }
+      
+      const url = `${baseUrl}?${params.toString()}`;
+      
+      console.log(`   📦 Batch ${i + 1}/${numBatches}: offset=${offset}, limit=${limit}`);
+      
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'BrokerChain/1.0 (contact@brokerchain.business)',
+          'Accept': 'application/json',
+          // SAM.gov API key from environment
+          ...(process.env.SAM_GOV_API_KEY ? { 'X-Api-Key': process.env.SAM_GOV_API_KEY } : {}),
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`SAM.gov API error: ${response.status} ${response.statusText}`);
+      }
+      
+      const data: SAMApiResponse = await response.json();
+      
+      console.log(`   ✅ Batch ${i + 1}: fetched ${data.opportunitiesData.length} opportunities (${data.totalRecords} total available)`);
+      
+      allOpportunities.push(...data.opportunitiesData);
+      
+      // Stop if we got fewer results than requested (no more data available)
+      if (data.opportunitiesData.length < limit) {
+        console.log(`   ⚠️  Received fewer results than requested - reached end of available data`);
+        break;
+      }
+      
+      // Rate limiting: wait 500ms between requests to be respectful to SAM.gov API
+      if (i < numBatches - 1) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
     }
     
-    const url = `${baseUrl}?${params.toString()}`;
+    console.log(`✅ SAM.gov scraping complete: ${allOpportunities.length} opportunities fetched`);
     
-    console.log(`🔍 Scraping SAM.gov opportunities: ${url}`);
-    
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'BrokerChain/1.0 (contact@brokerchain.business)',
-        'Accept': 'application/json',
-        // If SAM_GOV_API_KEY is set, use it
-        ...(process.env.SAM_GOV_API_KEY ? { 'X-Api-Key': process.env.SAM_GOV_API_KEY } : {}),
-      },
-    });
-    
-    if (!response.ok) {
-      throw new Error(`SAM.gov API error: ${response.status} ${response.statusText}`);
-    }
-    
-    const data: SAMApiResponse = await response.json();
-    
-    console.log(`✅ Found ${data.totalRecords} total opportunities, fetched ${data.opportunitiesData.length}`);
-    
-    return data.opportunitiesData;
+    return allOpportunities;
   } catch (error: any) {
     console.error(`❌ Error scraping SAM.gov:`, error.message);
     return [];
@@ -268,30 +293,63 @@ export async function scrapeSAMGovOpportunities(
  */
 export async function autoProcessSAMGovOpportunities(limit: number = 10): Promise<{
   buyers: Partial<InsertBuyer>[];
-  rfqs: Partial<InsertRFQ>[];
+  rfqs: Array<Omit<Partial<InsertRFQ>, 'buyerId'>>;
   opportunities: SAMOpportunity[];
+  stats: {
+    total: number;
+    pfas: number;
+    buyamerica: number;
+    eudr: number;
+    rejected: number;
+  };
 }> {
   const opportunities = await scrapeSAMGovOpportunities(limit);
   
   const buyers: Partial<InsertBuyer>[] = [];
-  const rfqs: Partial<InsertRFQ>[] = [];
+  const rfqs: Array<Omit<Partial<InsertRFQ>, 'buyerId'>> = [];
+  const stats = {
+    total: opportunities.length,
+    pfas: 0,
+    buyamerica: 0,
+    eudr: 0,
+    rejected: 0,
+  };
   
   for (const opportunity of opportunities) {
-    // Extract buyer info
-    const buyerInfo = extractBuyerInfo(opportunity);
+    // Detectar framework ANTES de processar
+    const framework = detectFramework(opportunity.title, opportunity.description);
+    
+    // REJEITAR se não for uma das 3 frentes principais
+    if (!framework) {
+      stats.rejected++;
+      console.log(`   ⏭️  Skipped: "${opportunity.title.substring(0, 60)}..." (not PFAS/Buy America/EUDR)`);
+      continue;
+    }
+    
+    // Type guard: framework is guaranteed to be 'pfas' | 'buyamerica' | 'eudr' here
+    const validFramework = framework as 'pfas' | 'buyamerica' | 'eudr';
+    
+    // Contar por framework
+    stats[validFramework]++;
+    
+    // Extract buyer info (pass validated framework)
+    const buyerInfo = extractBuyerInfo(opportunity, validFramework);
     buyers.push(buyerInfo);
     
-    // Extract RFQ info (buyerId will be set after buyer is inserted)
-    const rfqInfo = extractRFQInfo(opportunity, ''); // Temporary buyerId
+    // Extract RFQ info (buyerId will be set when buyer is created)
+    const rfqInfo = extractRFQInfo(opportunity, validFramework);
     rfqs.push(rfqInfo);
+    
+    console.log(`   ✅ Accepted: "${opportunity.title.substring(0, 60)}..." → ${validFramework.toUpperCase()}`);
   }
   
-  console.log(`📊 Processed ${buyers.length} buyers and ${rfqs.length} RFQs from SAM.gov`);
+  console.log(`📊 Processed ${opportunities.length} total → ${buyers.length} accepted (${stats.pfas} PFAS, ${stats.buyamerica} Buy America, ${stats.eudr} EUDR) | ${stats.rejected} rejected`);
   
   return {
     buyers,
     rfqs,
     opportunities,
+    stats,
   };
 }
 
@@ -313,14 +371,35 @@ export function scheduleSAMGovScraping(intervalHours: number = 6, storageInstanc
   autoProcessSAMGovOpportunities(50).then(async (result) => {
     if (storageInstance && result.buyers.length > 0) {
       try {
+        let inserted = 0;
+        let duplicates = 0;
+        
         for (let i = 0; i < result.buyers.length; i++) {
           const buyerInfo = result.buyers[i];
           const rfqInfo = result.rfqs[i];
           
-          const buyer = await storageInstance.createBuyer(buyerInfo);
-          await storageInstance.createRFQ({ ...rfqInfo, buyerId: buyer.id });
+          // ANTI-DUPLICAÇÃO: Verificar se buyer já existe (por email)
+          const existingBuyers = await storageInstance.getAllBuyers();
+          let buyer = existingBuyers.find((b: any) => b.contactEmail === buyerInfo.contactEmail);
+          
+          if (!buyer) {
+            buyer = await storageInstance.createBuyer(buyerInfo);
+          }
+          
+          // ANTI-DUPLICAÇÃO: Verificar se RFQ já existe (por subject)
+          const existingRFQs = await storageInstance.getAllRFQs();
+          const rfqExists = existingRFQs.some((r: any) => r.subject === rfqInfo.subject);
+          
+          if (!rfqExists) {
+            await storageInstance.createRFQ({ ...rfqInfo, buyerId: buyer.id });
+            inserted++;
+          } else {
+            duplicates++;
+          }
         }
-        console.log(`✅ Initial scrape auto-inserted: ${result.buyers.length} buyers, ${result.rfqs.length} RFQs`);
+        
+        console.log(`✅ Initial scrape: ${inserted} new RFQs inserted, ${duplicates} duplicates skipped`);
+        console.log(`📊 Breakdown: ${result.stats.pfas} PFAS | ${result.stats.buyamerica} Buy America | ${result.stats.eudr} EUDR | ${result.stats.rejected} rejected`);
       } catch (error: any) {
         console.error('❌ Initial scrape insertion failed:', error.message);
       }
@@ -338,14 +417,35 @@ export function scheduleSAMGovScraping(intervalHours: number = 6, storageInstanc
       
       // Auto-insert into database if storage instance provided
       if (storageInstance && result.buyers.length > 0) {
+        let inserted = 0;
+        let duplicates = 0;
+        
         for (let i = 0; i < result.buyers.length; i++) {
           const buyerInfo = result.buyers[i];
           const rfqInfo = result.rfqs[i];
           
-          const buyer = await storageInstance.createBuyer(buyerInfo);
-          await storageInstance.createRFQ({ ...rfqInfo, buyerId: buyer.id });
+          // ANTI-DUPLICAÇÃO: Verificar se buyer já existe
+          const existingBuyers = await storageInstance.getAllBuyers();
+          let buyer = existingBuyers.find((b: any) => b.contactEmail === buyerInfo.contactEmail);
+          
+          if (!buyer) {
+            buyer = await storageInstance.createBuyer(buyerInfo);
+          }
+          
+          // ANTI-DUPLICAÇÃO: Verificar se RFQ já existe
+          const existingRFQs = await storageInstance.getAllRFQs();
+          const rfqExists = existingRFQs.some((r: any) => r.subject === rfqInfo.subject);
+          
+          if (!rfqExists) {
+            await storageInstance.createRFQ({ ...rfqInfo, buyerId: buyer.id });
+            inserted++;
+          } else {
+            duplicates++;
+          }
         }
-        console.log(`✅ Auto-inserted: ${result.buyers.length} buyers, ${result.rfqs.length} RFQs`);
+        
+        console.log(`✅ Auto-inserted: ${inserted} new RFQs, ${duplicates} duplicates skipped`);
+        console.log(`📊 Breakdown: ${result.stats.pfas} PFAS | ${result.stats.buyamerica} Buy America | ${result.stats.eudr} EUDR | ${result.stats.rejected} rejected`);
       }
     } catch (error: any) {
       console.error('❌ Scheduled SAM.gov scrape failed:', error.message);
