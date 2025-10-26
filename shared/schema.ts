@@ -285,6 +285,22 @@ export const emailLogs = pgTable("email_logs", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// OAuth Tokens - DocuSign OAuth 2.0 Access Tokens
+export const oauthTokens = pgTable("oauth_tokens", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  provider: text("provider").notNull(), // docusign, stripe, payoneer
+  accessToken: text("access_token").notNull(),
+  refreshToken: text("refresh_token"),
+  tokenType: text("token_type").notNull().default("Bearer"),
+  expiresAt: timestamp("expires_at").notNull(),
+  scope: text("scope"),
+  accountId: text("account_id"), // DocuSign account ID
+  userId: text("user_id"), // DocuSign user ID
+  baseUri: text("base_uri"), // DocuSign base URI (e.g., https://demo.docusign.net/restapi)
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Insert Schemas (for validation)
 export const insertSupplierSchema = createInsertSchema(suppliers).omit({ id: true, createdAt: true });
 export const insertBuyerSchema = createInsertSchema(buyers).omit({ id: true, createdAt: true });
@@ -302,6 +318,7 @@ export const insertContractSchema = createInsertSchema(contracts).omit({ id: tru
 export const insertPaymentSchema = createInsertSchema(payments).omit({ id: true, createdAt: true, buyerPaidAt: true, escrowedAt: true, releasedAt: true });
 export const insertCommissionSchema = createInsertSchema(commissions).omit({ id: true, createdAt: true, paidAt: true });
 export const insertEmailLogSchema = createInsertSchema(emailLogs).omit({ id: true, createdAt: true, sentAt: true, deliveredAt: true, openedAt: true });
+export const insertOAuthTokenSchema = createInsertSchema(oauthTokens).omit({ id: true, createdAt: true, updatedAt: true });
 
 // TypeScript types
 export type InsertSupplier = z.infer<typeof insertSupplierSchema>;
@@ -351,6 +368,9 @@ export type Commission = typeof commissions.$inferSelect;
 
 export type InsertEmailLog = z.infer<typeof insertEmailLogSchema>;
 export type EmailLog = typeof emailLogs.$inferSelect;
+
+export type InsertOAuthToken = z.infer<typeof insertOAuthTokenSchema>;
+export type OAuthToken = typeof oauthTokens.$inferSelect;
 
 // Extended types for frontend use
 export interface RFQWithDetails extends RFQ {
