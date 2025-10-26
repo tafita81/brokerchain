@@ -210,27 +210,25 @@ export async function scrapeSAMGovOpportunities(
   // SAM.gov Contract Opportunities API endpoint
   const baseUrl = 'https://api.sam.gov/opportunities/v2/search';
   
-  // Build date range for last 3 days
+  // Build date range for ONLY YESTERDAY (dia anterior)
   // SAM.gov API expects date format: MM/DD/YYYY
   const today = new Date();
-  const threeDaysAgo = new Date(today);
-  threeDaysAgo.setDate(today.getDate() - 3);
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
   
-  // Format today's date
-  const todayMonth = String(today.getMonth() + 1).padStart(2, '0');
-  const todayDay = String(today.getDate()).padStart(2, '0');
-  const todayYear = today.getFullYear();
-  const formattedToday = `${todayMonth}/${todayDay}/${todayYear}`;
+  // Format yesterday's date (both from and to are yesterday)
+  const yesterdayMonth = String(yesterday.getMonth() + 1).padStart(2, '0');
+  const yesterdayDay = String(yesterday.getDate()).padStart(2, '0');
+  const yesterdayYear = yesterday.getFullYear();
+  const formattedYesterday = `${yesterdayMonth}/${yesterdayDay}/${yesterdayYear}`;
   
-  // Format 3 days ago date
-  const fromMonth = String(threeDaysAgo.getMonth() + 1).padStart(2, '0');
-  const fromDay = String(threeDaysAgo.getDate()).padStart(2, '0');
-  const fromYear = threeDaysAgo.getFullYear();
-  const formattedFrom = `${fromMonth}/${fromDay}/${fromYear}`;
+  // Use same date for from and to (ONLY yesterday)
+  const formattedFrom = formattedYesterday;
+  const formattedToday = formattedYesterday;
   
   try {
     // STEP 1: Pre-query metadata to get total count
-    console.log(`🔍 SAM.gov scraping: querying metadata for period ${formattedFrom} to ${formattedToday}...`);
+    console.log(`🔍 SAM.gov scraping: querying metadata for YESTERDAY ONLY (${formattedYesterday})...`);
     
     const metadataParams = new URLSearchParams({
       limit: '1',  // Only need 1 result to get totalRecords
@@ -264,28 +262,29 @@ export async function scrapeSAMGovOpportunities(
     
     // STEP 2: Calculate number of pages needed
     const recordsToFetch = Math.min(totalLimit, totalAvailable);
-    const numBatches = Math.ceil(recordsToFetch / 10); // SAM.gov API limit is 10 per request
+    const BATCH_SIZE = 100; // SAM.gov API supports up to 100 records per request
+    const numBatches = Math.ceil(recordsToFetch / BATCH_SIZE);
     
-    console.log(`   📄 Will fetch ${recordsToFetch} RFQs in ${numBatches} batches (10 per batch, 10s delay between batches)`);
+    console.log(`   📄 Will fetch ${recordsToFetch} RFQs in ${numBatches} batches (${BATCH_SIZE} per batch, 15s delay between batches)`);
     
     if (totalAvailable === 0) {
       console.log(`   ⚠️  No opportunities available for this period`);
       return [];
     }
     
-    // Wait 10 seconds before starting pagination requests
-    console.log(`   ⏳ Waiting 10 seconds before starting pagination...`);
-    await new Promise(resolve => setTimeout(resolve, 10000));
+    // Wait 15 seconds before starting pagination requests (avoid 429 errors)
+    console.log(`   ⏳ Waiting 15 seconds before starting pagination...`);
+    await new Promise(resolve => setTimeout(resolve, 15000));
     
     // STEP 3: Fetch all pages with deduplication
     const allOpportunities: SAMOpportunity[] = [];
     const seenIds = new Set<string>(); // Track IDs to avoid duplicates
     
     for (let i = 0; i < numBatches; i++) {
-      const offset = i * 10;
+      const offset = i * BATCH_SIZE;
       
       const params = new URLSearchParams({
-        limit: '10',
+        limit: BATCH_SIZE.toString(),
         offset: offset.toString(),
         postedFrom: formattedFrom,
         postedTo: formattedToday,
@@ -297,7 +296,7 @@ export async function scrapeSAMGovOpportunities(
       
       const url = `${baseUrl}?${params.toString()}`;
       
-      console.log(`   📦 Batch ${i + 1}/${numBatches}: offset=${offset}, limit=10`);
+      console.log(`   📦 Batch ${i + 1}/${numBatches}: offset=${offset}, limit=${BATCH_SIZE}`);
       
       const response = await fetch(url, {
         headers: {
@@ -326,15 +325,16 @@ export async function scrapeSAMGovOpportunities(
       console.log(`   ✅ Batch ${i + 1}: fetched ${data.opportunitiesData.length} opportunities (${newCount} new, ${data.opportunitiesData.length - newCount} duplicates skipped)`);
       
       // Stop if we got fewer results than requested (no more data available)
-      if (data.opportunitiesData.length < 10) {
+      if (data.opportunitiesData.length < BATCH_SIZE) {
         console.log(`   ⚠️  Received fewer results than requested - reached end of available data`);
         break;
       }
       
-      // Rate limiting: wait 10 seconds between requests to avoid 429 errors from SAM.gov API
+      // Rate limiting: wait 15 seconds between requests to avoid 429 errors from SAM.gov API
+      // SAM.gov limits: 1,000 requests/hour with API key
       if (i < numBatches - 1) {
-        console.log(`   ⏳ Waiting 10 seconds before next batch...`);
-        await new Promise(resolve => setTimeout(resolve, 10000));
+        console.log(`   ⏳ Waiting 15 seconds before next batch...`);
+        await new Promise(resolve => setTimeout(resolve, 15000));
       }
     }
     
@@ -425,15 +425,17 @@ export async function autoProcessSAMGovOpportunities(limit: number = 10): Promis
  * Schedule automatic SAM.gov scraping (cron job)
  * 
  * This should be called from server startup to schedule recurring scrapes.
- * Recommended: Run every 6 hours to catch new federal opportunities.
+ * Recommended: Run every 24 hours + 1 second to respect SAM.gov API rate limits (1,000 requests/day).
+ * Scrapes ONLY yesterday's RFQs (dia anterior) to minimize API calls.
  * 
- * @param intervalHours - Hours between scrapes
+ * @param intervalHours - Hours between scrapes (default: 24)
+ * @param extraSeconds - Additional seconds to add (default: 1)
  * @param storageInstance - Storage instance for database persistence
  */
-export function scheduleSAMGovScraping(intervalHours: number = 6, storageInstance?: any) {
-  const intervalMs = intervalHours * 60 * 60 * 1000;
+export function scheduleSAMGovScraping(intervalHours: number = 24, extraSeconds: number = 1, storageInstance?: any) {
+  const intervalMs = (intervalHours * 60 * 60 * 1000) + (extraSeconds * 1000);
   
-  console.log(`⏰ Scheduling SAM.gov scraping every ${intervalHours} hours`);
+  console.log(`⏰ Scheduling SAM.gov scraping every ${intervalHours} hours + ${extraSeconds}s (ONLY yesterday's RFQs)`);
   
   // Initial scrape on startup
   autoProcessSAMGovOpportunities(50).then(async (result) => {

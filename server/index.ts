@@ -114,8 +114,10 @@ app.use((req, res, next) => {
       console.log(`   Preview: ${email.text.substring(0, 200)}...\n`);
     });
     
-    // 🔍 STEP ZERO: Schedule automatic SAM.gov scraping every 6 hours
+    // 🔍 STEP ZERO: Schedule automatic SAM.gov scraping every 24 hours + 1 second
     // This auto-discovers federal procurement opportunities and initiates RFQs
-    scheduleSAMGovScraping(6, storage);
+    // Rate limits: 1,000 requests/day with API key, 100 records per request
+    // Scrapes ONLY yesterday's RFQs (dia anterior) to minimize API calls
+    scheduleSAMGovScraping(24, 1, storage);
   });
 })();
