@@ -34,14 +34,10 @@ export function ContentGenerator({ onGenerate }: ContentGeneratorProps) {
   const generateMutation = useMutation({
     mutationFn: async (data: any) => {
       const keywords = data.keywords.split(',').map((k: string) => k.trim()).filter(Boolean);
-      const response = await apiRequest("/api/content/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          niche: data.niche,
-          country: data.country,
-          keywords,
-        }),
+      const response = await apiRequest("POST", "/api/content/generate", {
+        niche: data.niche,
+        country: data.country,
+        keywords,
       });
       return response.json();
     },

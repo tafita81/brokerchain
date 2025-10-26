@@ -35,13 +35,9 @@ export function RFQGenerator({ framework, onGenerate }: RFQGeneratorProps) {
 
   const generateMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await apiRequest("/api/rfqs/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          framework,
-          ...data,
-        }),
+      const response = await apiRequest("POST", "/api/rfqs/generate", {
+        framework,
+        ...data,
       });
       return response.json();
     },
