@@ -12,6 +12,7 @@ import EUDR from "@/pages/EUDR";
 import Suppliers from "@/pages/Suppliers";
 import Content from "@/pages/Content";
 import Metrics from "@/pages/Metrics";
+import Admin from "@/pages/Admin";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -25,6 +26,7 @@ function Router() {
       <Route path="/suppliers" component={Suppliers} />
       <Route path="/content" component={Content} />
       <Route path="/metrics" component={Metrics} />
+      <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );
