@@ -14,7 +14,6 @@ export function Navigation() {
     { path: "/buy-america", label: t("buyAmerica"), testId: "buy-america" },
     { path: "/eudr", label: t("eudrCompliance"), testId: "eudr" },
     { path: "/suppliers", label: t("suppliers"), testId: "suppliers" },
-    { path: "/buyers", label: "Buyers", testId: "buyers" },
     { path: "/metrics", label: t("metrics"), testId: "metrics" },
   ];
 
