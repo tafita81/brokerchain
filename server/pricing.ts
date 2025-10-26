@@ -22,6 +22,7 @@ export interface SupplierQuote {
   
   // Metadata
   leadTime: string; // "7 days", "2 weeks", etc
+  deliveryDate: string; // "November 15, 2025" - Data final combinada
   certifications: string[];
   framework: "pfas" | "buyamerica" | "eudr";
   
@@ -186,6 +187,7 @@ COMISSÃO BROKERCHAIN: ${(breakdown.commissionRate * 100).toFixed(1)}% = $${brea
 
 ✅ MARGEM LÍQUIDA: $${breakdown.commissionAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })} (${breakdown.marginPercent.toFixed(1)}%)
 📦 Prazo de Entrega: ${quote.leadTime}
+📅 DATA FINAL DE ENTREGA: ${quote.deliveryDate}
 🏆 Certificações: ${quote.certifications.join(", ")}
 `;
   }

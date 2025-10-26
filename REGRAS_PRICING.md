@@ -49,6 +49,7 @@ COMISSÃO BROKERCHAIN: 8% = $2,520.00
 
 ✅ MARGEM LÍQUIDA: $2,520.00 (viável)
 📦 Prazo de Entrega: 7 dias
+📅 DATA FINAL DE ENTREGA: November 2, 2025
 🏆 Certificações: BPI, ASTM D6868, PFAS-Free
 ```
 
@@ -236,6 +237,7 @@ Comissão 8%: $1,252
 ━━━━━━━━━━━━━━━━
 TOTAL: $16,902
 Margem: $1,252 (8% ✅ > 5% mínimo)
+📅 DATA FINAL DE ENTREGA: November 3, 2025
 ```
 
 ### **FORNECEDOR B (SURPLUS) - ACEITO ✅**
@@ -252,6 +254,7 @@ Comissão 10%: $990
 TOTAL: $10,890
 Margem: $990 (10% ✅ > 5% mínimo)
 ECONOMIA vs. Novo: $6,012
+📅 DATA FINAL DE ENTREGA: November 16, 2025 (2 semanas)
 ```
 
 ### **FORNECEDOR C - REJEITADO ❌**
