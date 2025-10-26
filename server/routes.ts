@@ -124,15 +124,150 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Generate RFQ using ChatGPT 4o mini
-      const generated = await generateRFQ({
-        framework,
-        buyerName,
-        industry: industry || "General",
-        productType,
-        quantity,
-        requirements,
-      });
+      // Generate RFQ using ChatGPT 4o mini with fallback
+      let generated;
+      try {
+        generated = await generateRFQ({
+          framework,
+          buyerName,
+          industry: industry || "General",
+          productType,
+          quantity,
+          requirements,
+        });
+      } catch (openaiError: any) {
+        console.warn("⚠️ OpenAI API unavailable, using intelligent demo mode");
+        
+        // Intelligent demo mode with framework-specific content
+        const frameworkTemplates = {
+          pfas: {
+            name: "PFAS/EPR Compliance",
+            requirements: [
+              "Full PFAS-free certification (BPI, ASTM D6868, TÜV OK Compost)",
+              "Compliance with state-level PFAS bans (CA, ME, NY, and 17+ other states)",
+              "Sustainable Packaging Coalition (SPC) alignment documentation",
+              "Material composition: Bio-based resins, molded fiber, bagasse, or PLA alternatives",
+              "Zero intentionally added PFAS substances declaration",
+              "Third-party laboratory test results for PFAS detection"
+            ],
+            certifications: "BPI Certified Compostable, ASTM D6868, TÜV OK Compost, PFAS-Free Declaration"
+          },
+          buyamerica: {
+            name: "Buy America Act Compliance",
+            requirements: [
+              "100% melted and manufactured in the United States (41 U.S.C. § 8301–8305)",
+              "Complete metallurgical traceability from foundry to finished product",
+              "IATF 16949 and ISO 9001 certifications",
+              "Zero offshore subcontracting or foreign material sourcing",
+              "SAM.gov registration verification",
+              "Mill test certificates and material origin documentation"
+            ],
+            certifications: "IATF 16949, ISO 9001, Buy America Compliance Proof, ITAR Registration"
+          },
+          eudr: {
+            name: "EU Deforestation Regulation (EUDR)",
+            requirements: [
+              "Zero deforestation after December 31, 2020",
+              "Polygon-level GPS coordinates with geospatial mapping (±50m accuracy)",
+              "Satellite verification using Sentinel-2 imagery",
+              "Digital Product Passport (DPP) with embedded geocoordinates",
+              "FSC, PEFC, or Rainforest Alliance certification",
+              "Integration capability with EU TRACES NT system"
+            ],
+            certifications: "FSC Certified, PEFC Certified, Rainforest Alliance, Satellite-Verified Zero Deforestation"
+          }
+        };
+
+        const template = frameworkTemplates[framework as keyof typeof frameworkTemplates];
+        
+        generated = {
+          subject: `RFQ: ${productType} - ${template.name} for ${buyerName}`,
+          content: `PROFESSIONAL REQUEST FOR QUOTE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TO: Qualified ${template.name} Suppliers
+FROM: ${buyerName} - Procurement Department
+DATE: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+SUBJECT: ${productType} Supply - ${template.name}
+
+Dear Supplier,
+
+${buyerName}, operating in the ${industry || 'General'} sector, is seeking qualified suppliers for ${productType} with strict ${template.name} requirements.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PROCUREMENT SPECIFICATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Product/Material: ${productType}
+Estimated Quantity: ${quantity || 'To be determined based on quote'}
+Industry Application: ${industry || 'General'}
+Compliance Framework: ${template.name}
+
+${requirements ? `\nADDITIONAL REQUIREMENTS:\n${requirements}\n` : ''}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MANDATORY COMPLIANCE REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+All suppliers must demonstrate compliance with the following:
+
+${template.requirements.map((req: string, idx: number) => `${idx + 1}. ${req}`).join('\n')}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+REQUIRED DOCUMENTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Your quote must include:
+
+1. PRICING STRUCTURE
+   • Unit price with volume-based discounts
+   • MOQ (Minimum Order Quantity)
+   • Payment terms and conditions
+
+2. CERTIFICATION PACKAGE
+   • ${template.certifications}
+   • Third-party audit reports (where applicable)
+   • Chain of custody documentation
+
+3. TECHNICAL SPECIFICATIONS
+   • Material composition analysis
+   • Product data sheets and safety documentation
+   • Quality control procedures
+
+4. LOGISTICS & DELIVERY
+   • Lead time from order to delivery
+   • Shipping terms (FOB, CIF, etc.)
+   • Geographic coverage and distribution capabilities
+
+5. COMPANY CREDENTIALS
+   • Years in business
+   • Client references in similar compliance frameworks
+   • Annual production capacity
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SUBMISSION REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Deadline: 7 business days from receipt
+Format: PDF with all supporting documentation
+Evaluation Criteria: Compliance (40%), Price (30%), Quality (20%), Delivery (10%)
+
+All quotes will be evaluated by our technical and procurement teams. Suppliers meeting our requirements will be contacted for follow-up discussions.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+We look forward to establishing a long-term partnership with suppliers who share our commitment to compliance excellence.
+
+Best regards,
+
+${buyerName} Procurement Team
+Compliance-First Sourcing Initiative
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Note: Generated by BrokerChain AI (Demo Mode - ChatGPT 4o mini integration pending)
+For production use with full AI capabilities, configure OPENAI_API_KEY`
+        };
+      }
 
       // Create or get buyer
       let buyer = (await storage.getAllBuyers()).find(b => b.name === buyerName);

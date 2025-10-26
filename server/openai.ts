@@ -1,11 +1,10 @@
 import OpenAI from "openai";
 
-if (!process.env.OPENAI_API_KEY) {
-  throw new Error("OPENAI_API_KEY environment variable is required");
-}
-
+// Using Replit's AI Integrations service - provides OpenAI-compatible API without requiring your own API key
+// Charges are billed to your Replit credits
 export const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
 });
 
 export interface RFQGenerationParams {
