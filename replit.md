@@ -132,9 +132,25 @@ The codebase does not currently implement authentication/authorization mechanism
 - Current database: 38 verified suppliers (14 PFAS, 11 Buy America, 13 EUDR)
 - Each supplier includes verified certifications, compliance documentation, and product catalogs
 
+**DocuSign Integration (OAuth 2.0 - FULLY IMPLEMENTED)**:
+- 3-party contract signing (buyer + supplier + broker)
+- OAuth 2.0 Authorization Code Grant flow with CSRF protection
+- Automatic token refresh 5 minutes before expiration
+- Tokens stored in PostgreSQL oauth_tokens table
+- User-friendly connection UI at /settings page
+- Test endpoint: POST /api/docusign/test/send
+- Environment variables: `DOCUSIGN_INTEGRATION_KEY`, `DOCUSIGN_SECRET_KEY`, `DOCUSIGN_REDIRECT_URI`
+- Account ID: fb86833f-9a89-4da8-97b9-58b0a4ef0188 (RAFAEL OLIVEIRA)
+- Successfully tested: envelope sent and signed in sandbox environment
+
+**Stripe Integration (FULLY IMPLEMENTED)**:
+- Escrow payments with automated releases
+- Payment Intent creation with metadata tracking
+- Webhook handling for payment status updates
+- Test mode: Successfully processed $4,760 Payment Intent
+- Environment variable: `STRIPE_SECRET_KEY`
+
 **Planned Integrations**:
-- DocuSign API for 3-party contract signing (buyer + supplier + broker)
-- Stripe for escrow payments and automated releases
 - Payoneer for commission payouts (5-15%)
 - Twilio for SMS/WhatsApp supplier notifications
 

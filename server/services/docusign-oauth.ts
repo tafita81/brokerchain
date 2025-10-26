@@ -31,7 +31,7 @@ const STATE_EXPIRATION_MS = 10 * 60 * 1000; // 10 minutes
 // Cleanup expired states every minute
 setInterval(() => {
   const now = Date.now();
-  for (const [state, data] of stateStore.entries()) {
+  for (const [state, data] of Array.from(stateStore.entries())) {
     if (now - data.timestamp > STATE_EXPIRATION_MS) {
       stateStore.delete(state);
     }
