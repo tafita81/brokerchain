@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Shield, Factory, Leaf, Recycle, CheckCircle2, Zap } from "lucide-react";
+import { ArrowRight, Shield, Factory, Leaf, Recycle, CheckCircle2, Zap, Globe } from "lucide-react";
 import { Link } from "wouter";
 
 // Import stock images
@@ -60,13 +60,46 @@ export function HeroCarousel() {
           <div className="max-w-5xl mx-auto space-y-8 text-white">
             <div className="space-y-6">
               {/* 🎯 TAGLINE REVOLUCIONÁRIO - DOURADO GIGANTE */}
-              <div className="flex items-center gap-3 md:gap-4 mb-6">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full bg-gradient-to-br from-yellow-200/30 via-yellow-300/20 to-amber-200/30 backdrop-blur-sm border-2 border-yellow-300/40 flex items-center justify-center flex-shrink-0 animate-pulse">
-                  <Recycle className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 text-yellow-200" />
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center gap-3 md:gap-4">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full bg-gradient-to-br from-yellow-200/30 via-yellow-300/20 to-amber-200/30 backdrop-blur-sm border-2 border-yellow-300/40 flex items-center justify-center flex-shrink-0 animate-pulse">
+                    <Recycle className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 text-yellow-200" />
+                  </div>
+                  <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight leading-none text-yellow-200 drop-shadow-[0_2px_10px_rgba(252,211,77,0.5)] whitespace-nowrap">
+                    World's First Circular Compliance Broker
+                  </h2>
                 </div>
-                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight leading-none text-yellow-200 drop-shadow-[0_2px_10px_rgba(252,211,77,0.5)] whitespace-nowrap">
-                  World's First Circular Compliance Broker
-                </h2>
+                
+                {/* 🌍 GLOBAL PRESENCE BADGES */}
+                <div className="flex flex-wrap items-center gap-2 pl-0 sm:pl-16 md:pl-20 lg:pl-24">
+                  <div className="flex items-center gap-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-1.5">
+                    <Globe className="w-4 h-4 text-blue-300" />
+                    <span className="text-xs sm:text-sm font-bold text-white">14 Countries</span>
+                  </div>
+                  <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
+                    <span className="text-base sm:text-lg">🇺🇸</span>
+                    <span className="text-xs font-semibold text-white/80">USA</span>
+                  </div>
+                  <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
+                    <span className="text-base sm:text-lg">🇩🇪</span>
+                    <span className="text-xs font-semibold text-white/80">Germany</span>
+                  </div>
+                  <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
+                    <span className="text-base sm:text-lg">🇨🇳</span>
+                    <span className="text-xs font-semibold text-white/80">China</span>
+                  </div>
+                  <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
+                    <span className="text-base sm:text-lg">🇧🇷</span>
+                    <span className="text-xs font-semibold text-white/80">Brazil</span>
+                  </div>
+                  <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
+                    <span className="text-base sm:text-lg">🇮🇳</span>
+                    <span className="text-xs font-semibold text-white/80">India</span>
+                  </div>
+                  <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
+                    <span className="text-xs font-semibold text-white/60">+8 more</span>
+                  </div>
+                </div>
               </div>
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-tight">
