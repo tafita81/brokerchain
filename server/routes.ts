@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { generateRFQ, generateSEOContent } from "./openai";
 import { matchingEngine } from "./matching";
+import { rfqAutomationService } from "./services/rfq-automation";
 import { insertSupplierSchema, insertBuyerSchema, insertRFQSchema, insertContentSchema, insertDPPSchema, insertLeadSchema, insertConversationMessageSchema, LANGUAGES } from "@shared/schema";
 import { z } from "zod";
 import { populateDatabaseWithRealData } from "./scrapers/populate-database";
@@ -108,6 +109,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertRFQSchema.parse(req.body);
       const rfq = await storage.createRFQ(validatedData);
+      
+      // 🚀 FASE 1D: AUTO-SEND RFQ to top 6 suppliers (3 new + 3 surplus)
+      const { buyerEmail, timeline } = req.body;
+      
+      if (buyerEmail) {
+        // Execute automated workflow in background (non-blocking)
+        rfqAutomationService.executeAutomatedRFQWorkflow({
+          rfq,
+          buyerEmail,
+          timeline,
+        }).then((result) => {
+          console.log(`✅ Automated RFQ workflow completed for RFQ #${rfq.id.slice(0, 8)}`);
+          console.log(`   Suppliers matched: ${result.suppliersMatched}`);
+          console.log(`   Emails sent: ${result.emailsSent}`);
+          if (result.errors.length > 0) {
+            console.warn(`   Errors: ${result.errors.length}`);
+          }
+        }).catch((error) => {
+          console.error(`❌ Automated RFQ workflow failed for RFQ #${rfq.id.slice(0, 8)}:`, error);
+        });
+      }
+      
       res.status(201).json(rfq);
     } catch (error: any) {
       if (error instanceof z.ZodError) {

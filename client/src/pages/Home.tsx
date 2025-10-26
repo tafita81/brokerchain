@@ -350,8 +350,8 @@ export default function Home() {
 
               {/* 🔥 URGÊNCIA - MENSAGEM SUBLIMINAR */}
               <div className="bg-gradient-to-r from-yellow-500/20 via-amber-500/20 to-yellow-500/20 border-2 border-yellow-500/30 rounded-2xl p-6 text-center animate-pulse">
-                <div className="text-2xl md:text-3xl font-black text-yellow-600 dark:text-yellow-400 mb-2">⚡ Limited Time Offer</div>
-                <div className="text-base md:text-lg font-bold text-foreground">First 100 suppliers get free carbon credit tracking</div>
+                <div className="text-2xl md:text-3xl font-black text-yellow-600 dark:text-yellow-400 mb-2">{t('limitedTimeFirstFree')}</div>
+                <div className="text-base md:text-lg font-bold text-foreground">{t('firstFreeTracking')}</div>
               </div>
             </div>
           </div>
@@ -364,39 +364,39 @@ export default function Home() {
         <section className="w-full py-24 bg-muted/20">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center space-y-4 mb-12">
-              <h2 className="text-3xl font-semibold tracking-tight">Real-Time Compliance Metrics</h2>
+              <h2 className="text-3xl font-semibold tracking-tight">{t('realTimeMetrics')}</h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Transparency as a Service
+                {t('transparencyAsService')}
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <MetricsCard
-                title="RFQs Issued"
+                title={t('rfqsIssued')}
                 value="1,247"
                 trend={{ value: 12, isPositive: true }}
-                subtitle="Across 3 regulatory domains"
+                subtitle={t('acrossRegulatory')}
                 data-testid="metric-rfqs-issued"
               />
               <MetricsCard
-                title="Supplier Responses"
+                title={t('supplierResponses')}
                 value="892"
                 trend={{ value: 8, isPositive: true }}
-                subtitle="71% response rate"
+                subtitle={t('responseRate')}
                 data-testid="metric-supplier-responses"
               />
               <MetricsCard
-                title="Closed Transactions"
+                title={t('closedTransactions')}
                 value="312"
                 trend={{ value: 15, isPositive: true }}
-                subtitle="35% success rate"
+                subtitle={t('successRate')}
                 data-testid="metric-closed-transactions"
               />
               <MetricsCard
-                title="Avg Cycle Time"
+                title={t('avgCycleTime')}
                 value="4.2d"
                 trend={{ value: 5, isPositive: false }}
-                subtitle="From RFQ to close"
+                subtitle={t('fromRfqToClose')}
                 data-testid="metric-avg-cycle-time"
               />
             </div>
@@ -409,16 +409,15 @@ export default function Home() {
             <div className="text-center space-y-4 mb-16">
               <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full mb-4">
                 <Recycle className="w-5 h-5 text-primary" />
-                <span className="text-sm font-semibold text-primary">Circular Compliance Innovation</span>
+                <span className="text-sm font-semibold text-primary">{t('circularCompliance')}</span>
               </div>
               <h2 className="text-4xl font-bold tracking-tight">
-                Buy Verified <span className="text-primary">Secondary Materials</span>
+                {t('buySecondary')}
                 <br />
-                Save 30% While Staying Compliant
+                {t('save30Percent')}
               </h2>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                World's first marketplace combining circular economy with multi-framework regulatory compliance. 
-                Every surplus material is AI-matched, verified, and certified.
+                {t('worldsFirstMarketplace')}
               </p>
             </div>
 
@@ -427,22 +426,22 @@ export default function Home() {
                 <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                   <Recycle className="w-7 h-7 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Surplus Marketplace</h3>
+                <h3 className="text-xl font-semibold mb-3">{t('surplusMarketplace')}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Access certified materials from completed projects. All compliance maintained, pricing 30% below market.
+                  {t('surplusMarketplaceDesc')}
                 </p>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    <span>PFAS-free packaging surplus</span>
+                    <span>{t('pfasSurplus')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    <span>Buy America steel & components</span>
+                    <span>{t('buyAmericaComponents')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    <span>EUDR-certified commodities</span>
+                    <span>{t('eudrCertified')}</span>
                   </li>
                 </ul>
               </div>
@@ -451,22 +450,22 @@ export default function Home() {
                 <div className="w-14 h-14 rounded-lg bg-chart-2/10 flex items-center justify-center mb-4">
                   <Award className="w-7 h-7 text-chart-2" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Carbon Credits Included</h3>
+                <h3 className="text-xl font-semibold mb-3">{t('carbonCreditsIncluded')}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Every circular transaction generates verified carbon credits. Monetize your sustainability impact.
+                  {t('carbonCreditsDesc')}
                 </p>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-chart-2" />
-                    <span>Auto-calculated CO2 savings</span>
+                    <span>{t('autoCalculated')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-chart-2" />
-                    <span>Verified carbon credits marketplace</span>
+                    <span>{t('carbonMarketplace')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-chart-2" />
-                    <span>ESG reporting integration</span>
+                    <span>{t('esgIntegration')}</span>
                   </li>
                 </ul>
               </div>
@@ -475,22 +474,22 @@ export default function Home() {
                 <div className="w-14 h-14 rounded-lg bg-chart-3/10 flex items-center justify-center mb-4">
                   <TrendingUp className="w-7 h-7 text-chart-3" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">AI Reverse Auctions</h3>
+                <h3 className="text-xl font-semibold mb-3">{t('aiReverseAuctions')}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Smart matching engine finds best combination of price, compliance, and sustainability in real-time.
+                  {t('aiReverseAuctionsDesc')}
                 </p>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-chart-3" />
-                    <span>24h automated bidding</span>
+                    <span>{t('automatedBidding')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-chart-3" />
-                    <span>8-language AI negotiation</span>
+                    <span>{t('aiNegotiation')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-chart-3" />
-                    <span>Optimal supplier mix algorithm</span>
+                    <span>{t('optimalAlgorithm')}</span>
                   </li>
                 </ul>
               </div>
@@ -505,11 +504,11 @@ export default function Home() {
             <div className="bg-card/95 backdrop-blur-sm border-2 border-primary/20 rounded-2xl p-12 text-center space-y-6 shadow-2xl">
               <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full mb-2">
                 <Recycle className="w-5 h-5 text-primary animate-pulse" />
-                <span className="text-sm font-semibold text-primary">⚡ Limited Time: First 100 Free</span>
+                <span className="text-sm font-semibold text-primary">{t('limitedTimeOffer')}</span>
               </div>
               
               <h2 className="text-4xl font-bold tracking-tight">
-                Start Circular Compliance Sourcing Today
+                {t('ctaHeadline')}
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Join <span className="font-semibold text-primary">{formatCount(supplierCount)} verified suppliers</span> and buyers using BrokerChain for 
@@ -519,12 +518,12 @@ export default function Home() {
               <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto pt-4" onSubmit={(e) => e.preventDefault()}>
                 <Input
                   type="email"
-                  placeholder="your.email@company.com"
+                  placeholder={t('emailPlaceholder')}
                   className="h-14 text-base"
                   data-testid="input-email-subscribe"
                 />
                 <Button size="lg" className="gap-2 whitespace-nowrap h-14 px-8 font-semibold animate-pulse" data-testid="button-subscribe">
-                  Get Started Free
+                  {t('getStartedFree')}
                   <ArrowRight className="w-5 h-5" />
                 </Button>
               </form>
@@ -532,15 +531,15 @@ export default function Home() {
               <div className="flex items-center justify-center gap-8 pt-6 text-sm text-muted-foreground border-t">
                 <div className="flex items-center gap-2">
                   <Recycle className="w-4 h-4 text-primary" />
-                  <span>No credit card required</span>
+                  <span>{t('noCreditCard')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Award className="w-4 h-4 text-chart-2" />
-                  <span>Free carbon tracking</span>
+                  <span>{t('freeCarbonTracking')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-chart-3" />
-                  <span>AI consultation included</span>
+                  <span>{t('aiConsultation')}</span>
                 </div>
               </div>
 

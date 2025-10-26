@@ -102,7 +102,7 @@ export function RegulatoryFrameworks() {
                   {/* Certifications */}
                   <div className="space-y-2">
                     <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                      Certifications
+                      {t('certifications')}
                     </p>
                     <div className="space-y-1">
                       {framework.certifications.map((cert) => (
@@ -118,7 +118,7 @@ export function RegulatoryFrameworks() {
                 <CardFooter>
                   <Link href={framework.link} className="w-full" data-testid={`link-explore-${framework.id}`}>
                     <Button variant="outline" className="w-full gap-2" data-testid={`button-explore-${framework.id}`}>
-                      Explore
+                      {t('explore')}
                       <ArrowRight className="w-4 h-4" />
                     </Button>
                   </Link>

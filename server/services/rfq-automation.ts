@@ -140,3 +140,7 @@ export class RFQAutomationService {
     }
   }
 }
+
+// Export singleton instance
+import { storage } from '../storage';
+export const rfqAutomationService = new RFQAutomationService(storage);

@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { emailService } from "./services/email-service";
 
 const app = express();
 
@@ -77,5 +78,17 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+    
+    // 🚀 FASE 1E: Start IMAP listener 24/7 for supplier quote responses
+    emailService.startEmailListener(async (email) => {
+      console.log('\n📧 New supplier email received!');
+      console.log(`   From: ${email.from}`);
+      console.log(`   Subject: ${email.subject}`);
+      console.log(`   Date: ${email.date}`);
+      
+      // TODO (FASE 1F): Parse email to extract price, MOQ, lead time, certifications
+      // For now, just log the email content
+      console.log(`   Preview: ${email.text.substring(0, 200)}...\n`);
+    });
   });
 })();
