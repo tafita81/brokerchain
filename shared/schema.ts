@@ -9,10 +9,10 @@ export type RFQStatus = "draft" | "sent" | "responded" | "negotiating" | "closed
 export type SupplierCertification = "BPI" | "TUV_OK_COMPOST" | "ASTM_D6868" | "IATF_16949" | "ISO_9001" | "FSC" | "PEFC" | "RAINFOREST_ALLIANCE";
 export type ContentStatus = "generating" | "generated" | "published" | "error";
 
-// Countries supported by Amazon OneLink
+// Countries supported by Amazon OneLink + China
 export const COUNTRIES = [
   "USA", "Canada", "UK", "Germany", "France", "Italy", "Spain", 
-  "Japan", "Australia", "Brazil", "Mexico", "Netherlands", "Singapore", "UAE"
+  "Japan", "Australia", "Brazil", "Mexico", "Netherlands", "Singapore", "UAE", "China"
 ] as const;
 
 export const LANGUAGES = {
@@ -29,7 +29,8 @@ export const LANGUAGES = {
   "Mexico": "es",
   "Netherlands": "en",
   "Singapore": "en",
-  "UAE": "en"
+  "UAE": "en",
+  "China": "zh"
 } as const;
 
 // Suppliers table
@@ -125,6 +126,43 @@ export const metrics = pgTable("metrics", {
   date: timestamp("date").defaultNow().notNull(),
 });
 
+// Conversation Threads - ChatGPT 4o mini powered negotiations
+export const conversationThreads = pgTable("conversation_threads", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: text("company_id").notNull(), // supplier or buyer ID
+  companyType: text("company_type").notNull(), // 'supplier' or 'buyer'
+  companyName: text("company_name").notNull(),
+  language: text("language").notNull(), // en, pt, es, fr, de, it, ja
+  framework: text("framework").notNull(), // pfas, buyamerica, eudr
+  status: text("status").notNull().default("active"), // active, closed, on_hold
+  summary: text("summary"), // AI-generated summary of conversation
+  lastMessageAt: timestamp("last_message_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Conversation Messages - Complete history stored forever
+export const conversationMessages = pgTable("conversation_messages", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  threadId: text("thread_id").notNull(),
+  role: text("role").notNull(), // 'assistant' (us) or 'user' (them)
+  content: text("content").notNull(),
+  language: text("language").notNull(),
+  metadata: jsonb("metadata").notNull().default({}), // context data used for this message
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Real-time Company Context - Always up-to-date data for conversations
+export const companyContext = pgTable("company_context", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: text("company_id").notNull().unique(),
+  companyType: text("company_type").notNull(), // 'supplier' or 'buyer'
+  currentInventory: jsonb("current_inventory").notNull().default({}),
+  activePricing: jsonb("active_pricing").notNull().default({}),
+  capabilities: jsonb("capabilities").notNull().default({}),
+  constraints: jsonb("constraints").notNull().default({}), // what we CAN'T promise
+  lastUpdated: timestamp("last_updated").defaultNow().notNull(),
+});
+
 // Insert Schemas (for validation)
 export const insertSupplierSchema = createInsertSchema(suppliers).omit({ id: true, createdAt: true });
 export const insertBuyerSchema = createInsertSchema(buyers).omit({ id: true, createdAt: true });
@@ -133,6 +171,9 @@ export const insertContentSchema = createInsertSchema(generatedContent).omit({ i
 export const insertDPPSchema = createInsertSchema(digitalProductPassports).omit({ id: true, createdAt: true });
 export const insertLeadSchema = createInsertSchema(leads).omit({ id: true, createdAt: true });
 export const insertMetricSchema = createInsertSchema(metrics).omit({ id: true, date: true });
+export const insertConversationThreadSchema = createInsertSchema(conversationThreads).omit({ id: true, createdAt: true, lastMessageAt: true });
+export const insertConversationMessageSchema = createInsertSchema(conversationMessages).omit({ id: true, createdAt: true });
+export const insertCompanyContextSchema = createInsertSchema(companyContext).omit({ id: true, lastUpdated: true });
 
 // TypeScript types
 export type InsertSupplier = z.infer<typeof insertSupplierSchema>;
@@ -155,6 +196,15 @@ export type Lead = typeof leads.$inferSelect;
 
 export type InsertMetric = z.infer<typeof insertMetricSchema>;
 export type Metric = typeof metrics.$inferSelect;
+
+export type InsertConversationThread = z.infer<typeof insertConversationThreadSchema>;
+export type ConversationThread = typeof conversationThreads.$inferSelect;
+
+export type InsertConversationMessage = z.infer<typeof insertConversationMessageSchema>;
+export type ConversationMessage = typeof conversationMessages.$inferSelect;
+
+export type InsertCompanyContext = z.infer<typeof insertCompanyContextSchema>;
+export type CompanyContext = typeof companyContext.$inferSelect;
 
 // Extended types for frontend use
 export interface RFQWithDetails extends RFQ {

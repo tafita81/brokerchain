@@ -34,24 +34,28 @@ export default function Home() {
                 value="1,247"
                 trend={{ value: 12, isPositive: true }}
                 subtitle="Across 3 regulatory domains"
+                data-testid="metric-rfqs-issued"
               />
               <MetricsCard
                 title="Supplier Responses"
                 value="892"
                 trend={{ value: 8, isPositive: true }}
                 subtitle="71% response rate"
+                data-testid="metric-supplier-responses"
               />
               <MetricsCard
                 title="Closed Transactions"
                 value="312"
                 trend={{ value: 15, isPositive: true }}
                 subtitle="35% success rate"
+                data-testid="metric-closed-transactions"
               />
               <MetricsCard
                 title="Avg Cycle Time"
                 value="4.2d"
                 trend={{ value: 5, isPositive: false }}
                 subtitle="From RFQ to close"
+                data-testid="metric-avg-cycle-time"
               />
             </div>
           </div>

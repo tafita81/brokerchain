@@ -70,7 +70,7 @@ export function RegulatoryFrameworks() {
                   {/* Key Metrics */}
                   <div className="flex flex-wrap gap-2">
                     {framework.metrics.map((metric) => (
-                      <Badge key={metric} variant="secondary" className="font-mono text-xs" data-testid={`badge-metric-${metric.toLowerCase().replace(/\s+/g, '-')}`}>
+                      <Badge key={metric} variant="secondary" className="font-mono text-xs font-medium" data-testid={`badge-metric-${metric.toLowerCase().replace(/\s+/g, '-')}`}>
                         {metric}
                       </Badge>
                     ))}

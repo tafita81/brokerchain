@@ -17,6 +17,7 @@ import {
   type MetricsSummary,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
+import { DbStorage } from "./db-storage";
 
 export interface IStorage {
   // Suppliers
@@ -335,4 +336,5 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Use PostgreSQL database storage instead of in-memory
+export const storage = process.env.DATABASE_URL ? new DbStorage() : new MemStorage();

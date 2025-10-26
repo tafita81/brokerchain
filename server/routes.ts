@@ -2,8 +2,11 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { generateRFQ, generateSEOContent } from "./openai";
-import { insertSupplierSchema, insertBuyerSchema, insertRFQSchema, insertContentSchema, insertDPPSchema, insertLeadSchema, LANGUAGES } from "@shared/schema";
+import { insertSupplierSchema, insertBuyerSchema, insertRFQSchema, insertContentSchema, insertDPPSchema, insertLeadSchema, insertConversationMessageSchema, LANGUAGES } from "@shared/schema";
 import { z } from "zod";
+import { populateDatabaseWithRealData } from "./scrapers/populate-database";
+import { conversationStorage } from "./storage-conversations";
+import { sendMessageToBuyerOrSupplier, startNewConversation } from "./ai/conversation-agent";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Suppliers
@@ -510,6 +513,233 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
     try {
       const summary = await storage.getMetricsSummary();
       res.json(summary);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Automated Scraping - Populate database with 600+ real companies
+  app.post("/api/scrape/run", async (_req, res) => {
+    try {
+      console.log('\n🚀 AUTO-SCRAPING INITIATED');
+      console.log('📍 Scraping from: SPC Directory, SAM.gov, EU TRACES NT, NMSDC');
+      console.log('🎯 Target: 600+ real buyers and suppliers\n');
+      
+      const result = await populateDatabaseWithRealData(storage);
+      
+      if (result.success) {
+        return res.status(200).json({
+          message: "Database populated successfully with real data",
+          suppliersAdded: result.suppliersAdded,
+          buyersAdded: result.buyersAdded,
+          total: result.total,
+          sources: ['SPC Directory', 'SAM.gov', 'EU TRACES NT', 'NMSDC']
+        });
+      } else {
+        return res.status(500).json({
+          error: "Scraping completed with errors",
+          details: result.error
+        });
+      }
+    } catch (error: any) {
+      console.error('❌ Scraping endpoint error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Broker competitor analysis - Get static strategies
+  app.get("/api/broker-strategies", async (_req, res) => {
+    try {
+      const { getBrokerStrategiesStatic, generateCombinedStrategy } = await import('./scrapers/broker-competitor-scraper');
+      
+      const strategies = getBrokerStrategiesStatic();
+      const insights = generateCombinedStrategy();
+      
+      res.json({
+        strategies,
+        insights,
+        totalAnalyzed: strategies.length
+      });
+    } catch (error: any) {
+      console.error('❌ Broker strategies error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Live broker scraping - Analyze competitor sites in real-time
+  app.post("/api/scrape/brokers", async (_req, res) => {
+    try {
+      console.log('\n🔍 LIVE BROKER ANALYSIS INITIATED');
+      console.log('📊 Analyzing competitor sites in real-time...\n');
+      
+      const { scrapeAllBrokerCompetitors } = await import('./scrapers/broker-competitor-scraper');
+      const result = await scrapeAllBrokerCompetitors();
+      
+      res.json({
+        message: "Broker analysis completed successfully",
+        ...result
+      });
+    } catch (error: any) {
+      console.error('❌ Live broker scraping error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ============================================
+  // MULTILINGUAL AI CONVERSATION SYSTEM
+  // ChatGPT 4o mini powered negotiations
+  // ============================================
+
+  // Start new conversation with buyer or supplier
+  app.post("/api/conversations/start", async (req, res) => {
+    try {
+      const { companyId, companyType, language, framework } = req.body;
+
+      if (!companyId || !companyType || !language || !framework) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      // Get company data
+      const company = companyType === 'supplier'
+        ? await storage.getSupplier(companyId)
+        : await storage.getBuyer(companyId);
+
+      if (!company) {
+        return res.status(404).json({ error: "Company not found" });
+      }
+
+      // Create conversation thread
+      const threadData = await startNewConversation({
+        companyId,
+        companyType,
+        companyName: company.name,
+        language,
+        framework,
+      });
+
+      const thread = await conversationStorage.createThread(threadData);
+
+      // Initialize company context if doesn't exist
+      let context = await conversationStorage.getCompanyContext(companyId);
+      if (!context) {
+        context = await conversationStorage.createCompanyContext({
+          companyId,
+          companyType,
+          currentInventory: {},
+          activePricing: {},
+          capabilities: companyType === 'supplier' ? company.products : {},
+          constraints: { financialCommitments: "Requires approval", deliveryPromises: "Case by case" },
+        });
+      }
+
+      res.status(201).json({ thread, context });
+    } catch (error: any) {
+      console.error('Start conversation error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Send message in conversation (AI responds automatically)
+  app.post("/api/conversations/:threadId/message", async (req, res) => {
+    try {
+      const { threadId } = req.params;
+      const { content } = req.body;
+
+      if (!content) {
+        return res.status(400).json({ error: "Message content required" });
+      }
+
+      const thread = await conversationStorage.getThread(threadId);
+      if (!thread) {
+        return res.status(404).json({ error: "Conversation thread not found" });
+      }
+
+      // Get conversation history
+      const messageHistory = await conversationStorage.getMessagesByThread(threadId);
+
+      // Get company context
+      const companyContext = await conversationStorage.getCompanyContext(thread.companyId);
+      if (!companyContext) {
+        return res.status(500).json({ error: "Company context not found" });
+      }
+
+      // Get company data
+      const companyData = thread.companyType === 'supplier'
+        ? await storage.getSupplier(thread.companyId)
+        : await storage.getBuyer(thread.companyId);
+
+      if (!companyData) {
+        return res.status(404).json({ error: "Company data not found" });
+      }
+
+      // Save user message
+      const userMessage = await conversationStorage.createMessage({
+        threadId,
+        role: 'user',
+        content,
+        language: thread.language,
+        metadata: { timestamp: new Date().toISOString() },
+      });
+
+      // Generate AI response using ChatGPT 4o mini
+      const { responseMessage, updatedThread } = await sendMessageToBuyerOrSupplier({
+        threadId,
+        userMessage: content,
+        context: {
+          thread,
+          messageHistory,
+          companyContext,
+          companyData,
+        },
+      });
+
+      // Save AI response
+      const aiMessage = await conversationStorage.createMessage({
+        threadId,
+        role: 'assistant',
+        content: responseMessage,
+        language: thread.language,
+        metadata: {
+          model: 'gpt-4o-mini',
+          companyContextUsed: true,
+          timestamp: new Date().toISOString(),
+        },
+      });
+
+      // Update thread
+      await conversationStorage.updateThread(threadId, {
+        summary: updatedThread.summary,
+        lastMessageAt: updatedThread.lastMessageAt,
+      });
+
+      res.json({
+        userMessage,
+        aiMessage,
+        thread: updatedThread,
+      });
+    } catch (error: any) {
+      console.error('Send message error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get conversation history
+  app.get("/api/conversations/:threadId/messages", async (req, res) => {
+    try {
+      const { threadId } = req.params;
+      const messages = await conversationStorage.getMessagesByThread(threadId);
+      res.json(messages);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get all conversations for a company
+  app.get("/api/conversations/company/:companyId", async (req, res) => {
+    try {
+      const { companyId } = req.params;
+      const threads = await conversationStorage.getThreadsByCompany(companyId);
+      res.json(threads);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
