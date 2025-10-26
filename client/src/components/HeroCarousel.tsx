@@ -76,50 +76,50 @@ export function HeroCarousel() {
                 
                 {/* 🌍 GLOBAL PRESENCE BADGES - 600+ REAL COMPANIES ACROSS 10 COUNTRIES */}
                 <div className="w-full overflow-hidden pb-2">
-                  <div className="flex items-center gap-6 animate-marquee whitespace-nowrap">
-                    <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-2">
-                      <Globe className="w-4 h-4 text-blue-300" />
-                      <span className="text-xs sm:text-sm font-bold text-white whitespace-nowrap">{stats ? `${stats.countries} Countries • ${formatCount(stats.suppliers.total)} Verified` : "10 Countries • 600+ Verified"}</span>
+                  <div className="flex items-center gap-8 animate-marquee">
+                    <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-2.5 flex-shrink-0 whitespace-nowrap">
+                      <Globe className="w-4 h-4 text-blue-300 flex-shrink-0" />
+                      <span className="text-xs sm:text-sm font-bold text-white flex-shrink-0">{stats ? `${stats.countries} Countries • ${formatCount(stats.suppliers.total)} Verified` : "10 Countries • 600+ Verified"}</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/us.svg" alt="USA" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">USA</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">USA</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/br.svg" alt="Brazil" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">Brazil</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">Brazil</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/cn.svg" alt="China" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">China</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">China</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/au.svg" alt="Australia" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">Australia</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">Australia</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/id.svg" alt="Indonesia" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">Indonesia</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">Indonesia</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/sg.svg" alt="Singapore" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">Singapore</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">Singapore</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/nl.svg" alt="Netherlands" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">Netherlands</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">Netherlands</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/ch.svg" alt="Switzerland" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">Switzerland</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">Switzerland</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/ci.svg" alt="Ivory Coast" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">Ivory Coast</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">Ivory Coast</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/ng.svg" alt="Nigeria" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">Nigeria</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">Nigeria</span>
                     </div>
                     
                     {/* Duplicate for seamless scroll */}
@@ -127,45 +127,45 @@ export function HeroCarousel() {
                       <Globe className="w-4 h-4 text-blue-300" />
                       <span className="text-xs sm:text-sm font-bold text-white whitespace-nowrap">{stats ? `${stats.countries} Countries • ${formatCount(stats.suppliers.total)} Verified` : "10 Countries • 600+ Verified"}</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/us.svg" alt="USA" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">USA</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">USA</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/br.svg" alt="Brazil" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">Brazil</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">Brazil</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/cn.svg" alt="China" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">China</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">China</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/au.svg" alt="Australia" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">Australia</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">Australia</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/id.svg" alt="Indonesia" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">Indonesia</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">Indonesia</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/sg.svg" alt="Singapore" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">Singapore</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">Singapore</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/nl.svg" alt="Netherlands" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">Netherlands</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">Netherlands</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/ch.svg" alt="Switzerland" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">Switzerland</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">Switzerland</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/ci.svg" alt="Ivory Coast" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">Ivory Coast</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">Ivory Coast</span>
                     </div>
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover-elevate transition-all">
+                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover-elevate transition-all flex-shrink-0 whitespace-nowrap">
                       <img src="https://flagcdn.com/ng.svg" alt="Nigeria" className="w-6 h-4 object-cover rounded" />
-                      <span className="text-xs font-semibold text-white/80 whitespace-nowrap">Nigeria</span>
+                      <span className="text-sm font-semibold text-white/80 whitespace-nowrap">Nigeria</span>
                     </div>
                   </div>
                 </div>
