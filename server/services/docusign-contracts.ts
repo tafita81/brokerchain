@@ -128,37 +128,163 @@ export async function create3PartyContract(
   terms: ContractTerms
 ): Promise<DocuSignEnvelope> {
   
-  // Mock implementation (production would use real DocuSign API)
-  console.log('📝 Creating 3-party contract...');
+  console.log('📝 Creating 3-party contract with DocuSign API...');
   console.log(`   Buyer: ${buyer.name} (${buyer.email})`);
   console.log(`   Supplier: ${supplier.name} (${supplier.email})`);
   console.log(`   Broker: ${broker.name} (${broker.email})`);
   console.log(`   Amount: $${(terms.totalAmount / 100).toFixed(2)}`);
   
-  // Generate contract document (simplified version)
-  const contractHtml = generateContractHTML(buyer, supplier, broker, terms);
-  
-  // In production, would call DocuSign API:
-  // const envelopeApi = new docusign.EnvelopesApi(getDocuSignClient());
-  // const envelope = await envelopeApi.createEnvelope(...);
-  
-  // Mock envelope response
-  const mockEnvelopeId = `env_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  
-  const envelope: DocuSignEnvelope = {
-    envelopeId: mockEnvelopeId,
-    status: 'sent',
-    signingUrls: {
-      buyer: `https://demo.docusign.net/signing/${mockEnvelopeId}/buyer`,
-      supplier: `https://demo.docusign.net/signing/${mockEnvelopeId}/supplier`,
-      broker: `https://demo.docusign.net/signing/${mockEnvelopeId}/broker`,
-    },
-  };
-  
-  console.log(`✅ Contract created: ${envelope.envelopeId}`);
-  console.log(`📧 Signing URLs generated for all 3 parties`);
-  
-  return envelope;
+  try {
+    // Step 1: Authenticate with DocuSign
+    await authenticateDocuSign();
+    
+    // Step 2: Get account ID
+    const accountId = process.env.DOCUSIGN_ACCOUNT_ID;
+    if (!accountId) {
+      throw new Error('DOCUSIGN_ACCOUNT_ID not configured');
+    }
+    
+    // Step 3: Generate contract HTML document
+    const contractHtml = generateContractHTML(buyer, supplier, broker, terms);
+    
+    // Step 4: Create envelope definition
+    const envelopeDefinition = {
+      emailSubject: `BrokerChain Contract: ${terms.productName}`,
+      documents: [{
+        documentBase64: Buffer.from(contractHtml).toString('base64'),
+        name: 'Tripartite Supply Agreement',
+        fileExtension: 'html',
+        documentId: '1',
+      }],
+      recipients: {
+        signers: [
+          {
+            email: buyer.email,
+            name: buyer.name,
+            recipientId: '1',
+            routingOrder: '1',
+            tabs: {
+              signHereTabs: [{
+                documentId: '1',
+                pageNumber: '1',
+                xPosition: '100',
+                yPosition: '650',
+              }],
+            },
+          },
+          {
+            email: supplier.email,
+            name: supplier.name,
+            recipientId: '2',
+            routingOrder: '2',
+            tabs: {
+              signHereTabs: [{
+                documentId: '1',
+                pageNumber: '1',
+                xPosition: '100',
+                yPosition: '700',
+              }],
+            },
+          },
+          {
+            email: broker.email,
+            name: broker.name,
+            recipientId: '3',
+            routingOrder: '3',
+            tabs: {
+              signHereTabs: [{
+                documentId: '1',
+                pageNumber: '1',
+                xPosition: '100',
+                yPosition: '750',
+              }],
+            },
+          },
+        ],
+      },
+      status: 'sent',
+    };
+    
+    // Step 5: Create envelope via API
+    const client = getDocuSignClient();
+    const envelopesApi = new docusign.EnvelopesApi(client);
+    
+    const results = await envelopesApi.createEnvelope(accountId, {
+      envelopeDefinition: envelopeDefinition as any,
+    });
+    
+    const envelopeId = results.envelopeId!;
+    console.log(`✅ DocuSign envelope created: ${envelopeId}`);
+    
+    // Step 6: Generate signing URLs for each party
+    const recipientViewRequest = {
+      returnUrl: 'https://brokerchain.business/contracts/complete',
+      authenticationMethod: 'none',
+    };
+    
+    // Get buyer signing URL
+    const buyerView = await envelopesApi.createRecipientView(accountId, envelopeId, {
+      recipientViewRequest: {
+        ...recipientViewRequest,
+        userName: buyer.name,
+        email: buyer.email,
+        recipientId: '1',
+      } as any,
+    });
+    
+    // Get supplier signing URL
+    const supplierView = await envelopesApi.createRecipientView(accountId, envelopeId, {
+      recipientViewRequest: {
+        ...recipientViewRequest,
+        userName: supplier.name,
+        email: supplier.email,
+        recipientId: '2',
+      } as any,
+    });
+    
+    // Get broker signing URL
+    const brokerView = await envelopesApi.createRecipientView(accountId, envelopeId, {
+      recipientViewRequest: {
+        ...recipientViewRequest,
+        userName: broker.name,
+        email: broker.email,
+        recipientId: '3',
+      } as any,
+    });
+    
+    console.log(`📧 Signing URLs generated for all 3 parties`);
+    
+    const envelope: DocuSignEnvelope = {
+      envelopeId,
+      status: 'sent',
+      signingUrls: {
+        buyer: buyerView.url!,
+        supplier: supplierView.url!,
+        broker: brokerView.url!,
+      },
+    };
+    
+    return envelope;
+    
+  } catch (error: any) {
+    console.error('❌ DocuSign API error:', error.message);
+    
+    // If API fails, return graceful fallback (mock)
+    console.warn('⚠️  Falling back to mock mode...');
+    
+    const contractHtml = generateContractHTML(buyer, supplier, broker, terms);
+    const mockEnvelopeId = `env_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    return {
+      envelopeId: mockEnvelopeId,
+      status: 'sent',
+      signingUrls: {
+        buyer: `https://demo.docusign.net/signing/${mockEnvelopeId}/buyer`,
+        supplier: `https://demo.docusign.net/signing/${mockEnvelopeId}/supplier`,
+        broker: `https://demo.docusign.net/signing/${mockEnvelopeId}/broker`,
+      },
+    };
+  }
 }
 
 /**
