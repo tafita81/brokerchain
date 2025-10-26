@@ -559,7 +559,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-sm text-muted-foreground">
-              © 2025 BrokerChain. NMSDC Certified MBE | SAM.gov Registered
+              © 2025 BrokerChain. SAM.gov Registered | SPC Member
             </div>
             <div className="flex gap-6 text-sm text-muted-foreground">
               <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
