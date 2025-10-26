@@ -10,6 +10,7 @@ import { populateDatabaseWithRealData } from "./scrapers/populate-database";
 import { conversationStorage } from "./storage-conversations";
 import { sendMessageToBuyerOrSupplier, startNewConversation } from "./ai/conversation-agent";
 import { autoProcessSAMGovOpportunities } from "./services/sam-gov-scraper";
+import { scrapeAllSuppliers } from "./services/supplier-scraper";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Suppliers
@@ -937,6 +938,65 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
         success: false,
         error: error.message,
         details: error.stack 
+      });
+    }
+  });
+
+  // ==================================================
+  // ADMIN ROUTES - Real Supplier Scraping (Certified Directories)
+  // ==================================================
+  app.post("/api/admin/scrape-suppliers", async (req, res) => {
+    try {
+      console.log("🌐 Manual supplier scraping triggered via API");
+      
+      const scrapedSuppliers = await scrapeAllSuppliers();
+      
+      // Add suppliers to database with anti-duplication check
+      let added = 0;
+      let skipped = 0;
+      const errors: string[] = [];
+      
+      for (const supplier of scrapedSuppliers) {
+        try {
+          // Check if supplier already exists (by name + country + framework)
+          const allSuppliers = await storage.getAllSuppliers();
+          const exists = allSuppliers.some(s =>
+            s.name === supplier.name &&
+            s.country === supplier.country &&
+            s.framework === supplier.framework
+          );
+          
+          if (exists) {
+            console.log(`⏭️  Skipping duplicate: ${supplier.name} (${supplier.framework})`);
+            skipped++;
+            continue;
+          }
+          
+          await storage.createSupplier(supplier);
+          console.log(`✅ Added: ${supplier.name} (${supplier.framework})`);
+          added++;
+        } catch (error: any) {
+          console.error(`❌ Error adding ${supplier.name}:`, error.message);
+          errors.push(`${supplier.name}: ${error.message}`);
+        }
+      }
+      
+      res.json({
+        success: true,
+        message: "Supplier scraping completed",
+        stats: {
+          scraped: scrapedSuppliers.length,
+          added,
+          skipped,
+          errors: errors.length,
+        },
+        errors: errors.length > 0 ? errors : undefined,
+      });
+    } catch (error: any) {
+      console.error("❌ Error in supplier scraping:", error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
       });
     }
   });

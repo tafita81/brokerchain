@@ -878,9 +878,7 @@ export const translations = {
     generateRequestForQuote: "Generar Solicitud de Cotización",
     rfqDescription: "Nuestra IA analizará sus requisitos y enviará automáticamente RFQs a los 6 mejores proveedores coincidentes (3 nuevos + 3 excedentes)",
     verifiedSuppliersInNetwork: "Proveedores Verificados en la Red",
-    loadingSuppliers: "Cargando proveedores...",
     errorLoadingSuppliers: "Error al cargar proveedores. Por favor, intente nuevamente.",
-    noSuppliersFound: "No se encontraron proveedores para este marco aún.",
   },
   
   fr: {
@@ -1884,9 +1882,7 @@ export const translations = {
     generateRequestForQuote: "生成询价单",
     rfqDescription: "我们的AI将分析您的需求并自动向排名前6的匹配供应商发送RFQ（3个新的+3个剩余的）",
     verifiedSuppliersInNetwork: "网络中经验证的供应商",
-    loadingSuppliers: "正在加载供应商...",
     errorLoadingSuppliers: "加载供应商时出错。请重试。",
-    noSuppliersFound: "目前尚未找到此框架的供应商。",
   },
 };
 
