@@ -15,6 +15,57 @@ export default function Home() {
         {/* Hero Section with 4K Carousel */}
         <HeroCarousel />
 
+        {/* 📊 STATS SECTION - SOCIAL PROOF EXTREMO */}
+        <section className="w-full py-16 bg-gradient-to-b from-background via-muted/30 to-background relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-chart-2/5 to-chart-3/5" />
+          <div className="relative max-w-6xl mx-auto px-6">
+            <div className="bg-card/80 backdrop-blur-lg border-2 border-primary/20 rounded-3xl p-8 md:p-12 shadow-2xl">
+              <div className="text-center space-y-4 mb-8">
+                <div className="text-6xl md:text-7xl lg:text-8xl font-black bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-2xl">
+                  $12.4M+
+                </div>
+                <div className="text-xl md:text-2xl font-bold text-foreground">Circular Materials Traded</div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                <div className="text-center bg-gradient-to-br from-blue-500/10 to-blue-600/5 rounded-2xl p-6 border border-blue-500/20 hover-elevate transition-all">
+                  <div className="text-5xl md:text-6xl font-black text-blue-600 dark:text-blue-400">600+</div>
+                  <div className="text-sm md:text-base font-semibold text-muted-foreground mt-2">Verified Suppliers</div>
+                </div>
+                <div className="text-center bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-2xl p-6 border border-green-500/20 hover-elevate transition-all">
+                  <div className="text-5xl md:text-6xl font-black text-green-600 dark:text-green-400">14</div>
+                  <div className="text-sm md:text-base font-semibold text-muted-foreground mt-2">Countries</div>
+                </div>
+                <div className="text-center bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-2xl p-6 border border-orange-500/20 hover-elevate transition-all">
+                  <div className="text-5xl md:text-6xl font-black text-orange-600 dark:text-orange-400">3</div>
+                  <div className="text-sm md:text-base font-semibold text-muted-foreground mt-2">Frameworks</div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div className="flex items-center gap-3 bg-muted/50 rounded-xl p-4 border">
+                  <Recycle className="w-6 h-6 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                  <span className="font-semibold text-sm md:text-base">30% avg discount on surplus materials</span>
+                </div>
+                <div className="flex items-center gap-3 bg-muted/50 rounded-xl p-4 border">
+                  <Recycle className="w-6 h-6 text-green-600 dark:text-green-400 flex-shrink-0" />
+                  <span className="font-semibold text-sm md:text-base">AI matches in under 2 minutes</span>
+                </div>
+                <div className="flex items-center gap-3 bg-muted/50 rounded-xl p-4 border">
+                  <Recycle className="w-6 h-6 text-orange-600 dark:text-orange-400 flex-shrink-0" />
+                  <span className="font-semibold text-sm md:text-base">Carbon credits auto-generated</span>
+                </div>
+              </div>
+
+              {/* 🔥 URGÊNCIA - MENSAGEM SUBLIMINAR */}
+              <div className="bg-gradient-to-r from-yellow-500/20 via-amber-500/20 to-yellow-500/20 border-2 border-yellow-500/30 rounded-2xl p-6 text-center animate-pulse">
+                <div className="text-2xl md:text-3xl font-black text-yellow-600 dark:text-yellow-400 mb-2">⚡ Limited Time Offer</div>
+                <div className="text-base md:text-lg font-bold text-foreground">First 100 suppliers get free carbon credit tracking</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Regulatory Frameworks */}
         <RegulatoryFrameworks />
 

@@ -55,9 +55,9 @@ export function HeroCarousel() {
 
       {/* Content */}
       <div className="relative z-20 max-w-7xl mx-auto px-6 py-24 min-h-[90vh] flex items-center">
-        <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
-          {/* Left: Content */}
-          <div className="space-y-8 text-white">
+        <div className="w-full">
+          {/* Content */}
+          <div className="max-w-5xl mx-auto space-y-8 text-white">
             <div className="space-y-6">
               {/* 🎯 TAGLINE REVOLUCIONÁRIO - DOURADO GIGANTE */}
               <div className="flex items-center gap-3 md:gap-4 mb-6">
@@ -174,51 +174,6 @@ export function HeroCarousel() {
             </div>
           </div>
 
-          {/* Right: Stats Card - URGÊNCIA E SOCIAL PROOF */}
-          <div className="lg:block">
-            <div className="bg-white/10 backdrop-blur-lg border-2 border-white/30 rounded-2xl p-6 md:p-8 space-y-6 shadow-2xl">
-              <div className="text-center space-y-3">
-                <div className="text-5xl md:text-6xl font-black text-yellow-200 drop-shadow-[0_2px_10px_rgba(252,211,77,0.5)]">$12.4M+</div>
-                <div className="text-base md:text-lg font-semibold text-white/90">Circular Materials Traded</div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3 md:gap-4">
-                <div className="text-center bg-white/5 rounded-xl p-3 md:p-4 border border-white/10">
-                  <div className="text-3xl md:text-4xl font-bold text-blue-300">600+</div>
-                  <div className="text-xs md:text-sm text-white/80 mt-1">Verified Suppliers</div>
-                </div>
-                <div className="text-center bg-white/5 rounded-xl p-3 md:p-4 border border-white/10">
-                  <div className="text-3xl md:text-4xl font-bold text-green-300">14</div>
-                  <div className="text-xs md:text-sm text-white/80 mt-1">Countries</div>
-                </div>
-                <div className="text-center bg-white/5 rounded-xl p-3 md:p-4 border border-white/10">
-                  <div className="text-3xl md:text-4xl font-bold text-orange-300">3</div>
-                  <div className="text-xs md:text-sm text-white/80 mt-1">Frameworks</div>
-                </div>
-              </div>
-
-              <div className="border-t border-white/20 pt-4 space-y-3">
-                <div className="flex items-center gap-3 text-white text-sm md:text-base">
-                  <CheckCircle2 className="w-5 h-5 text-blue-300 flex-shrink-0" />
-                  <span className="font-medium">30% avg discount on surplus materials</span>
-                </div>
-                <div className="flex items-center gap-3 text-white text-sm md:text-base">
-                  <CheckCircle2 className="w-5 h-5 text-green-300 flex-shrink-0" />
-                  <span className="font-medium">AI matches in under 2 minutes</span>
-                </div>
-                <div className="flex items-center gap-3 text-white text-sm md:text-base">
-                  <CheckCircle2 className="w-5 h-5 text-orange-300 flex-shrink-0" />
-                  <span className="font-medium">Carbon credits auto-generated</span>
-                </div>
-              </div>
-
-              {/* 🔥 URGÊNCIA - MENSAGEM SUBLIMINAR */}
-              <div className="bg-gradient-to-r from-yellow-500/20 via-amber-500/20 to-yellow-500/20 border-2 border-yellow-400/40 rounded-xl p-4 text-center animate-pulse">
-                <div className="text-base md:text-lg font-bold text-yellow-200 mb-1">⚡ Limited Time Offer</div>
-                <div className="text-xs md:text-sm text-white/90 font-medium">First 100 suppliers get free carbon credit tracking</div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
