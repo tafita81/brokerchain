@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowRight, Recycle, TrendingUp, Award, Shield, Zap, Leaf, CheckCircle2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import type { Supplier } from "@shared/schema";
+import { formatCount } from "@/hooks/use-stats";
 
 export default function Home() {
   const { data: suppliers = [] } = useQuery<Supplier[]>({
@@ -510,7 +511,7 @@ export default function Home() {
                 Start Circular Compliance Sourcing Today
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Join <span className="font-semibold text-primary">600+ verified suppliers</span> and buyers using BrokerChain for 
+                Join <span className="font-semibold text-primary">{formatCount(supplierCount)} verified suppliers</span> and buyers using BrokerChain for 
                 circular, compliant supply chains across PFAS, Buy America, and EUDR.
               </p>
 

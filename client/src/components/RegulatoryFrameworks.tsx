@@ -1,46 +1,60 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Shield, Flag, Leaf } from "lucide-react";
+import { ArrowRight, Shield, Flag, Leaf, Loader2 } from "lucide-react";
 import { Link } from "wouter";
-
-const frameworks = [
-  {
-    id: "pfas",
-    title: "PFAS & EPR Compliance",
-    icon: Shield,
-    description: "PFAS-free packaging solutions for US food service. Over 20 states have banned PFAS in food packaging. Our certified suppliers ensure full compliance with state regulations.",
-    metrics: ["600+ Suppliers", "14 Countries", "100% PFAS-Free"],
-    certifications: ["BPI Certified", "ASTM D6868", "SPC Aligned"],
-    color: "text-primary",
-    bgColor: "bg-primary/10",
-    link: "/pfas",
-  },
-  {
-    id: "buyamerica",
-    title: "Buy America Act",
-    icon: Flag,
-    description: "100% melted and manufactured in USA components for federal contracts. End-to-end metallurgical traceability from foundry to finished product.",
-    metrics: ["10,000+ Contracts", "ISO 9001", "Zero Offshore"],
-    certifications: ["IATF 16949", "Buy America Proof", "SAM.gov: N394AKZSR349"],
-    color: "text-chart-2",
-    bgColor: "bg-chart-2/10",
-    link: "/buy-america",
-  },
-  {
-    id: "eudr",
-    title: "EUDR Compliance",
-    icon: Leaf,
-    description: "Deforestation-free agricultural commodities for EU imports. Satellite-verified geofencing and Digital Product Passports for every shipment.",
-    metrics: ["500+ Importers", "Polygon-Level GPS", "FSC/PEFC"],
-    certifications: ["EU TRACES NT", "Rainforest Alliance", "Zero Deforestation"],
-    color: "text-chart-3",
-    bgColor: "bg-chart-3/10",
-    link: "/eudr",
-  },
-];
+import { useStats, formatCount } from "@/hooks/use-stats";
 
 export function RegulatoryFrameworks() {
+  const { data: stats, isLoading } = useStats();
+
+  const frameworks = [
+    {
+      id: "pfas",
+      title: "PFAS & EPR Compliance",
+      icon: Shield,
+      description: "PFAS-free packaging solutions for US food service. Over 20 states have banned PFAS in food packaging. Our certified suppliers ensure full compliance with state regulations.",
+      getMetrics: () => stats ? [
+        `${formatCount(stats.suppliers.pfas)} Suppliers`,
+        `${stats.countries} Countries`,
+        "100% PFAS-Free"
+      ] : ["Loading..."],
+      certifications: ["BPI Certified", "ASTM D6868", "SPC Aligned"],
+      color: "text-primary",
+      bgColor: "bg-primary/10",
+      link: "/pfas",
+    },
+    {
+      id: "buyamerica",
+      title: "Buy America Act",
+      icon: Flag,
+      description: "100% melted and manufactured in USA components for federal contracts. End-to-end metallurgical traceability from foundry to finished product.",
+      getMetrics: () => stats ? [
+        `${formatCount(stats.buyers.buyamerica)} Contracts`,
+        "ISO 9001",
+        "Zero Offshore"
+      ] : ["Loading..."],
+      certifications: ["IATF 16949", "Buy America Proof", "SAM.gov: N394AKZSR349"],
+      color: "text-chart-2",
+      bgColor: "bg-chart-2/10",
+      link: "/buy-america",
+    },
+    {
+      id: "eudr",
+      title: "EUDR Compliance",
+      icon: Leaf,
+      description: "Deforestation-free agricultural commodities for EU imports. Satellite-verified geofencing and Digital Product Passports for every shipment.",
+      getMetrics: () => stats ? [
+        `${formatCount(stats.buyers.eudr)} Importers`,
+        "Polygon-Level GPS",
+        "FSC/PEFC"
+      ] : ["Loading..."],
+      certifications: ["EU TRACES NT", "Rainforest Alliance", "Zero Deforestation"],
+      color: "text-chart-3",
+      bgColor: "bg-chart-3/10",
+      link: "/eudr",
+    },
+  ];
   return (
     <section className="w-full py-24">
       <div className="max-w-7xl mx-auto px-6">
@@ -69,11 +83,18 @@ export function RegulatoryFrameworks() {
                 <CardContent className="space-y-6">
                   {/* Key Metrics */}
                   <div className="flex flex-wrap gap-2">
-                    {framework.metrics.map((metric) => (
-                      <Badge key={metric} variant="secondary" className="font-mono text-xs font-medium" data-testid={`badge-metric-${metric.toLowerCase().replace(/\s+/g, '-')}`}>
-                        {metric}
+                    {isLoading ? (
+                      <Badge variant="secondary" className="font-mono text-xs font-medium">
+                        <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                        Loading stats...
                       </Badge>
-                    ))}
+                    ) : (
+                      framework.getMetrics().map((metric) => (
+                        <Badge key={metric} variant="secondary" className="font-mono text-xs font-medium" data-testid={`badge-metric-${metric.toLowerCase().replace(/\s+/g, '-')}`}>
+                          {metric}
+                        </Badge>
+                      ))
+                    )}
                   </div>
 
                   {/* Certifications */}

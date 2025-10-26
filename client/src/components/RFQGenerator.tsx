@@ -16,6 +16,7 @@ import { Loader2, Send, FileText, CheckCircle2, Sparkles, Zap, TrendingUp, Clock
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useStats, formatCount } from "@/hooks/use-stats";
 
 // Import product images - MELHORES FOTOS PFAS
 import pfasProduct1 from "@assets/stock_images/compostable_food_pac_057a4a06.jpg";
@@ -55,6 +56,7 @@ const frameworkProducts = {
 
 export function RFQGenerator({ framework, onGenerate }: RFQGeneratorProps) {
   const { toast } = useToast();
+  const { data: stats } = useStats();
   const [formData, setFormData] = useState({
     buyerName: "",
     email: "",
@@ -240,7 +242,7 @@ export function RFQGenerator({ framework, onGenerate }: RFQGeneratorProps) {
               </div>
               <CardTitle className="text-3xl font-bold">Complete Your Information</CardTitle>
               <CardDescription className="text-base">
-                Fill in the details below and our AI will create a <strong>professional, compliance-ready RFQ</strong>
+                <strong>All fields are required (*)</strong> - Fill in complete details so our AI can create a <strong>professional, compliance-ready RFQ</strong>
               </CardDescription>
             </div>
           </div>
@@ -299,12 +301,14 @@ export function RFQGenerator({ framework, onGenerate }: RFQGeneratorProps) {
 
               {/* Industry - ENHANCED */}
               <div className="space-y-3">
-                <Label htmlFor="industry" className="text-base font-bold">
+                <Label htmlFor="industry" className="text-base font-bold flex items-center gap-2">
                   Industry Sector
+                  <span className="text-destructive">*</span>
                 </Label>
                 <Select
                   value={formData.industry}
                   onValueChange={(value) => setFormData({ ...formData, industry: value })}
+                  required
                 >
                   <SelectTrigger id="industry" className="h-12 text-lg border-2" data-testid="select-industry">
                     <SelectValue placeholder="Choose your industry" />
@@ -340,14 +344,16 @@ export function RFQGenerator({ framework, onGenerate }: RFQGeneratorProps) {
 
               {/* Quantity - ENHANCED */}
               <div className="space-y-3">
-                <Label htmlFor="quantity" className="text-base font-bold">
+                <Label htmlFor="quantity" className="text-base font-bold flex items-center gap-2">
                   Estimated Volume
+                  <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="quantity"
                   placeholder="e.g., 50,000 units/month"
                   value={formData.quantity}
                   onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                  required
                   className="h-12 text-lg border-2"
                   data-testid="input-quantity"
                 />
@@ -356,12 +362,14 @@ export function RFQGenerator({ framework, onGenerate }: RFQGeneratorProps) {
 
               {/* Timeline - NOVO CAMPO PARA NEGOCIAÇÃO */}
               <div className="space-y-3">
-                <Label htmlFor="timeline" className="text-base font-bold">
+                <Label htmlFor="timeline" className="text-base font-bold flex items-center gap-2">
                   When Do You Need This?
+                  <span className="text-destructive">*</span>
                 </Label>
                 <Select
                   value={formData.timeline}
                   onValueChange={(value) => setFormData({ ...formData, timeline: value })}
+                  required
                 >
                   <SelectTrigger id="timeline" className="h-12 text-lg border-2" data-testid="select-timeline">
                     <SelectValue placeholder="Select timeline" />
@@ -380,14 +388,16 @@ export function RFQGenerator({ framework, onGenerate }: RFQGeneratorProps) {
 
             {/* Special Requirements - ENHANCED */}
             <div className="space-y-3">
-              <Label htmlFor="requirements" className="text-base font-bold">
+              <Label htmlFor="requirements" className="text-base font-bold flex items-center gap-2">
                 Special Compliance Requirements
+                <span className="text-destructive">*</span>
               </Label>
               <Textarea
                 id="requirements"
                 placeholder="List certifications, compliance standards, technical specs, delivery timelines, or any special requests..."
                 value={formData.requirements}
                 onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
+                required
                 rows={5}
                 className="text-base border-2 resize-none"
                 data-testid="textarea-requirements"
@@ -412,7 +422,7 @@ export function RFQGenerator({ framework, onGenerate }: RFQGeneratorProps) {
                     📝 Writing professional procurement language
                   </p>
                   <p className="text-base text-muted-foreground">
-                    🎯 Matching you with 600+ verified suppliers
+                    🎯 Matching you with {stats ? formatCount(stats.suppliers.total) : "600+"} verified suppliers
                   </p>
                 </div>
               </div>
@@ -453,7 +463,7 @@ export function RFQGenerator({ framework, onGenerate }: RFQGeneratorProps) {
           <CardFooter className="flex flex-col sm:flex-row gap-4 pt-6 border-t">
             <Button
               type="submit"
-              disabled={generateMutation.isPending || !formData.buyerName || !formData.email || !formData.productType}
+              disabled={generateMutation.isPending || !formData.buyerName || !formData.email || !formData.industry || !formData.productType || !formData.quantity || !formData.timeline || !formData.requirements}
               className={`w-full sm:flex-1 h-14 text-lg font-bold gap-3 bg-gradient-to-r ${frameworkColors[framework]} hover:opacity-90 shadow-xl transition-all hover:scale-105`}
               data-testid="button-generate-rfq"
             >
@@ -509,7 +519,7 @@ export function RFQGenerator({ framework, onGenerate }: RFQGeneratorProps) {
           <p className="text-sm text-muted-foreground">Suppliers respond fast to our AI-optimized RFQs</p>
         </div>
         <div className="p-6 rounded-xl border-2 bg-card hover-elevate transition-all">
-          <div className="text-4xl font-black text-orange-600 mb-2">600+</div>
+          <div className="text-4xl font-black text-orange-600 mb-2">{stats ? formatCount(stats.suppliers.total) : "600+"}</div>
           <p className="font-semibold mb-1">Verified Suppliers</p>
           <p className="text-sm text-muted-foreground">Instant access to certified compliance partners</p>
         </div>

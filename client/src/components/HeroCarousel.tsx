@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Shield, Factory, Leaf, Recycle, CheckCircle2, Zap, Globe } from "lucide-react";
 import { Link } from "wouter";
+import { useStats, formatCount } from "@/hooks/use-stats";
 
 // Import stock images
 import sustainableImg1 from '@assets/stock_images/sustainable_packagin_e77be9fd.jpg';
@@ -22,6 +23,7 @@ const BACKGROUND_IMAGES = [
 
 export function HeroCarousel() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { data: stats } = useStats();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -75,7 +77,7 @@ export function HeroCarousel() {
                   <div className="flex items-center gap-2 min-w-max">
                     <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-1.5 flex-shrink-0">
                       <Globe className="w-4 h-4 text-blue-300" />
-                      <span className="text-xs sm:text-sm font-bold text-white whitespace-nowrap">10 Countries • 600+ Verified</span>
+                      <span className="text-xs sm:text-sm font-bold text-white whitespace-nowrap">{stats ? `${stats.countries} Countries • ${formatCount(stats.suppliers.total)} Verified` : "10 Countries • 600+ Verified"}</span>
                     </div>
                     <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-2 py-1 flex-shrink-0 hover-elevate transition-all">
                       <img src="https://flagcdn.com/us.svg" alt="USA" className="w-6 h-4 object-cover rounded" />
@@ -200,7 +202,7 @@ export function HeroCarousel() {
                   className="w-full sm:w-auto gap-3 font-bold text-lg md:text-xl h-16 md:h-18 px-10 bg-white/10 backdrop-blur-md border-2 border-white/40 text-white hover:bg-white/20 hover:border-white/60" 
                   data-testid="button-view-suppliers"
                 >
-                  Browse 600+ Suppliers
+                  Browse {stats ? formatCount(stats.suppliers.total) : "600+"} Suppliers
                 </Button>
               </Link>
             </div>

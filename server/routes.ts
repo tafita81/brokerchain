@@ -122,9 +122,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { framework, buyerName, email, industry, productType, quantity, timeline, requirements } = req.body;
 
-      if (!framework || !buyerName || !email || !productType) {
+      if (!framework || !buyerName || !email || !industry || !productType || !quantity || !timeline || !requirements) {
         return res.status(400).json({
-          error: "Missing required fields: framework, buyerName, email, productType",
+          error: "Missing required fields: All fields are mandatory (buyerName, email, industry, productType, quantity, timeline, requirements)",
         });
       }
 
@@ -135,7 +135,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           framework,
           buyerName,
           email,
-          industry: industry || "General",
+          industry,
           productType,
           quantity,
           timeline,
@@ -554,6 +554,55 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
     }
   });
 
+  // Platform Statistics - Real-time counts from database
+  app.get("/api/stats", async (_req, res) => {
+    try {
+      const suppliers = await storage.getAllSuppliers();
+      const buyers = await storage.getAllBuyers();
+      const rfqs = await storage.getAllRFQs();
+      
+      // Count by framework
+      const pfasSuppliers = suppliers.filter(s => s.framework === 'pfas').length;
+      const buyAmericaSuppliers = suppliers.filter(s => s.framework === 'buyamerica').length;
+      const eudrSuppliers = suppliers.filter(s => s.framework === 'eudr').length;
+      
+      const pfasBuyers = buyers.filter(b => b.framework === 'pfas').length;
+      const buyAmericaBuyers = buyers.filter(b => b.framework === 'buyamerica').length;
+      const eudrBuyers = buyers.filter(b => b.framework === 'eudr').length;
+      
+      // Count unique countries
+      const uniqueCountries = new Set([
+        ...suppliers.map(s => s.country),
+        ...buyers.map(b => b.country)
+      ]);
+
+      res.json({
+        suppliers: {
+          total: suppliers.length,
+          pfas: pfasSuppliers,
+          buyamerica: buyAmericaSuppliers,
+          eudr: eudrSuppliers
+        },
+        buyers: {
+          total: buyers.length,
+          pfas: pfasBuyers,
+          buyamerica: buyAmericaBuyers,
+          eudr: eudrBuyers
+        },
+        rfqs: {
+          total: rfqs.length,
+          sent: rfqs.filter(r => r.status === 'sent').length,
+          negotiating: rfqs.filter(r => r.status === 'negotiating').length,
+          closed: rfqs.filter(r => r.status === 'closed').length
+        },
+        countries: uniqueCountries.size,
+        lastUpdated: new Date().toISOString()
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Automated Scraping - Populate database with 600+ real companies
   app.post("/api/scrape/run", async (_req, res) => {
     try {
@@ -663,7 +712,7 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
           companyType,
           currentInventory: {},
           activePricing: {},
-          capabilities: companyType === 'supplier' ? company.products : {},
+          capabilities: companyType === 'supplier' ? (company as any).products : {},
           constraints: { financialCommitments: "Requires approval", deliveryPromises: "Case by case" },
         });
       }
