@@ -212,7 +212,7 @@ export async function scrapeSAMGovOpportunities(
     const batchSize = 10; // SAM.gov API limitation - maximum 10 per request
     const numBatches = Math.ceil(totalLimit / batchSize);
     
-    console.log(`🔍 SAM.gov scraping: fetching ${totalLimit} opportunities in ${numBatches} batches of ${batchSize}...`);
+    console.log(`🔍 SAM.gov scraping: fetching ${totalLimit} opportunities from last 3 days in ${numBatches} batches of ${batchSize}...`);
     
     for (let i = 0; i < numBatches; i++) {
       const offset = i * batchSize;
@@ -222,19 +222,29 @@ export async function scrapeSAMGovOpportunities(
       const baseUrl = 'https://api.sam.gov/opportunities/v2/search';
       
       // Build query parameters
-      // IMPORTANTE: Buscar apenas oportunidades DO DIA (não últimos 30 dias)
+      // IMPORTANTE: Buscar oportunidades DOS ÚLTIMOS 3 DIAS
       // SAM.gov API expects date format: MM/DD/YYYY
       const today = new Date();
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const day = String(today.getDate()).padStart(2, '0');
-      const year = today.getFullYear();
-      const formattedDate = `${month}/${day}/${year}`;
+      const threeDaysAgo = new Date(today);
+      threeDaysAgo.setDate(today.getDate() - 3);
+      
+      // Format today's date
+      const todayMonth = String(today.getMonth() + 1).padStart(2, '0');
+      const todayDay = String(today.getDate()).padStart(2, '0');
+      const todayYear = today.getFullYear();
+      const formattedToday = `${todayMonth}/${todayDay}/${todayYear}`;
+      
+      // Format 3 days ago date
+      const fromMonth = String(threeDaysAgo.getMonth() + 1).padStart(2, '0');
+      const fromDay = String(threeDaysAgo.getDate()).padStart(2, '0');
+      const fromYear = threeDaysAgo.getFullYear();
+      const formattedFrom = `${fromMonth}/${fromDay}/${fromYear}`;
       
       const params = new URLSearchParams({
         limit: limit.toString(),
         offset: offset.toString(),
-        postedFrom: formattedDate, // Apenas hoje (MM/DD/YYYY format)
-        postedTo: formattedDate,   // Apenas hoje (MM/DD/YYYY format)
+        postedFrom: formattedFrom,   // Últimos 3 dias (MM/DD/YYYY format)
+        postedTo: formattedToday,     // Até hoje (MM/DD/YYYY format)
       });
       
       if (naicsCode) {
@@ -243,7 +253,7 @@ export async function scrapeSAMGovOpportunities(
       
       const url = `${baseUrl}?${params.toString()}`;
       
-      console.log(`   📦 Batch ${i + 1}/${numBatches}: offset=${offset}, limit=${limit}`);
+      console.log(`   📦 Batch ${i + 1}/${numBatches}: offset=${offset}, limit=${limit}, period=${formattedFrom} to ${formattedToday}`);
       
       const response = await fetch(url, {
         headers: {

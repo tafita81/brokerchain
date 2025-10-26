@@ -103,7 +103,7 @@ The codebase does not currently implement authentication/authorization mechanism
 
 **SAM.gov Automated RFQ Discovery (STEP ZERO)**:
 - Automatic scraping of federal procurement opportunities from SAM.gov API v2
-- Fetches opportunities from current day only (no historical data accumulation)
+- Fetches opportunities from last 3 days (rolling 3-day window)
 - Pagination handling: Fetches in batches of 10 (SAM.gov API limitation)
 - Framework-based filtering: Only processes PFAS, Buy America Act, and EUDR opportunities (rejects non-relevant categories)
 - Intelligent keyword detection to classify opportunities by compliance framework
