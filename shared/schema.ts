@@ -176,19 +176,30 @@ export const companyContext = pgTable("company_context", {
 });
 
 // Supplier Quotes - Cotações recebidas de suppliers via email ou web form
+// PRICING LAW: Final price = supplier price + shipping + taxes + fees + tariffs + broker commission
 export const supplierQuotes = pgTable("supplier_quotes", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   rfqId: text("rfq_id").notNull(),
   supplierId: text("supplier_id").notNull(),
   status: text("status").notNull().default("pending"), // pending, received, selected, rejected
-  pricePerUnit: integer("price_per_unit"), // cents
+  
+  // BASE COSTS (hidden from buyer)
+  supplierPricePerUnit: integer("supplier_price_per_unit"), // cents - what supplier charges
+  shippingCostPerUnit: integer("shipping_cost_per_unit"), // cents - freight cost per unit
+  taxesPerUnit: integer("taxes_per_unit"), // cents - taxes per unit
+  feesPerUnit: integer("fees_per_unit"), // cents - customs, handling, etc.
+  tariffsPerUnit: integer("tariffs_per_unit"), // cents - import tariffs
+  brokerMarginPercent: integer("broker_margin_percent"), // 5-15% - BrokerChain commission
+  
+  // CALCULATED FINAL PRICE (shown to buyer - NO BREAKDOWN)
+  finalPriceToBuyer: integer("final_price_to_buyer"), // cents - TOTAL (all costs included)
+  
+  // OTHER DETAILS
   minimumOrderQuantity: integer("minimum_order_quantity"),
   leadTimeDays: integer("lead_time_days"),
   validUntil: timestamp("valid_until"),
   rawQuoteText: text("raw_quote_text"), // original email/form content
   parsedData: jsonb("parsed_data").notNull().default({}),
-  brokerMarginPercent: integer("broker_margin_percent"), // 5-15%
-  finalPriceToBuyer: integer("final_price_to_buyer"), // cents (includes margin)
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

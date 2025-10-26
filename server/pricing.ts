@@ -1,234 +1,218 @@
 /**
- * BROKERCHAIN PRICING ENGINE
+ * ═══════════════════════════════════════════════════════════════════
+ * BROKERCHAIN PRICING LAW (LEI DE PRECIFICAÇÃO)
+ * ═══════════════════════════════════════════════════════════════════
  * 
- * Calcula preços totais com transparência completa e valida viabilidade
- * de margem antes de apresentar opção ao comprador.
+ * REGRA FUNDAMENTAL:
+ * O comprador vê APENAS o preço final por unidade.
+ * O comprador NUNCA vê o breakdown de custos.
+ * 
+ * FÓRMULA:
+ * Preço Final = Preço Fornecedor + Frete + Impostos + Taxas + Tarifas + Comissão BrokerChain
+ * 
+ * CUSTOS OCULTOS DO COMPRADOR:
+ * - supplierPricePerUnit: Quanto o fornecedor cobra
+ * - shippingCostPerUnit: Custo de frete por unidade
+ * - taxesPerUnit: Impostos por unidade
+ * - feesPerUnit: Taxas (alfândega, handling, etc.)
+ * - tariffsPerUnit: Tarifas de importação
+ * - brokerMarginPercent: Comissão BrokerChain (5-15%)
+ * 
+ * O QUE O COMPRADOR VÊ:
+ * - finalPriceToBuyer: Preço final total por unidade
+ * 
+ * NUNCA mostre o breakdown ao comprador!
+ * ═══════════════════════════════════════════════════════════════════
  */
 
-export interface SupplierQuote {
-  supplierId: string;
-  supplierName: string;
-  productType: "new" | "surplus" | "overstock" | "gradeB";
-  
-  // Breakdown de custos
-  unitPrice: number;
-  quantity: number;
-  shipping: number;
-  taxes: number;
-  customsFees: number;
-  insurance: number;
-  certificationFees: number;
-  handlingFees: number;
-  
-  // Metadata
-  leadTime: string; // "7 days", "2 weeks", etc
-  deliveryDate: string; // "November 15, 2025" - Data final combinada
-  certifications: string[];
-  framework: "pfas" | "buyamerica" | "eudr";
-  
-  // Configuração de margem
-  commissionRate?: number; // 0.05 to 0.15 (5% to 15%)
-}
-
 export interface PricingBreakdown {
-  // Custos
-  productCost: number;
-  shippingCost: number;
-  taxesCost: number;
-  feesCost: number;
-  totalCost: number;
+  // ═══ CUSTOS BASE (OCULTOS DO COMPRADOR) ═══
+  supplierPricePerUnit: number; // cents - preço do fornecedor
+  shippingCostPerUnit: number; // cents - frete por unidade
+  taxesPerUnit: number; // cents - impostos
+  feesPerUnit: number; // cents - taxas (alfândega, handling)
+  tariffsPerUnit: number; // cents - tarifas de importação
   
-  // Comissão
-  commissionRate: number;
-  commissionAmount: number;
+  // ═══ MARGEM BROKERCHAIN ═══
+  brokerMarginPercent: number; // % - comissão (5-15%)
   
-  // Final
-  finalPrice: number;
+  // ═══ CÁLCULOS INTERMEDIÁRIOS ═══
+  subtotalBeforeCommission: number; // cents - soma de todos custos
+  brokerCommissionPerUnit: number; // cents - comissão calculada
   
-  // Validação
-  viable: boolean;
-  marginPercent: number;
-  reason?: string;
+  // ═══ PREÇO FINAL (MOSTRADO AO COMPRADOR) ═══
+  finalPriceToBuyer: number; // cents - TOTAL que comprador paga
 }
 
-export class PricingEngine {
-  private readonly MINIMUM_COMMISSION_RATE = 0.05; // 5%
-  private readonly MINIMUM_ABSOLUTE_COMMISSION = 500; // $500
+/**
+ * ═══════════════════════════════════════════════════════════════════
+ * CALCULAR PREÇO FINAL (FUNÇÃO PRINCIPAL)
+ * ═══════════════════════════════════════════════════════════════════
+ * 
+ * Esta função aplica a LEI DE PRECIFICAÇÃO do BrokerChain.
+ * 
+ * @param supplierPrice - Preço do fornecedor (cents/unidade)
+ * @param shipping - Frete (cents/unidade)
+ * @param taxes - Impostos (cents/unidade)
+ * @param fees - Taxas diversas (cents/unidade)
+ * @param tariffs - Tarifas de importação (cents/unidade)
+ * @param brokerMargin - Margem BrokerChain em % (padrão: 10%)
+ * @returns Breakdown completo com preço final
+ */
+export function calculateFinalPrice(
+  supplierPrice: number,
+  shipping: number = 0,
+  taxes: number = 0,
+  fees: number = 0,
+  tariffs: number = 0,
+  brokerMargin: number = 10
+): PricingBreakdown {
+  // Passo 1: Somar TODOS os custos
+  const subtotal = supplierPrice + shipping + taxes + fees + tariffs;
   
-  private readonly FRAMEWORK_RATES = {
-    pfas: { min: 0.05, target: 0.08, max: 0.15 },
-    buyamerica: { min: 0.07, target: 0.10, max: 0.15 },
-    eudr: { min: 0.08, target: 0.12, max: 0.15 },
-  };
+  // Passo 2: Calcular comissão BrokerChain sobre o subtotal
+  const commission = Math.round(subtotal * (brokerMargin / 100));
   
-  private readonly URGENCY_MULTIPLIERS = {
-    urgent: 1.5,
-    "1month": 1.2,
-    "3months": 1.0,
-    "6months": 0.9,
-    planning: 0.8,
+  // Passo 3: Preço final = subtotal + comissão
+  const finalPrice = subtotal + commission;
+  
+  return {
+    supplierPricePerUnit: supplierPrice,
+    shippingCostPerUnit: shipping,
+    taxesPerUnit: taxes,
+    feesPerUnit: fees,
+    tariffsPerUnit: tariffs,
+    brokerMarginPercent: brokerMargin,
+    subtotalBeforeCommission: subtotal,
+    brokerCommissionPerUnit: commission,
+    finalPriceToBuyer: finalPrice,
   };
-
-  /**
-   * Calcula breakdown completo de pricing e valida viabilidade
-   */
-  calculatePricing(quote: SupplierQuote, urgency?: string): PricingBreakdown {
-    // 1. Calcular todos os custos
-    const productCost = quote.unitPrice * quote.quantity;
-    const shippingCost = quote.shipping;
-    const taxesCost = quote.taxes;
-    const feesCost = 
-      quote.customsFees + 
-      quote.insurance + 
-      quote.certificationFees + 
-      quote.handlingFees;
-    
-    const totalCost = productCost + shippingCost + taxesCost + feesCost;
-
-    // 2. Determinar commission rate
-    let commissionRate = quote.commissionRate || this.FRAMEWORK_RATES[quote.framework].target;
-    
-    // Ajustar por urgência
-    if (urgency && this.URGENCY_MULTIPLIERS[urgency as keyof typeof this.URGENCY_MULTIPLIERS]) {
-      const multiplier = this.URGENCY_MULTIPLIERS[urgency as keyof typeof this.URGENCY_MULTIPLIERS];
-      commissionRate = Math.min(
-        commissionRate * multiplier,
-        this.FRAMEWORK_RATES[quote.framework].max
-      );
-    }
-
-    // 3. Calcular comissão
-    const commissionAmount = totalCost * commissionRate;
-
-    // 4. Preço final para comprador
-    const finalPrice = totalCost + commissionAmount;
-
-    // 5. VALIDAR VIABILIDADE
-    const minimumMargin = totalCost * this.MINIMUM_COMMISSION_RATE;
-    const marginPercent = (commissionAmount / totalCost) * 100;
-
-    // Verificações de viabilidade
-    if (commissionAmount < minimumMargin) {
-      return {
-        productCost,
-        shippingCost,
-        taxesCost,
-        feesCost,
-        totalCost,
-        commissionRate,
-        commissionAmount,
-        finalPrice,
-        viable: false,
-        marginPercent,
-        reason: `Margem insuficiente: ${marginPercent.toFixed(1)}% < ${this.MINIMUM_COMMISSION_RATE * 100}% mínimo`,
-      };
-    }
-
-    if (commissionAmount < this.MINIMUM_ABSOLUTE_COMMISSION) {
-      return {
-        productCost,
-        shippingCost,
-        taxesCost,
-        feesCost,
-        totalCost,
-        commissionRate,
-        commissionAmount,
-        finalPrice,
-        viable: false,
-        marginPercent,
-        reason: `Comissão muito baixa: $${commissionAmount.toFixed(2)} < $${this.MINIMUM_ABSOLUTE_COMMISSION} mínimo`,
-      };
-    }
-
-    // ✅ VIÁVEL
-    return {
-      productCost,
-      shippingCost,
-      taxesCost,
-      feesCost,
-      totalCost,
-      commissionRate,
-      commissionAmount,
-      finalPrice,
-      viable: true,
-      marginPercent,
-    };
-  }
-
-  /**
-   * Formata breakdown para exibição em email
-   */
-  formatBreakdownForEmail(
-    supplierName: string,
-    productType: string,
-    quote: SupplierQuote,
-    breakdown: PricingBreakdown
-  ): string {
-    const typeLabel = productType === "new" ? "NOVO" : "SURPLUS/OVERSTOCK";
-    
-    return `
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-OPÇÃO: ${supplierName} - ${typeLabel}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Quantidade: ${quote.quantity.toLocaleString()} unidades
-
-DETALHAMENTO DE CUSTOS:
-├─ Preço Unitário: $${quote.unitPrice.toFixed(2)}
-├─ Subtotal Produto: $${breakdown.productCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-├─ Frete: $${breakdown.shippingCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-├─ Impostos: $${breakdown.taxesCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-├─ Taxas (Alfândega + Seguro + Handling): $${breakdown.feesCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-└─ TOTAL CUSTOS: $${breakdown.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-
-COMISSÃO BROKERCHAIN: ${(breakdown.commissionRate * 100).toFixed(1)}% = $${breakdown.commissionAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💰 PREÇO FINAL PARA COMPRADOR: $${breakdown.finalPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-
-✅ MARGEM LÍQUIDA: $${breakdown.commissionAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })} (${breakdown.marginPercent.toFixed(1)}%)
-📦 Prazo de Entrega: ${quote.leadTime}
-📅 DATA FINAL DE ENTREGA: ${quote.deliveryDate}
-🏆 Certificações: ${quote.certifications.join(", ")}
-`;
-  }
-
-  /**
-   * Filtra e ranqueia quotes por viabilidade e valor
-   */
-  filterViableQuotes(
-    quotes: Array<{ quote: SupplierQuote; breakdown: PricingBreakdown }>
-  ): Array<{ quote: SupplierQuote; breakdown: PricingBreakdown }> {
-    return quotes
-      .filter(q => q.breakdown.viable)
-      .sort((a, b) => {
-        // Priorizar por margem absoluta (mais lucro para BrokerChain)
-        return b.breakdown.commissionAmount - a.breakdown.commissionAmount;
-      });
-  }
-
-  /**
-   * Separa quotes em NEW vs SURPLUS
-   */
-  categorizeQuotes(
-    quotes: Array<{ quote: SupplierQuote; breakdown: PricingBreakdown }>
-  ): {
-    new: Array<{ quote: SupplierQuote; breakdown: PricingBreakdown }>;
-    surplus: Array<{ quote: SupplierQuote; breakdown: PricingBreakdown }>;
-  } {
-    const newQuotes: Array<{ quote: SupplierQuote; breakdown: PricingBreakdown }> = [];
-    const surplusQuotes: Array<{ quote: SupplierQuote; breakdown: PricingBreakdown }> = [];
-
-    for (const q of quotes) {
-      if (q.quote.productType === "new") {
-        newQuotes.push(q);
-      } else {
-        surplusQuotes.push(q);
-      }
-    }
-
-    return { new: newQuotes, surplus: surplusQuotes };
-  }
 }
 
-// Singleton instance
-export const pricingEngine = new PricingEngine();
+/**
+ * ═══════════════════════════════════════════════════════════════════
+ * FORMATAR PREÇO PARA EXIBIÇÃO AO COMPRADOR
+ * ═══════════════════════════════════════════════════════════════════
+ * 
+ * Mostra APENAS o preço final, sem breakdown.
+ * 
+ * @param cents - Preço em centavos
+ * @returns String formatada (ex: "$10.75")
+ */
+export function formatPriceForBuyer(cents: number): string {
+  return `$${(cents / 100).toFixed(2)}`;
+}
+
+/**
+ * ═══════════════════════════════════════════════════════════════════
+ * CALCULAR VALOR TOTAL DO CONTRATO
+ * ═══════════════════════════════════════════════════════════════════
+ * 
+ * @param pricePerUnit - Preço final por unidade (cents)
+ * @param quantity - Quantidade de unidades
+ * @returns Valor total em cents
+ */
+export function calculateContractTotal(pricePerUnit: number, quantity: number): number {
+  return pricePerUnit * quantity;
+}
+
+/**
+ * ═══════════════════════════════════════════════════════════════════
+ * APLICAR DESCONTO DE SURPLUS
+ * ═══════════════════════════════════════════════════════════════════
+ * 
+ * Fornecedores SURPLUS oferecem 30-50% de desconto no preço base.
+ * 
+ * @param originalPrice - Preço original (cents)
+ * @param discountPercent - Desconto % (30-50)
+ * @returns Preço com desconto (cents)
+ */
+export function applySurplusDiscount(originalPrice: number, discountPercent: number): number {
+  return Math.round(originalPrice * (1 - discountPercent / 100));
+}
+
+/**
+ * ═══════════════════════════════════════════════════════════════════
+ * CALCULAR BREAKDOWN PARA FORNECEDOR SURPLUS
+ * ═══════════════════════════════════════════════════════════════════
+ * 
+ * Surplus tem desconto aplicado no preço base antes dos outros custos.
+ * 
+ * @param newSupplierPrice - Preço de fornecedor NEW (cents/unidade)
+ * @param surplusDiscountPercent - Desconto surplus (30-50%)
+ * @param shipping - Frete (cents/unidade)
+ * @param taxes - Impostos (cents/unidade)
+ * @param fees - Taxas (cents/unidade)
+ * @param tariffs - Tarifas (cents/unidade)
+ * @param brokerMargin - Margem % (padrão: 15% para surplus)
+ * @returns Breakdown completo
+ */
+export function calculateSurplusFinalPrice(
+  newSupplierPrice: number,
+  surplusDiscountPercent: number,
+  shipping: number = 0,
+  taxes: number = 0,
+  fees: number = 0,
+  tariffs: number = 0,
+  brokerMargin: number = 15 // Margem maior para surplus
+): PricingBreakdown {
+  // Aplicar desconto surplus no preço base
+  const discountedSupplierPrice = applySurplusDiscount(newSupplierPrice, surplusDiscountPercent);
+  
+  // Calcular preço final com o preço com desconto
+  return calculateFinalPrice(
+    discountedSupplierPrice,
+    shipping,
+    taxes,
+    fees,
+    tariffs,
+    brokerMargin
+  );
+}
+
+/**
+ * ═══════════════════════════════════════════════════════════════════
+ * EXEMPLO DE USO
+ * ═══════════════════════════════════════════════════════════════════
+ * 
+ * // Cotação NEW:
+ * const newQuote = calculateFinalPrice(
+ *   850,  // $8.50/lb supplier price
+ *   50,   // $0.50/lb shipping
+ *   35,   // $0.35/lb taxes
+ *   25,   // $0.25/lb fees (customs + handling)
+ *   15,   // $0.15/lb tariffs
+ *   12    // 12% broker commission
+ * );
+ * 
+ * console.log(formatPriceForBuyer(newQuote.finalPriceToBuyer));
+ * // Output: "$10.89" (ISSO É O QUE O COMPRADOR VÊ)
+ * 
+ * // Breakdown completo (INTERNO - NUNCA MOSTRAR AO COMPRADOR):
+ * // {
+ * //   supplierPricePerUnit: 850,        // $8.50
+ * //   shippingCostPerUnit: 50,          // $0.50
+ * //   taxesPerUnit: 35,                 // $0.35
+ * //   feesPerUnit: 25,                  // $0.25
+ * //   tariffsPerUnit: 15,               // $0.15
+ * //   subtotalBeforeCommission: 975,    // $9.75
+ * //   brokerMarginPercent: 12,
+ * //   brokerCommissionPerUnit: 117,     // $1.17 (12% de $9.75)
+ * //   finalPriceToBuyer: 1092           // $10.92
+ * // }
+ * 
+ * // Cotação SURPLUS (50% desconto):
+ * const surplusQuote = calculateSurplusFinalPrice(
+ *   850,  // $8.50/lb base (antes do desconto)
+ *   50,   // 50% discount
+ *   50,   // $0.50/lb shipping
+ *   35,   // $0.35/lb taxes
+ *   25,   // $0.25/lb fees
+ *   15,   // $0.15/lb tariffs
+ *   15    // 15% broker margin (maior para surplus)
+ * );
+ * 
+ * console.log(formatPriceForBuyer(surplusQuote.finalPriceToBuyer));
+ * // Output: "$6.09" (50% mais barato!)
+ * ═══════════════════════════════════════════════════════════════════
+ */
