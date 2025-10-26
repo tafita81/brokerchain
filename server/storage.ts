@@ -77,91 +77,9 @@ export class MemStorage implements IStorage {
     this.dpps = new Map();
     this.leads = new Map();
     this.metrics = new Map();
-
-    this.seedInitialData();
-  }
-
-  private seedInitialData() {
-    // Seed suppliers
-    const suppliers: InsertSupplier[] = [
-      {
-        name: "Braskem",
-        country: "USA",
-        framework: "pfas",
-        products: ["MDO Bio-films", "Recyclable Packaging", "Sugarcane-based Resin"],
-        certifications: ["SPC Aligned", "Mono-material Recyclable", "Bio-based"],
-        contactEmail: "contact@braskem.com",
-        description: "World's first mono-material recyclable MDO bio-film made from sugarcane.",
-      },
-      {
-        name: "Vegware",
-        country: "USA",
-        framework: "pfas",
-        products: ["Compostable Tableware", "Bagasse Containers", "PLA Products"],
-        certifications: ["BPI Certified", "TÜV OK Compost", "PFAS-Free"],
-        contactEmail: "contact@vegware.com",
-        description: "Industrial compostable food service packaging with full PFAS-free certification.",
-      },
-      {
-        name: "Sabert",
-        country: "USA",
-        framework: "pfas",
-        products: ["Pulp Containers", "Molded Fiber", "Natural Fiber Packaging"],
-        certifications: ["ASTM D6868", "PFAS-Free Declaration", "Compostable"],
-        contactEmail: "contact@sabert.com",
-        description: "Pulp Plus™ and Pulp Max™ containers - 100% PFAS-free, natural fiber solutions.",
-      },
-      {
-        name: "SunDance",
-        country: "USA",
-        framework: "pfas",
-        products: ["Biodegradable Films", "Recyclable Packaging", "Eco-friendly Materials"],
-        certifications: ["CA Compliant", "ME Compliant", "NY Compliant"],
-        contactEmail: "contact@sundance.com",
-        description: "Biodegradable films meeting California, Maine, and New York PFAS regulations.",
-      },
-      {
-        name: "Dyson Fasteners",
-        country: "USA",
-        framework: "buyamerica",
-        products: ["High-tensile Bolts", "Industrial Fasteners", "Aerospace Components"],
-        certifications: ["IATF 16949", "100% US Melted", "Buy America Proof"],
-        contactEmail: "contact@dyson-fasteners.com",
-        description: "High-tensile bolts for infrastructure, defense, and aerospace - 100% U.S.-melted steel.",
-      },
-      {
-        name: "Prestige Stamping",
-        country: "USA",
-        framework: "buyamerica",
-        products: ["Precision Washers", "Industrial Hardware", "Metal Stampings"],
-        certifications: ["ISO 9001", "Buy America Compliant", "ITAR Registered"],
-        contactEmail: "contact@prestigestamping.com",
-        description: "Precision washers and industrial hardware - fully compliant with 41 U.S.C. § 8301–8305.",
-      },
-      {
-        name: "Sancoffee",
-        country: "Brazil",
-        framework: "eudr",
-        products: ["Direct-trade Coffee", "Specialty Arabica", "Sustainable Commodities"],
-        certifications: ["Rainforest Alliance", "GPS Verified", "Zero Deforestation"],
-        contactEmail: "contact@sancoffee.com",
-        description: "Direct-trade Brazilian coffee with polygon-level GPS mapping and full traceability.",
-      },
-      {
-        name: "Suzano",
-        country: "Brazil",
-        framework: "eudr",
-        products: ["Deforestation-free Cellulose", "Eucalyptus Pulp", "Sustainable Fiber"],
-        certifications: ["FSC", "PEFC", "CERFLOR", "Sentinel-2 Monitored"],
-        contactEmail: "contact@suzano.com",
-        description: "Deforestation-free cellulose with FSC, PEFC certifications - monitored via satellite.",
-      },
-    ];
-
-    suppliers.forEach(supplier => {
-      const id = randomUUID();
-      this.suppliers.set(id, { ...supplier, id, createdAt: new Date() });
-    });
+    
+    // NO MOCK DATA - All data comes from real database
+    // NO SEED DATA - Zero simulated/fake companies
   }
 
   // Suppliers

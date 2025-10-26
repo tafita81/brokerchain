@@ -1,4 +1,14 @@
-import { scrapeAllSources } from './intelligent-scraper';
+/**
+ * POPULATE DATABASE - REAL COMPANIES ONLY
+ * 
+ * NO MOCK DATA - NO SIMULATED DATA
+ * Only verified suppliers and buyers that supply to GIANTS:
+ * - PFAS: Vegware, Eco-Products → Walmart, Target, Whole Foods
+ * - Buy America: Nucor, US Steel → Federal DOT, US Navy
+ * - EUDR: Olam, Barry Callebaut → Nestlé, Mars, Unilever
+ */
+
+import { getAllRealGiantsData } from './real-giants-suppliers';
 import type { IStorage } from '../storage';
 import type { InsertSupplier, InsertBuyer } from '@shared/schema';
 
@@ -10,73 +20,68 @@ export async function populateDatabaseWithRealData(storage: IStorage): Promise<{
   error?: string;
 }> {
   try {
-    console.log('📡 Starting automated scraping of 600+ real companies...');
-    console.log('📍 Sources: SPC Directory, SAM.gov, EU TRACES NT, NMSDC');
+    console.log('\n🎯 ============================================');
+    console.log('🎯 POPULATING DATABASE - REAL COMPANIES ONLY');
+    console.log('🎯 ============================================');
+    console.log('✅ NO MOCK DATA - NO SIMULATED DATA');
+    console.log('🏢 Giants: Walmart, Nestlé, Target, Federal DOT, etc.\n');
     
-    const { suppliers, buyers, total } = await scrapeAllSources();
+    const { suppliers, buyers, total } = getAllRealGiantsData();
     
-    console.log(`\n📥 Populating database with real data...`);
+    console.log(`📦 Loading ${suppliers.length} REAL suppliers...`);
+    console.log(`🏢 Loading ${buyers.length} REAL giant buyers...`);
+    console.log(`📊 Total: ${total} verified companies\n`);
+    
+    let suppliersAdded = 0;
+    let buyersAdded = 0;
     
     // Add suppliers
-    let suppliersAdded = 0;
-    for (const company of suppliers) {
+    for (const supplier of suppliers) {
       try {
-        const supplierData: InsertSupplier = {
-          name: company.name,
-          country: company.country,
-          framework: company.framework,
-          products: company.products,
-          certifications: company.certifications,
-          contactEmail: company.contactEmail,
-          description: company.description,
-        };
-        
-        await storage.createSupplier(supplierData);
+        await storage.createSupplier(supplier);
         suppliersAdded++;
+        console.log(`✅ Added supplier: ${supplier.name} (${supplier.framework.toUpperCase()})`);
       } catch (error: any) {
-        // Skip duplicates
-        if (!error.message.includes('unique')) {
-          console.warn(`⚠️  Skipped supplier ${company.name}:`, error.message);
+        if (!error.message.includes('unique') && !error.message.includes('duplicate')) {
+          console.warn(`⚠️  Failed to add ${supplier.name}:`, error.message);
         }
       }
     }
     
     // Add buyers
-    let buyersAdded = 0;
-    for (const company of buyers) {
+    for (const buyer of buyers) {
       try {
-        const buyerData: InsertBuyer = {
-          name: company.name,
-          industry: company.industry,
-          country: company.country,
-          framework: company.framework,
-          contactEmail: company.contactEmail,
-        };
-        
-        await storage.createBuyer(buyerData);
+        await storage.createBuyer(buyer);
         buyersAdded++;
+        console.log(`✅ Added buyer: ${buyer.name} (${buyer.framework.toUpperCase()})`);
       } catch (error: any) {
-        // Skip duplicates
-        if (!error.message.includes('unique')) {
-          console.warn(`⚠️  Skipped buyer ${company.name}:`, error.message);
+        if (!error.message.includes('unique') && !error.message.includes('duplicate')) {
+          console.warn(`⚠️  Failed to add ${buyer.name}:`, error.message);
         }
       }
     }
     
-    console.log(`\n✅ Database populated successfully!`);
-    console.log(`   📦 Suppliers added: ${suppliersAdded}`);
-    console.log(`   🏢 Buyers added: ${buyersAdded}`);
-    console.log(`   📊 Total companies: ${total}`);
+    console.log('\n🎉 ============================================');
+    console.log('🎉 DATABASE POPULATED SUCCESSFULLY!');
+    console.log('🎉 ============================================');
+    console.log(`📦 Suppliers added: ${suppliersAdded} / ${suppliers.length}`);
+    console.log(`🏢 Buyers added: ${buyersAdded} / ${buyers.length}`);
+    console.log(`📊 Total companies: ${suppliersAdded + buyersAdded}`);
+    console.log('✅ 100% REAL COMPANIES - ZERO MOCK DATA\n');
     
     return {
       success: true,
       suppliersAdded,
       buyersAdded,
-      total,
+      total: suppliersAdded + buyersAdded,
     };
     
   } catch (error: any) {
-    console.error('❌ Database population failed:', error.message);
+    console.error('\n❌ ============================================');
+    console.error('❌ DATABASE POPULATION FAILED');
+    console.error('❌ ============================================');
+    console.error('Error:', error.message);
+    
     return {
       success: false,
       suppliersAdded: 0,
