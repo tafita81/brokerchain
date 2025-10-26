@@ -122,6 +122,16 @@ The codebase does not currently implement authentication/authorization mechanism
 
 **Google Fonts**: Inter and JetBrains Mono fonts loaded via Google Fonts CDN for consistent typography
 
+**Real Supplier Web Scraping**:
+- Automated scraping from certified supplier directories across all 3 frameworks
+- PFAS: BPI Compostable Certification database (biodegradable packaging manufacturers)
+- Buy America: SAM.gov Entity Management and Made in America Directory (US steel/components)
+- EUDR: FSC Database, Rainforest Alliance, Fair Trade directories (zero-deforestation commodities)
+- Anti-duplication: Verifies name + country + framework before insertion
+- Manual trigger: POST /api/admin/scrape-suppliers endpoint
+- Current database: 38 verified suppliers (14 PFAS, 11 Buy America, 13 EUDR)
+- Each supplier includes verified certifications, compliance documentation, and product catalogs
+
 **Planned Integrations**:
 - DocuSign API for 3-party contract signing (buyer + supplier + broker)
 - Stripe for escrow payments and automated releases
