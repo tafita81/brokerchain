@@ -1057,6 +1057,202 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
     }
   });
 
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // DOCUSIGN OAUTH 2.0 ROUTES
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  const {
+    getAuthorizationUrl,
+    completeOAuthFlow,
+    isConnected,
+    disconnect,
+  } = await import('./services/docusign-oauth.js');
+
+  // GET /api/docusign/oauth/connect
+  // Returns authorization URL to redirect user to DocuSign
+  app.get("/api/docusign/oauth/connect", async (_req, res) => {
+    try {
+      const authUrl = getAuthorizationUrl();
+      res.json({ authorizationUrl: authUrl });
+    } catch (error: any) {
+      console.error("❌ Error generating DocuSign auth URL:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // GET /api/docusign/oauth/callback
+  // DocuSign redirects here with authorization code
+  app.get("/api/docusign/oauth/callback", async (req, res) => {
+    try {
+      const { code } = req.query;
+
+      if (!code || typeof code !== 'string') {
+        return res.status(400).json({ error: 'Missing authorization code' });
+      }
+
+      // Complete OAuth flow (exchange code for token, store in DB)
+      const result = await completeOAuthFlow(code);
+
+      // Redirect to success page with account info
+      res.send(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>DocuSign Connected</title>
+            <style>
+              body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                margin: 0;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              }
+              .success-card {
+                background: white;
+                padding: 3rem;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                text-align: center;
+                max-width: 500px;
+              }
+              h1 {
+                color: #2d3748;
+                margin-bottom: 1rem;
+              }
+              .checkmark {
+                font-size: 4rem;
+                color: #48bb78;
+                margin-bottom: 1rem;
+              }
+              .info {
+                background: #f7fafc;
+                padding: 1rem;
+                border-radius: 8px;
+                margin: 1.5rem 0;
+              }
+              .info-label {
+                font-size: 0.875rem;
+                color: #718096;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+              }
+              .info-value {
+                font-size: 1.125rem;
+                color: #2d3748;
+                font-weight: 600;
+                margin-top: 0.25rem;
+              }
+              button {
+                background: #667eea;
+                color: white;
+                border: none;
+                padding: 0.75rem 2rem;
+                border-radius: 6px;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: background 0.2s;
+              }
+              button:hover {
+                background: #5a67d8;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="success-card">
+              <div class="checkmark">✓</div>
+              <h1>DocuSign Connected!</h1>
+              <p style="color: #718096;">Your DocuSign account has been successfully connected to BrokerChain.</p>
+              
+              <div class="info">
+                <div class="info-label">Account ID</div>
+                <div class="info-value">${result.accountId}</div>
+              </div>
+              
+              <div class="info">
+                <div class="info-label">Account Name</div>
+                <div class="info-value">${result.accountName}</div>
+              </div>
+              
+              <p style="color: #718096; font-size: 0.875rem; margin-top: 1.5rem;">
+                You can now send contracts for digital signatures!
+              </p>
+              
+              <button onclick="window.close()">Close Window</button>
+            </div>
+          </body>
+        </html>
+      `);
+    } catch (error: any) {
+      console.error("❌ OAuth callback error:", error);
+      res.status(500).send(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Connection Failed</title>
+            <style>
+              body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                margin: 0;
+                background: #f7fafc;
+              }
+              .error-card {
+                background: white;
+                padding: 3rem;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                text-align: center;
+                max-width: 500px;
+              }
+              .error-icon {
+                font-size: 4rem;
+                color: #f56565;
+                margin-bottom: 1rem;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="error-card">
+              <div class="error-icon">✕</div>
+              <h1>Connection Failed</h1>
+              <p style="color: #718096;">${error.message}</p>
+              <button onclick="window.close()" style="margin-top: 1.5rem; background: #cbd5e0; color: #2d3748; border: none; padding: 0.75rem 2rem; border-radius: 6px; cursor: pointer;">Close</button>
+            </div>
+          </body>
+        </html>
+      `);
+    }
+  });
+
+  // GET /api/docusign/oauth/status
+  // Check if DocuSign is connected
+  app.get("/api/docusign/oauth/status", async (_req, res) => {
+    try {
+      const connected = await isConnected();
+      res.json({ connected });
+    } catch (error: any) {
+      console.error("❌ Error checking DocuSign status:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // POST /api/docusign/oauth/disconnect
+  // Disconnect DocuSign account
+  app.post("/api/docusign/oauth/disconnect", async (_req, res) => {
+    try {
+      await disconnect();
+      res.json({ success: true, message: 'DocuSign disconnected successfully' });
+    } catch (error: any) {
+      console.error("❌ Error disconnecting DocuSign:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
