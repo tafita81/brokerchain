@@ -9,6 +9,7 @@ import { z } from "zod";
 import { populateDatabaseWithRealData } from "./scrapers/populate-database";
 import { conversationStorage } from "./storage-conversations";
 import { sendMessageToBuyerOrSupplier, startNewConversation } from "./ai/conversation-agent";
+import { autoProcessSAMGovOpportunities } from "./services/sam-gov-scraper";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Suppliers
@@ -860,13 +861,13 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
     try {
       // 🔒 SECURITY: Require admin token for database population
       const adminToken = req.headers['x-admin-token'] || req.query.token;
-      const expectedToken = process.env.ADMIN_TOKEN || 'brokerchain_admin_2025';
+      const expectedToken = process.env.ADMIN_TOKEN;
       
-      if (adminToken !== expectedToken) {
+      if (!expectedToken || adminToken !== expectedToken) {
         console.warn('⚠️  Unauthorized database population attempt');
         return res.status(401).json({ 
           success: false,
-          error: 'Unauthorized - admin token required' 
+          error: 'Unauthorized - admin token required (configure ADMIN_TOKEN environment variable)' 
         });
       }
       
@@ -882,6 +883,72 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
       });
     } catch (error: any) {
       console.error('❌ Database population failed:', error);
+      res.status(500).json({ 
+        success: false,
+        error: error.message,
+        details: error.stack 
+      });
+    }
+  });
+
+  // ==================================================
+  // ADMIN ROUTES - SAM.gov RFQ Scraping (STEP ZERO)
+  // ==================================================
+  app.post("/api/admin/scrape-sam-gov", async (req, res) => {
+    try {
+      // 🔒 SECURITY: Require admin token for SAM.gov scraping
+      const adminToken = req.headers['x-admin-token'] || req.query.token;
+      const expectedToken = process.env.ADMIN_TOKEN;
+      
+      if (!expectedToken || adminToken !== expectedToken) {
+        console.warn('⚠️  Unauthorized SAM.gov scraping attempt');
+        return res.status(401).json({ 
+          success: false,
+          error: 'Unauthorized - admin token required (configure ADMIN_TOKEN environment variable)' 
+        });
+      }
+      
+      const { limit = 10 } = req.body;
+      
+      console.log(`🔍 Scraping SAM.gov for ${limit} federal procurement opportunities...`);
+      
+      const result = await autoProcessSAMGovOpportunities(limit);
+      
+      // Auto-insert buyers and RFQs into database
+      const insertedBuyers = [];
+      const insertedRFQs = [];
+      
+      for (let i = 0; i < result.buyers.length; i++) {
+        const buyerInfo = result.buyers[i];
+        const rfqInfo = result.rfqs[i];
+        
+        // Create buyer
+        const buyer = await storage.createBuyer(buyerInfo);
+        insertedBuyers.push(buyer);
+        
+        // Create RFQ with correct buyerId
+        const rfq = await storage.createRFQ({ ...rfqInfo, buyerId: buyer.id });
+        insertedRFQs.push(rfq);
+        
+        console.log(`✅ Processed: ${buyer.name} - RFQ: ${rfq.subject}`);
+      }
+      
+      console.log(`✅ SAM.gov scraping completed: ${insertedBuyers.length} buyers, ${insertedRFQs.length} RFQs`);
+      res.json({
+        success: true,
+        message: `Scraped and processed ${result.opportunities.length} SAM.gov opportunities`,
+        stats: {
+          opportunities: result.opportunities.length,
+          buyers: insertedBuyers.length,
+          rfqs: insertedRFQs.length,
+        },
+        data: {
+          buyers: insertedBuyers,
+          rfqs: insertedRFQs,
+        }
+      });
+    } catch (error: any) {
+      console.error('❌ SAM.gov scraping failed:', error);
       res.status(500).json({ 
         success: false,
         error: error.message,

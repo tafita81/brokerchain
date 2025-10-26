@@ -2,6 +2,8 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { emailService } from "./services/email-service";
+import { scheduleSAMGovScraping } from "./services/sam-gov-scraper";
+import { storage } from "./storage";
 
 const app = express();
 
@@ -90,5 +92,9 @@ app.use((req, res, next) => {
       // For now, just log the email content
       console.log(`   Preview: ${email.text.substring(0, 200)}...\n`);
     });
+    
+    // 🔍 STEP ZERO: Schedule automatic SAM.gov scraping every 6 hours
+    // This auto-discovers federal procurement opportunities and initiates RFQs
+    scheduleSAMGovScraping(6, storage);
   });
 })();
