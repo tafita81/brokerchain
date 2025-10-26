@@ -60,22 +60,27 @@ async function authenticateDocuSign(): Promise<string> {
     const jwtLifeSec = 3600; // 1 hour
     const scopes = ['signature', 'impersonation'];
     
-    // Ensure private key is in proper format (with newlines)
+    // Get private key
     let privateKey = process.env.DOCUSIGN_PRIVATE_KEY;
     
-    // If the key doesn't have proper line breaks, format it
+    // Ensure proper newlines for both RSA and PKCS#8 formats
     if (!privateKey.includes('\n')) {
+      // Support both formats: RSA PRIVATE KEY (PKCS#1) and PRIVATE KEY (PKCS#8)
       privateKey = privateKey
         .replace('-----BEGIN RSA PRIVATE KEY-----', '-----BEGIN RSA PRIVATE KEY-----\n')
         .replace('-----END RSA PRIVATE KEY-----', '\n-----END RSA PRIVATE KEY-----')
+        .replace('-----BEGIN PRIVATE KEY-----', '-----BEGIN PRIVATE KEY-----\n')
+        .replace('-----END PRIVATE KEY-----', '\n-----END PRIVATE KEY-----')
         .replace(/(.{64})/g, '$1\n');
     }
+    
+    console.log(`🔑 Using private key format: ${privateKey.includes('RSA PRIVATE') ? 'PKCS#1 (RSA)' : 'PKCS#8'}`);
     
     const results = await client.requestJWTUserToken(
       process.env.DOCUSIGN_INTEGRATION_KEY,
       process.env.DOCUSIGN_USER_ID,
       scopes,
-      Buffer.from(privateKey, 'utf-8'),
+      privateKey, // Pass as string, not Buffer
       jwtLifeSec
     );
     
