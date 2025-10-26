@@ -15,7 +15,7 @@ export function CountryBanner() {
         {displayCountries.map((country, index) => (
           <div 
             key={`${country}-${index}`}
-            className="inline-flex items-center gap-2 mx-6"
+            className="inline-flex items-center gap-2 mx-8"
           >
             <img
               src={getFlagUrl(country)}
