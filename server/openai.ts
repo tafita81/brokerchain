@@ -1,10 +1,12 @@
 import OpenAI from "openai";
 
-// Using Replit's AI Integrations service - provides OpenAI-compatible API without requiring your own API key
-// Charges are billed to your Replit credits
+// Using your OpenAI API key with ChatGPT 4o mini
+if (!process.env.OPENAI_API_KEY) {
+  throw new Error("OPENAI_API_KEY is required - please configure it in Replit Secrets");
+}
+
 export const openai = new OpenAI({
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 export interface RFQGenerationParams {

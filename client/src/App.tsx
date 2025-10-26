@@ -9,6 +9,7 @@ import PFAS from "@/pages/PFAS";
 import BuyAmerica from "@/pages/BuyAmerica";
 import EUDR from "@/pages/EUDR";
 import Suppliers from "@/pages/Suppliers";
+import Content from "@/pages/Content";
 import Metrics from "@/pages/Metrics";
 import NotFound from "@/pages/not-found";
 
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/buy-america" component={BuyAmerica} />
       <Route path="/eudr" component={EUDR} />
       <Route path="/suppliers" component={Suppliers} />
+      <Route path="/content" component={Content} />
       <Route path="/metrics" component={Metrics} />
       <Route component={NotFound} />
     </Switch>
