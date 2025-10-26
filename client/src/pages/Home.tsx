@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { Supplier } from "@shared/schema";
 import { formatCount } from "@/hooks/use-stats";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Link } from "wouter";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -50,14 +51,15 @@ export default function Home() {
 
             <div className="grid md:grid-cols-3 gap-8 mb-12">
               {/* PFAS - Sustainable Packaging */}
-              <div className="bg-card border-2 border-blue-500/20 rounded-2xl p-8 hover-elevate transition-all">
-                <div className="w-16 h-16 rounded-xl bg-blue-500/10 flex items-center justify-center mb-6">
-                  <Leaf className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                </div>
-                <h3 className="text-2xl font-bold mb-3">{t('pfasFreePackaging')}</h3>
-                <p className="text-muted-foreground mb-6">
-                  {t('pfasPackagingDesc')}
-                </p>
+              <Link href="/pfas" data-testid="link-pfas-card">
+                <div className="bg-card border-2 border-blue-500/20 rounded-2xl p-8 hover-elevate active-elevate-2 transition-all cursor-pointer">
+                  <div className="w-16 h-16 rounded-xl bg-blue-500/10 flex items-center justify-center mb-6">
+                    <Leaf className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-3">{t('pfasFreePackaging')}</h3>
+                  <p className="text-muted-foreground mb-6">
+                    {t('pfasPackagingDesc')}
+                  </p>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
@@ -82,16 +84,18 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+              </Link>
 
               {/* Buy America - Steel & Components */}
-              <div className="bg-card border-2 border-orange-500/20 rounded-2xl p-8 hover-elevate transition-all">
-                <div className="w-16 h-16 rounded-xl bg-orange-500/10 flex items-center justify-center mb-6">
-                  <Shield className="w-8 h-8 text-orange-600 dark:text-orange-400" />
-                </div>
-                <h3 className="text-2xl font-bold mb-3">{t('buyAmericaSteel')}</h3>
-                <p className="text-muted-foreground mb-6">
-                  {t('buyAmericaSteelDesc')}
-                </p>
+              <Link href="/buy-america" data-testid="link-buy-america-card">
+                <div className="bg-card border-2 border-orange-500/20 rounded-2xl p-8 hover-elevate active-elevate-2 transition-all cursor-pointer">
+                  <div className="w-16 h-16 rounded-xl bg-orange-500/10 flex items-center justify-center mb-6">
+                    <Shield className="w-8 h-8 text-orange-600 dark:text-orange-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-3">{t('buyAmericaSteel')}</h3>
+                  <p className="text-muted-foreground mb-6">
+                    {t('buyAmericaSteelDesc')}
+                  </p>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0" />
@@ -116,16 +120,18 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+              </Link>
 
               {/* EUDR - Agricultural Commodities */}
-              <div className="bg-card border-2 border-green-500/20 rounded-2xl p-8 hover-elevate transition-all">
-                <div className="w-16 h-16 rounded-xl bg-green-500/10 flex items-center justify-center mb-6">
-                  <Leaf className="w-8 h-8 text-green-600 dark:text-green-400" />
-                </div>
-                <h3 className="text-2xl font-bold mb-3">{t('eudrCommodities')}</h3>
-                <p className="text-muted-foreground mb-6">
-                  {t('eudrCommoditiesDesc')}
-                </p>
+              <Link href="/eudr" data-testid="link-eudr-card">
+                <div className="bg-card border-2 border-green-500/20 rounded-2xl p-8 hover-elevate active-elevate-2 transition-all cursor-pointer">
+                  <div className="w-16 h-16 rounded-xl bg-green-500/10 flex items-center justify-center mb-6">
+                    <Leaf className="w-8 h-8 text-green-600 dark:text-green-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-3">{t('eudrCommodities')}</h3>
+                  <p className="text-muted-foreground mb-6">
+                    {t('eudrCommoditiesDesc')}
+                  </p>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
@@ -150,6 +156,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+              </Link>
             </div>
 
             {/* GS1 + DPP + QR Code Tracking */}
