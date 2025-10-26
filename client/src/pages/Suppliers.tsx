@@ -13,8 +13,10 @@ import { Search, Filter, Loader2 } from "lucide-react";
 import type { Supplier } from "@shared/schema";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Suppliers() {
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFramework, setSelectedFramework] = useState<string>("all");
 
@@ -44,16 +46,16 @@ export default function Suppliers() {
         <div className="max-w-7xl mx-auto px-6 space-y-12">
           {/* Header */}
           <div className="space-y-4">
-            <h1 className="text-4xl font-semibold tracking-tight">Supplier Network</h1>
+            <h1 className="text-4xl font-semibold tracking-tight">{t('supplierNetwork')}</h1>
             <p className="text-lg text-muted-foreground">
-              Pre-vetted, certified suppliers across all three regulatory frameworks
+              {t('supplierNetworkDesc')}
             </p>
 
             {/* Stats */}
             <div className="flex flex-wrap gap-4">
               <Badge variant="outline" className="gap-2 px-4 py-2">
                 <span className="font-mono text-lg">{stats.total}</span>
-                <span className="text-muted-foreground">Total Suppliers</span>
+                <span className="text-muted-foreground">{t('totalSuppliers')}</span>
               </Badge>
               <Badge variant="outline" className="gap-2 px-4 py-2 bg-primary/5 border-primary/20">
                 <span className="font-mono text-lg">{stats.pfas}</span>
@@ -75,7 +77,7 @@ export default function Suppliers() {
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search suppliers by name or description..."
+                placeholder={t('searchSuppliers')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -88,10 +90,10 @@ export default function Suppliers() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all" data-testid="option-framework-all">All Frameworks</SelectItem>
-                <SelectItem value="pfas" data-testid="option-framework-pfas">PFAS/EPR Only</SelectItem>
-                <SelectItem value="buyamerica" data-testid="option-framework-buyamerica">Buy America Only</SelectItem>
-                <SelectItem value="eudr" data-testid="option-framework-eudr">EUDR Only</SelectItem>
+                <SelectItem value="all" data-testid="option-framework-all">{t('allFrameworks')}</SelectItem>
+                <SelectItem value="pfas" data-testid="option-framework-pfas">{t('pfasEprOnly')}</SelectItem>
+                <SelectItem value="buyamerica" data-testid="option-framework-buyamerica">{t('buyAmericaOnly')}</SelectItem>
+                <SelectItem value="eudr" data-testid="option-framework-eudr">{t('eudrOnly')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -103,7 +105,7 @@ export default function Suppliers() {
             </div>
           ) : isError ? (
             <div className="text-center py-16">
-              <p className="text-destructive font-medium">Failed to load suppliers</p>
+              <p className="text-destructive font-medium">{t('failedToLoad')}</p>
               <p className="text-sm text-muted-foreground mt-2">
                 {error instanceof Error ? error.message : "An unexpected error occurred"}
               </p>
@@ -118,7 +120,7 @@ export default function Suppliers() {
 
               {filteredSuppliers.length === 0 && (
                 <div className="text-center py-16">
-                  <p className="text-muted-foreground">No suppliers found matching your criteria.</p>
+                  <p className="text-muted-foreground">{t('noSuppliersFound')}</p>
                 </div>
               )}
             </>

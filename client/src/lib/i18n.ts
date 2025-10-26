@@ -224,6 +224,19 @@ export const translations = {
     contractsCount: "{count} Contracts",
     pfasFree: "100% PFAS-Free",
     
+    // Suppliers Page
+    supplierNetwork: "Supplier Network",
+    supplierNetworkDesc: "Pre-vetted, certified suppliers across all three regulatory frameworks",
+    totalSuppliers: "Total Suppliers",
+    searchSuppliers: "Search suppliers by name or description...",
+    allFrameworks: "All Frameworks",
+    pfasEprOnly: "PFAS/EPR Only",
+    buyAmericaOnly: "Buy America Only",
+    eudrOnly: "EUDR Only",
+    loadingSuppliers: "Loading suppliers...",
+    failedToLoad: "Failed to load suppliers",
+    noSuppliersFound: "No suppliers found matching your criteria.",
+    
     // PFAS Page
     pfasPageTitle: "PFAS & EPR Compliance",
     pfasPageSubtitle: "PFAS-free packaging solutions for US food service",
@@ -309,9 +322,7 @@ export const translations = {
     generateRequestForQuote: "Generate Request for Quote",
     rfqDescription: "Our AI will analyze your requirements and automatically send RFQs to the top 6 matching suppliers (3 new + 3 surplus)",
     verifiedSuppliersInNetwork: "Verified Suppliers in Network",
-    loadingSuppliers: "Loading suppliers...",
     errorLoadingSuppliers: "Error loading suppliers. Please try again.",
-    noSuppliersFound: "No suppliers found for this framework yet.",
   },
   
   pt: {
@@ -497,6 +508,19 @@ export const translations = {
     contractsCount: "{count} Contratos",
     pfasFree: "100% Livre de PFAS",
     
+    // Suppliers Page
+    supplierNetwork: "Rede de Fornecedores",
+    supplierNetworkDesc: "Fornecedores pré-verificados e certificados em todos os três frameworks regulatórios",
+    totalSuppliers: "Total de Fornecedores",
+    searchSuppliers: "Pesquisar fornecedores por nome ou descrição...",
+    allFrameworks: "Todos os Frameworks",
+    pfasEprOnly: "Apenas PFAS/EPR",
+    buyAmericaOnly: "Apenas Buy America",
+    eudrOnly: "Apenas EUDR",
+    loadingSuppliers: "Carregando fornecedores...",
+    failedToLoad: "Falha ao carregar fornecedores",
+    noSuppliersFound: "Nenhum fornecedor encontrado com os critérios selecionados.",
+    
     // PFAS Page
     pfasPageTitle: "Conformidade PFAS & EPR",
     pfasPageSubtitle: "Soluções de embalagens sem PFAS para serviço de alimentação dos EUA",
@@ -582,9 +606,7 @@ export const translations = {
     generateRequestForQuote: "Gerar Solicitação de Cotação",
     rfqDescription: "Nossa IA analisará seus requisitos e enviará automaticamente RFQs para os 6 melhores fornecedores correspondentes (3 novos + 3 excedentes)",
     verifiedSuppliersInNetwork: "Fornecedores Verificados na Rede",
-    loadingSuppliers: "Carregando fornecedores...",
     errorLoadingSuppliers: "Erro ao carregar fornecedores. Por favor, tente novamente.",
-    noSuppliersFound: "Nenhum fornecedor encontrado para este framework ainda.",
   },
   
   es: {
@@ -757,6 +779,19 @@ export const translations = {
     importersCount: "{count} Importadores",
     contractsCount: "{count} Contratos",
     pfasFree: "100% Libre de PFAS",
+    
+    // Suppliers Page
+    supplierNetwork: "Red de Proveedores",
+    supplierNetworkDesc: "Proveedores pre-verificados y certificados en los tres marcos regulatorios",
+    totalSuppliers: "Total de Proveedores",
+    searchSuppliers: "Buscar proveedores por nombre o descripción...",
+    allFrameworks: "Todos los Marcos",
+    pfasEprOnly: "Solo PFAS/EPR",
+    buyAmericaOnly: "Solo Buy America",
+    eudrOnly: "Solo EUDR",
+    loadingSuppliers: "Cargando proveedores...",
+    failedToLoad: "Error al cargar proveedores",
+    noSuppliersFound: "No se encontraron proveedores con los criterios seleccionados.",
     
     // PFAS Page
     pfasPageTitle: "Cumplimiento PFAS & EPR",
@@ -1750,6 +1785,19 @@ export const translations = {
     importersCount: "{count}个进口商",
     contractsCount: "{count}个合同",
     pfasFree: "100%无PFAS",
+    
+    // Suppliers Page
+    supplierNetwork: "供应商网络",
+    supplierNetworkDesc: "经过预先审核和认证的供应商，涵盖所有三个监管框架",
+    totalSuppliers: "总供应商数",
+    searchSuppliers: "按名称或描述搜索供应商...",
+    allFrameworks: "所有框架",
+    pfasEprOnly: "仅PFAS/EPR",
+    buyAmericaOnly: "仅Buy America",
+    eudrOnly: "仅EUDR",
+    loadingSuppliers: "正在加载供应商...",
+    failedToLoad: "加载供应商失败",
+    noSuppliersFound: "未找到符合所选条件的供应商。",
     
     // PFAS Page
     pfasPageTitle: "PFAS与EPR合规性",
