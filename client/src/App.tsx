@@ -22,6 +22,7 @@ function Router() {
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/pfas" component={PFAS} />
       <Route path="/buy-america" component={BuyAmerica} />
+      <Route path="/buyamerica" component={BuyAmerica} />
       <Route path="/eudr" component={EUDR} />
       <Route path="/suppliers" component={Suppliers} />
       <Route path="/content" component={Content} />

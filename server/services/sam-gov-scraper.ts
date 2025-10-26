@@ -223,12 +223,18 @@ export async function scrapeSAMGovOpportunities(
       
       // Build query parameters
       // IMPORTANTE: Buscar apenas oportunidades DO DIA (não últimos 30 dias)
-      const today = new Date().toISOString().split('T')[0];
+      // SAM.gov API expects date format: MM/DD/YYYY
+      const today = new Date();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const year = today.getFullYear();
+      const formattedDate = `${month}/${day}/${year}`;
+      
       const params = new URLSearchParams({
         limit: limit.toString(),
         offset: offset.toString(),
-        postedFrom: today, // Apenas hoje
-        postedTo: today,   // Apenas hoje
+        postedFrom: formattedDate, // Apenas hoje (MM/DD/YYYY format)
+        postedTo: formattedDate,   // Apenas hoje (MM/DD/YYYY format)
       });
       
       if (naicsCode) {
