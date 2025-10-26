@@ -1,10 +1,11 @@
 import { Navigation } from "@/components/Navigation";
 import { RFQGenerator } from "@/components/RFQGenerator";
 import { SupplierCard } from "@/components/SupplierCard";
+import { RFQListCard } from "@/components/RFQListCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Flag, CheckCircle2, Loader2, Package } from "lucide-react";
-import type { Supplier } from "@shared/schema";
+import { Flag, CheckCircle2, Loader2, Package, FileSearch } from "lucide-react";
+import type { Supplier, RFQWithDetails } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
 import { useLanguage } from "@/contexts/LanguageContext";
 import steelProduct1 from "@assets/stock_images/steel_manufacturing__9228c3fd.jpg";
@@ -21,6 +22,16 @@ export default function BuyAmerica() {
       return response.json();
     },
   });
+
+  const { data: rfqs = [], isLoading: rfqsLoading } = useQuery<RFQWithDetails[]>({
+    queryKey: ["/api/rfqs", { framework: "buyamerica" }],
+    queryFn: async () => {
+      const response = await fetch("/api/rfqs?framework=buyamerica");
+      if (!response.ok) throw new Error("Failed to fetch RFQs");
+      return response.json();
+    },
+  });
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navigation />
@@ -62,6 +73,39 @@ export default function BuyAmerica() {
                 </Badge>
               </div>
             </div>
+          </div>
+
+          {/* Captured RFQs from SAM.gov */}
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-lg bg-chart-2/10 flex items-center justify-center">
+                <FileSearch className="w-6 h-6 text-chart-2" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight">SAM.gov RFQs Captured</h2>
+                <p className="text-sm text-muted-foreground">
+                  Real federal procurement opportunities automatically discovered
+                </p>
+              </div>
+            </div>
+
+            {rfqsLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : rfqs.length === 0 ? (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <p className="text-muted-foreground">No Buy America RFQs captured yet. Check back soon!</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-6">
+                {rfqs.map((rfq) => (
+                  <RFQListCard key={rfq.id} rfq={rfq} />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Overview Card */}
