@@ -58,87 +58,94 @@ export function HeroCarousel() {
         <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
           {/* Left: Content */}
           <div className="space-y-8 text-white">
-            {/* 🎯 TAGLINE REVOLUCIONÁRIO */}
-            <div className="inline-flex items-center gap-2 bg-primary/20 backdrop-blur-sm border border-primary/30 px-4 py-2 rounded-full">
-              <Recycle className="w-5 h-5 text-primary animate-pulse" />
-              <span className="text-sm font-semibold text-primary">World's First Circular Compliance Broker</span>
-            </div>
-
             <div className="space-y-6">
-              <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-tight">
+              {/* 🎯 TAGLINE REVOLUCIONÁRIO - DOURADO GIGANTE */}
+              <div className="flex items-center gap-3 md:gap-4 mb-6">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full bg-gradient-to-br from-yellow-200/30 via-yellow-300/20 to-amber-200/30 backdrop-blur-sm border-2 border-yellow-300/40 flex items-center justify-center flex-shrink-0 animate-pulse">
+                  <Recycle className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 text-yellow-200" />
+                </div>
+                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight leading-none text-yellow-200 drop-shadow-[0_2px_10px_rgba(252,211,77,0.5)] whitespace-nowrap">
+                  World's First Circular Compliance Broker
+                </h2>
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-tight">
                 <span className="text-white">Virgin + Secondary Materials,</span>
                 <br />
-                <span className="bg-gradient-to-r from-primary via-chart-2 to-chart-3 bg-clip-text text-transparent">
-                  All Certified for PFAS, Buy America & EUDR
-                </span>
+                <span className="text-white">All Certified for </span>
+                <span className="text-blue-400">PFAS</span>
+                <span className="text-white">, </span>
+                <span className="text-green-400">Buy America</span>
+                <span className="text-white"> & </span>
+                <span className="text-orange-400">EUDR</span>
               </h1>
               
-              <p className="text-xl text-white/90 leading-relaxed max-w-2xl">
-                The only platform that combines <span className="font-semibold text-primary">Circular Economy</span> with <span className="font-semibold text-chart-2">Multi-Framework Compliance</span>. Buy verified primary or secondary materials, all certified across three regulatory domains.
+              <p className="text-lg sm:text-xl md:text-2xl text-white/90 leading-relaxed max-w-3xl">
+                The only platform that combines <span className="font-semibold text-blue-400">Circular Economy</span> with <span className="font-semibold text-green-400">Multi-Framework Compliance</span>. Buy verified primary or secondary materials, all certified across three regulatory domains.
               </p>
             </div>
 
             {/* 🔥 VALUE PROPS - ATENÇÃO EXTREMA */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-6">
-              <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4 hover-elevate transition-all">
-                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
-                  <Recycle className="w-5 h-5 text-primary" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-8">
+              <div className="flex flex-col items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 hover-elevate transition-all text-center">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500/30 to-blue-600/20 flex items-center justify-center flex-shrink-0">
+                  <Recycle className="w-7 h-7 text-blue-300" />
                 </div>
                 <div>
-                  <div className="font-semibold text-white mb-1">Circular Economy</div>
-                  <div className="text-sm text-white/70">Buy surplus certified materials at 30% discount</div>
+                  <div className="text-lg font-bold text-white mb-2">Circular Economy</div>
+                  <div className="text-sm text-white/80 leading-relaxed">Buy surplus certified materials at 30% discount</div>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4 hover-elevate transition-all">
-                <div className="w-10 h-10 rounded-lg bg-chart-2/20 flex items-center justify-center flex-shrink-0">
-                  <CheckCircle2 className="w-5 h-5 text-chart-2" />
+              <div className="flex flex-col items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 hover-elevate transition-all text-center">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500/30 to-green-600/20 flex items-center justify-center flex-shrink-0">
+                  <CheckCircle2 className="w-7 h-7 text-green-300" />
                 </div>
                 <div>
-                  <div className="font-semibold text-white mb-1">Triple Certification</div>
-                  <div className="text-sm text-white/70">PFAS + Buy America + EUDR verified</div>
+                  <div className="text-lg font-bold text-white mb-2">Triple Certification</div>
+                  <div className="text-sm text-white/80 leading-relaxed">PFAS + Buy America + EUDR verified</div>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4 hover-elevate transition-all">
-                <div className="w-10 h-10 rounded-lg bg-chart-3/20 flex items-center justify-center flex-shrink-0">
-                  <Zap className="w-5 h-5 text-chart-3" />
+              <div className="flex flex-col items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 hover-elevate transition-all text-center">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-500/30 to-orange-600/20 flex items-center justify-center flex-shrink-0">
+                  <Zap className="w-7 h-7 text-orange-300" />
                 </div>
                 <div>
-                  <div className="font-semibold text-white mb-1">AI-Powered Matching</div>
-                  <div className="text-sm text-white/70">Smart surplus-to-demand connections</div>
+                  <div className="text-lg font-bold text-white mb-2">AI-Powered Matching</div>
+                  <div className="text-sm text-white/80 leading-relaxed">Smart surplus-to-demand connections</div>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4 hover-elevate transition-all">
-                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
-                  <Leaf className="w-5 h-5 text-primary" />
+              <div className="flex flex-col items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 hover-elevate transition-all text-center">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-yellow-500/30 to-amber-600/20 flex items-center justify-center flex-shrink-0">
+                  <Leaf className="w-7 h-7 text-yellow-300" />
                 </div>
                 <div>
-                  <div className="font-semibold text-white mb-1">Carbon Credits</div>
-                  <div className="text-sm text-white/70">Earn credits on every circular transaction</div>
+                  <div className="text-lg font-bold text-white mb-2">Carbon Credits</div>
+                  <div className="text-sm text-white/80 leading-relaxed">Earn credits on every circular transaction</div>
                 </div>
               </div>
             </div>
 
             {/* 🚀 CTAs - ENGENHARIA DE ATENÇÃO */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link href="/dashboard" data-testid="link-access-dashboard">
+            <div className="flex flex-col sm:flex-row gap-4 pt-6">
+              <Link href="/dashboard" data-testid="link-access-dashboard" className="w-full sm:w-auto">
                 <Button 
                   size="lg" 
-                  className="gap-2 font-semibold text-lg h-14 px-8 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/50 animate-pulse" 
+                  className="w-full sm:w-auto gap-3 font-bold text-lg md:text-xl h-16 md:h-18 px-10 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 hover:from-blue-500 hover:via-blue-400 hover:to-blue-500 shadow-2xl shadow-blue-500/50 animate-pulse border-2 border-blue-400/30" 
                   data-testid="button-access-dashboard"
                 >
-                  <Recycle className="w-5 h-5" />
+                  <Recycle className="w-6 h-6 md:w-7 md:h-7" />
                   Start Circular Sourcing
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-6 h-6 md:w-7 md:h-7" />
                 </Button>
               </Link>
-              <Link href="/suppliers" data-testid="link-view-suppliers">
+              <Link href="/suppliers" data-testid="link-view-suppliers" className="w-full sm:w-auto">
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="gap-2 font-semibold text-lg h-14 px-8 bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20" 
+                  className="w-full sm:w-auto gap-3 font-bold text-lg md:text-xl h-16 md:h-18 px-10 bg-white/10 backdrop-blur-md border-2 border-white/40 text-white hover:bg-white/20 hover:border-white/60" 
                   data-testid="button-view-suppliers"
                 >
                   Browse 600+ Suppliers
@@ -147,68 +154,68 @@ export function HeroCarousel() {
             </div>
 
             {/* 🏆 TRUST INDICATORS - HIPNOSE DE AUTORIDADE */}
-            <div className="flex flex-wrap gap-6 pt-6 border-t border-white/20">
-              <div className="flex items-center gap-2 text-white/90">
-                <Shield className="w-5 h-5 text-primary" />
-                <span className="font-medium">NMSDC Certified MBE</span>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 pt-8 border-t border-white/20">
+              <div className="flex items-center gap-2 text-white bg-white/5 backdrop-blur-sm rounded-lg p-3 border border-white/10">
+                <Shield className="w-5 h-5 md:w-6 md:h-6 text-blue-300 flex-shrink-0" />
+                <span className="font-semibold text-sm md:text-base">NMSDC Certified MBE</span>
               </div>
-              <div className="flex items-center gap-2 text-white/90">
-                <Factory className="w-5 h-5 text-chart-2" />
-                <span className="font-medium">SAM.gov Registered</span>
+              <div className="flex items-center gap-2 text-white bg-white/5 backdrop-blur-sm rounded-lg p-3 border border-white/10">
+                <Factory className="w-5 h-5 md:w-6 md:h-6 text-green-300 flex-shrink-0" />
+                <span className="font-semibold text-sm md:text-base">SAM.gov Registered</span>
               </div>
-              <div className="flex items-center gap-2 text-white/90">
-                <Leaf className="w-5 h-5 text-chart-3" />
-                <span className="font-medium">SPC Member</span>
+              <div className="flex items-center gap-2 text-white bg-white/5 backdrop-blur-sm rounded-lg p-3 border border-white/10">
+                <Leaf className="w-5 h-5 md:w-6 md:h-6 text-orange-300 flex-shrink-0" />
+                <span className="font-semibold text-sm md:text-base">SPC Member</span>
               </div>
-              <div className="flex items-center gap-2 text-white/90">
-                <Recycle className="w-5 h-5 text-primary" />
-                <span className="font-medium">Ellen MacArthur Network</span>
+              <div className="flex items-center gap-2 text-white bg-white/5 backdrop-blur-sm rounded-lg p-3 border border-white/10">
+                <Recycle className="w-5 h-5 md:w-6 md:h-6 text-yellow-300 flex-shrink-0" />
+                <span className="font-semibold text-sm md:text-base">Ellen MacArthur</span>
               </div>
             </div>
           </div>
 
           {/* Right: Stats Card - URGÊNCIA E SOCIAL PROOF */}
-          <div className="hidden lg:block">
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-8 space-y-6">
-              <div className="text-center space-y-2">
-                <div className="text-4xl font-bold text-white">$12.4M+</div>
-                <div className="text-sm text-white/70">Circular Materials Traded</div>
+          <div className="lg:block">
+            <div className="bg-white/10 backdrop-blur-lg border-2 border-white/30 rounded-2xl p-6 md:p-8 space-y-6 shadow-2xl">
+              <div className="text-center space-y-3">
+                <div className="text-5xl md:text-6xl font-black text-yellow-200 drop-shadow-[0_2px_10px_rgba(252,211,77,0.5)]">$12.4M+</div>
+                <div className="text-base md:text-lg font-semibold text-white/90">Circular Materials Traded</div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">600+</div>
-                  <div className="text-xs text-white/70">Verified Suppliers</div>
+              <div className="grid grid-cols-3 gap-3 md:gap-4">
+                <div className="text-center bg-white/5 rounded-xl p-3 md:p-4 border border-white/10">
+                  <div className="text-3xl md:text-4xl font-bold text-blue-300">600+</div>
+                  <div className="text-xs md:text-sm text-white/80 mt-1">Verified Suppliers</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-chart-2">14</div>
-                  <div className="text-xs text-white/70">Countries</div>
+                <div className="text-center bg-white/5 rounded-xl p-3 md:p-4 border border-white/10">
+                  <div className="text-3xl md:text-4xl font-bold text-green-300">14</div>
+                  <div className="text-xs md:text-sm text-white/80 mt-1">Countries</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-chart-3">3</div>
-                  <div className="text-xs text-white/70">Frameworks</div>
+                <div className="text-center bg-white/5 rounded-xl p-3 md:p-4 border border-white/10">
+                  <div className="text-3xl md:text-4xl font-bold text-orange-300">3</div>
+                  <div className="text-xs md:text-sm text-white/80 mt-1">Frameworks</div>
                 </div>
               </div>
 
               <div className="border-t border-white/20 pt-4 space-y-3">
-                <div className="flex items-center gap-2 text-white/90 text-sm">
-                  <CheckCircle2 className="w-4 h-4 text-primary" />
-                  <span>30% avg discount on surplus materials</span>
+                <div className="flex items-center gap-3 text-white text-sm md:text-base">
+                  <CheckCircle2 className="w-5 h-5 text-blue-300 flex-shrink-0" />
+                  <span className="font-medium">30% avg discount on surplus materials</span>
                 </div>
-                <div className="flex items-center gap-2 text-white/90 text-sm">
-                  <CheckCircle2 className="w-4 h-4 text-primary" />
-                  <span>AI matches in under 2 minutes</span>
+                <div className="flex items-center gap-3 text-white text-sm md:text-base">
+                  <CheckCircle2 className="w-5 h-5 text-green-300 flex-shrink-0" />
+                  <span className="font-medium">AI matches in under 2 minutes</span>
                 </div>
-                <div className="flex items-center gap-2 text-white/90 text-sm">
-                  <CheckCircle2 className="w-4 h-4 text-primary" />
-                  <span>Carbon credits auto-generated</span>
+                <div className="flex items-center gap-3 text-white text-sm md:text-base">
+                  <CheckCircle2 className="w-5 h-5 text-orange-300 flex-shrink-0" />
+                  <span className="font-medium">Carbon credits auto-generated</span>
                 </div>
               </div>
 
               {/* 🔥 URGÊNCIA - MENSAGEM SUBLIMINAR */}
-              <div className="bg-primary/20 border border-primary/30 rounded-lg p-4 text-center">
-                <div className="text-sm font-semibold text-primary mb-1">⚡ Limited Time</div>
-                <div className="text-xs text-white/80">First 100 suppliers get free carbon credit tracking</div>
+              <div className="bg-gradient-to-r from-yellow-500/20 via-amber-500/20 to-yellow-500/20 border-2 border-yellow-400/40 rounded-xl p-4 text-center animate-pulse">
+                <div className="text-base md:text-lg font-bold text-yellow-200 mb-1">⚡ Limited Time Offer</div>
+                <div className="text-xs md:text-sm text-white/90 font-medium">First 100 suppliers get free carbon credit tracking</div>
               </div>
             </div>
           </div>
