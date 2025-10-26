@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Shield, Factory, Leaf, Recycle, CheckCircle2, Zap, Globe } from "lucide-react";
 import { Link } from "wouter";
 import { useStats, formatCount } from "@/hooks/use-stats";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Import stock images
 import sustainableImg1 from '@assets/stock_images/sustainable_packagin_e77be9fd.jpg';
@@ -24,6 +25,7 @@ const BACKGROUND_IMAGES = [
 export function HeroCarousel() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { data: stats } = useStats();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -68,7 +70,7 @@ export function HeroCarousel() {
                     <Recycle className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 text-yellow-200" />
                   </div>
                   <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight leading-none text-yellow-200 drop-shadow-[0_2px_10px_rgba(252,211,77,0.5)] whitespace-nowrap">
-                    World's First Circular Compliance Broker
+                    {t('worldsFirstBroker')}
                   </h2>
                 </div>
                 
@@ -124,9 +126,9 @@ export function HeroCarousel() {
               </div>
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-tight">
-                <span className="text-white">Virgin + Secondary Materials,</span>
+                <span className="text-white">{t('heroHeadline')}</span>
                 <br />
-                <span className="text-white">All Certified for </span>
+                <span className="text-white">{t('heroHeadlinePart2')} </span>
                 <span className="text-blue-400">PFAS</span>
                 <span className="text-white">, </span>
                 <span className="text-green-400">Buy America</span>
@@ -135,7 +137,7 @@ export function HeroCarousel() {
               </h1>
               
               <p className="text-lg sm:text-xl md:text-2xl text-white/90 leading-relaxed max-w-3xl">
-                The only platform that combines <span className="font-semibold text-blue-400">Circular Economy</span> with <span className="font-semibold text-green-400">Multi-Framework Compliance</span>. Buy verified primary or secondary materials, all certified across three regulatory domains.
+                {t('heroDescription')}
               </p>
             </div>
 
@@ -146,8 +148,8 @@ export function HeroCarousel() {
                   <Recycle className="w-7 h-7 text-blue-300" />
                 </div>
                 <div>
-                  <div className="text-lg font-bold text-white mb-2">Circular Economy</div>
-                  <div className="text-sm text-white/80 leading-relaxed">Buy surplus certified materials at 30% discount</div>
+                  <div className="text-lg font-bold text-white mb-2">{t('circularEconomy')}</div>
+                  <div className="text-sm text-white/80 leading-relaxed">{t('circularEconomyDesc')}</div>
                 </div>
               </div>
 
@@ -156,8 +158,8 @@ export function HeroCarousel() {
                   <CheckCircle2 className="w-7 h-7 text-green-300" />
                 </div>
                 <div>
-                  <div className="text-lg font-bold text-white mb-2">Triple Certification</div>
-                  <div className="text-sm text-white/80 leading-relaxed">PFAS + Buy America + EUDR verified</div>
+                  <div className="text-lg font-bold text-white mb-2">{t('tripleCertification')}</div>
+                  <div className="text-sm text-white/80 leading-relaxed">{t('tripleCertificationDesc')}</div>
                 </div>
               </div>
 
@@ -166,18 +168,18 @@ export function HeroCarousel() {
                   <Zap className="w-7 h-7 text-orange-300" />
                 </div>
                 <div>
-                  <div className="text-lg font-bold text-white mb-2">AI-Powered Matching</div>
-                  <div className="text-sm text-white/80 leading-relaxed">Smart surplus-to-demand connections</div>
+                  <div className="text-lg font-bold text-white mb-2">{t('aiPoweredMatching')}</div>
+                  <div className="text-sm text-white/80 leading-relaxed">{t('aiPoweredMatchingDesc')}</div>
                 </div>
               </div>
 
               <div className="flex flex-col items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 hover-elevate transition-all text-center">
                 <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-yellow-500/30 to-amber-600/20 flex items-center justify-center flex-shrink-0">
-                  <Leaf className="w-7 h-7 text-yellow-300" />
+                  <Shield className="w-7 h-7 text-yellow-300" />
                 </div>
                 <div>
-                  <div className="text-lg font-bold text-white mb-2">Carbon Credits</div>
-                  <div className="text-sm text-white/80 leading-relaxed">Earn credits on every circular transaction</div>
+                  <div className="text-lg font-bold text-white mb-2">{t('digitalPassports')}</div>
+                  <div className="text-sm text-white/80 leading-relaxed">{t('digitalPassportsDesc')}</div>
                 </div>
               </div>
             </div>

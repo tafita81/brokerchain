@@ -90,12 +90,26 @@ The codebase does not currently implement authentication/authorization mechanism
 **OpenAI Integration**: 
 - Used for AI-powered RFQ generation based on regulatory framework requirements (PFAS, Buy America, EUDR)
 - Generates SEO-optimized content for different countries and languages
-- The integration includes detailed context about regulatory requirements, certifications, and compliance criteria for each framework
+- AI-powered negotiation agents for automated counter-offers
+- Email parsing for supplier quote extraction
 - API key required via `OPENAI_API_KEY` environment variable
+
+**Email Automation (Hostinger SMTP/IMAP)**:
+- SMTP for sending RFQs to suppliers automatically (smtp.hostinger.com:465)
+- IMAP for receiving supplier quotes 24/7 (imap.hostinger.com:993)
+- Automated email tracking (sent, delivered, opened, clicked)
+- Intelligent quote parsing from supplier emails
+- Environment variables: `SMTP_HOST`, `SMTP_USER`, `SMTP_PASSWORD`
 
 **Database Service**: Neon PostgreSQL serverless database requiring `DATABASE_URL` environment variable
 
 **Google Fonts**: Inter and JetBrains Mono fonts loaded via Google Fonts CDN for consistent typography
+
+**Planned Integrations**:
+- DocuSign API for 3-party contract signing (buyer + supplier + broker)
+- Stripe for escrow payments and automated releases
+- Payoneer for commission payouts (5-15%)
+- Twilio for SMS/WhatsApp supplier notifications
 
 ### AI-Powered Features
 
