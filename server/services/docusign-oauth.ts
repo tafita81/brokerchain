@@ -19,9 +19,24 @@
  * - DOCUSIGN_REDIRECT_URI (Callback URL)
  */
 
-import { db } from '../db/index.js';
+import { db } from '../db.js';
 import { oauthTokens } from '@shared/schema.js';
 import { eq } from 'drizzle-orm';
+import { randomBytes } from 'crypto';
+
+// CSRF Protection: In-memory store for state nonces (expires after 10 minutes)
+const stateStore = new Map<string, { timestamp: number }>();
+const STATE_EXPIRATION_MS = 10 * 60 * 1000; // 10 minutes
+
+// Cleanup expired states every minute
+setInterval(() => {
+  const now = Date.now();
+  for (const [state, data] of stateStore.entries()) {
+    if (now - data.timestamp > STATE_EXPIRATION_MS) {
+      stateStore.delete(state);
+    }
+  }
+}, 60 * 1000);
 
 // Configuration
 const DOCUSIGN_ENV = process.env.DOCUSIGN_ENV || 'sandbox';
@@ -55,15 +70,23 @@ function getOAuthConfig(): OAuthConfig {
  * STEP 1: GENERATE AUTHORIZATION URL
  * 
  * Generates URL to redirect user to DocuSign login page
+ * Includes CSRF protection via state parameter
  */
-export function getAuthorizationUrl(): string {
+export function getAuthorizationUrl(): { authUrl: string; state: string } {
   const config = getOAuthConfig();
+  
+  // Generate cryptographically secure random state for CSRF protection
+  const state = randomBytes(32).toString('hex');
+  
+  // Store state with timestamp for validation (expires in 10 minutes)
+  stateStore.set(state, { timestamp: Date.now() });
   
   const params = new URLSearchParams({
     response_type: 'code',
     scope: 'signature impersonation',
     client_id: config.integrationKey,
     redirect_uri: config.redirectUri,
+    state: state, // CSRF protection
   });
 
   const authUrl = `${DOCUSIGN_AUTH_SERVER}/oauth/auth?${params.toString()}`;
@@ -71,8 +94,9 @@ export function getAuthorizationUrl(): string {
   console.log('📋 DocuSign OAuth Authorization URL generated');
   console.log(`   Environment: ${DOCUSIGN_ENV}`);
   console.log(`   Redirect URI: ${config.redirectUri}`);
+  console.log(`   State (CSRF token): ${state.substring(0, 16)}...`);
   
-  return authUrl;
+  return { authUrl, state };
 }
 
 /**
@@ -315,11 +339,39 @@ async function refreshAccessToken(refreshToken: string): Promise<{
 }
 
 /**
+ * VALIDATE STATE (CSRF Protection)
+ * 
+ * Verifies that the state parameter matches one we generated
+ */
+export function validateState(state: string): boolean {
+  const stateData = stateStore.get(state);
+  
+  if (!stateData) {
+    console.log('⚠️  Invalid state: not found in store');
+    return false;
+  }
+  
+  // Check if expired
+  const now = Date.now();
+  if (now - stateData.timestamp > STATE_EXPIRATION_MS) {
+    console.log('⚠️  Invalid state: expired');
+    stateStore.delete(state);
+    return false;
+  }
+  
+  // Valid state - remove it (one-time use)
+  stateStore.delete(state);
+  console.log('✅ State validated successfully');
+  return true;
+}
+
+/**
  * COMPLETE OAUTH FLOW (called from callback route)
  * 
  * Orchestrates the entire OAuth flow after receiving the code
+ * VALIDATES state parameter for CSRF protection
  */
-export async function completeOAuthFlow(code: string): Promise<{
+export async function completeOAuthFlow(code: string, state: string): Promise<{
   success: boolean;
   accountId: string;
   accountName: string;
@@ -327,6 +379,11 @@ export async function completeOAuthFlow(code: string): Promise<{
   console.log('\n╔═══════════════════════════════════════╗');
   console.log('║   DOCUSIGN OAUTH FLOW (Code Grant)   ║');
   console.log('╚═══════════════════════════════════════╝\n');
+  
+  // STEP 0: Validate state parameter (CSRF protection)
+  if (!validateState(state)) {
+    throw new Error('Invalid or expired state parameter - possible CSRF attack');
+  }
   
   // Step 1: Exchange code for tokens
   const tokenData = await exchangeCodeForToken(code);

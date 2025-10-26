@@ -1072,8 +1072,11 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
   // Returns authorization URL to redirect user to DocuSign
   app.get("/api/docusign/oauth/connect", async (_req, res) => {
     try {
-      const authUrl = getAuthorizationUrl();
-      res.json({ authorizationUrl: authUrl });
+      const { authUrl, state } = getAuthorizationUrl();
+      res.json({ 
+        authorizationUrl: authUrl,
+        state: state // Return state to frontend (optional - could be stored in session instead)
+      });
     } catch (error: any) {
       console.error("❌ Error generating DocuSign auth URL:", error);
       res.status(500).json({ error: error.message });
@@ -1084,14 +1087,18 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
   // DocuSign redirects here with authorization code
   app.get("/api/docusign/oauth/callback", async (req, res) => {
     try {
-      const { code } = req.query;
+      const { code, state } = req.query;
 
       if (!code || typeof code !== 'string') {
         return res.status(400).json({ error: 'Missing authorization code' });
       }
 
-      // Complete OAuth flow (exchange code for token, store in DB)
-      const result = await completeOAuthFlow(code);
+      if (!state || typeof state !== 'string') {
+        return res.status(400).json({ error: 'Missing state parameter' });
+      }
+
+      // Complete OAuth flow (validates state, exchanges code for token, stores in DB)
+      const result = await completeOAuthFlow(code, state);
 
       // Redirect to success page with account info
       res.send(`

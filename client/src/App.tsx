@@ -15,6 +15,7 @@ import Content from "@/pages/Content";
 import Metrics from "@/pages/Metrics";
 import Admin from "@/pages/Admin";
 import AdminRFQs from "@/pages/AdminRFQs";
+import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -32,6 +33,7 @@ function Router() {
       <Route path="/metrics" component={Metrics} />
       <Route path="/admin" component={Admin} />
       <Route path="/admin/rfqs" component={AdminRFQs} />
+      <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -113,8 +113,15 @@ Você precisa configurar as seguintes **secret keys** no Replit:
 - ✓ Sem bugs do SDK (RS256 algorithm error resolvido)
 - ✓ Sem necessidade de private key em arquivo
 - ✓ Tokens com refresh automático
-- ✓ Mais seguro (secret key + authorization flow)
+- ✓ Mais seguro (secret key + authorization flow + **CSRF protection**)
 - ✓ Padrão da indústria para produção
+
+### 🔐 Segurança CSRF:
+- ✓ Parâmetro `state` criptográfico de 256 bits
+- ✓ Validação one-time use (usado apenas uma vez)
+- ✓ Expiração automática em 10 minutos
+- ✓ Proteção contra ataques de redirecionamento maliciosos
+- ⚠️ Nota: Estado armazenado em memória (para produção com múltiplos servidores, considere Redis)
 
 ### ⚠️ Limitações:
 - Requer interação do usuário (1 vez apenas)
