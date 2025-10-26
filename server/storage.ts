@@ -35,6 +35,7 @@ export interface IStorage {
   getRFQ(id: string): Promise<RFQ | undefined>;
   getAllRFQs(): Promise<RFQWithDetails[]>;
   getRFQsByStatus(status: string): Promise<RFQWithDetails[]>;
+  getRFQsByFramework(framework: string): Promise<RFQWithDetails[]>;
   createRFQ(rfq: InsertRFQ): Promise<RFQ>;
   updateRFQStatus(id: string, status: string, response?: string): Promise<RFQ | undefined>;
 
@@ -97,7 +98,17 @@ export class MemStorage implements IStorage {
 
   async createSupplier(insertSupplier: InsertSupplier): Promise<Supplier> {
     const id = randomUUID();
-    const supplier: Supplier = { ...insertSupplier, id, createdAt: new Date() };
+    const supplier: Supplier = {
+      ...insertSupplier,
+      id,
+      createdAt: new Date(),
+      contactEmail: insertSupplier.contactEmail ?? null,
+      description: insertSupplier.description ?? null,
+      discountPercentage: insertSupplier.discountPercentage ?? null,
+      supplierType: insertSupplier.supplierType || 'new',
+      products: insertSupplier.products || {},
+      certifications: insertSupplier.certifications || {},
+    };
     this.suppliers.set(id, supplier);
     return supplier;
   }
@@ -113,7 +124,12 @@ export class MemStorage implements IStorage {
 
   async createBuyer(insertBuyer: InsertBuyer): Promise<Buyer> {
     const id = randomUUID();
-    const buyer: Buyer = { ...insertBuyer, id, createdAt: new Date() };
+    const buyer: Buyer = {
+      ...insertBuyer,
+      id,
+      createdAt: new Date(),
+      contactEmail: insertBuyer.contactEmail ?? null,
+    };
     this.buyers.set(id, buyer);
     return buyer;
   }
@@ -135,9 +151,24 @@ export class MemStorage implements IStorage {
     return (await this.getAllRFQs()).filter(rfq => rfq.status === status);
   }
 
+  async getRFQsByFramework(framework: string): Promise<RFQWithDetails[]> {
+    return (await this.getAllRFQs()).filter(rfq => rfq.framework === framework);
+  }
+
   async createRFQ(insertRFQ: InsertRFQ): Promise<RFQ> {
     const id = randomUUID();
-    const rfq: RFQ = { ...insertRFQ, id, createdAt: new Date(), sentAt: null, respondedAt: null };
+    const rfq: RFQ = {
+      ...insertRFQ,
+      id,
+      createdAt: new Date(),
+      sentAt: null,
+      respondedAt: null,
+      status: insertRFQ.status || 'draft',
+      supplierId: insertRFQ.supplierId ?? null,
+      response: insertRFQ.response ?? null,
+      requirements: insertRFQ.requirements || {},
+      templateVersion: insertRFQ.templateVersion || 1,
+    };
     this.rfqs.set(id, rfq);
     return rfq;
   }
@@ -177,6 +208,9 @@ export class MemStorage implements IStorage {
       id,
       createdAt: new Date(),
       publishedAt: null,
+      status: insertContent.status || 'draft',
+      keywords: insertContent.keywords || {},
+      productLinks: insertContent.productLinks || {},
     };
     this.content.set(id, content);
     return content;
@@ -206,7 +240,20 @@ export class MemStorage implements IStorage {
 
   async createDPP(insertDPP: InsertDPP): Promise<DigitalProductPassport> {
     const id = randomUUID();
-    const dpp: DigitalProductPassport = { ...insertDPP, id, createdAt: new Date() };
+    const dpp: DigitalProductPassport = {
+      ...insertDPP,
+      id,
+      createdAt: new Date(),
+      gs1Barcode: insertDPP.gs1Barcode ?? null,
+      qrCodeData: insertDPP.qrCodeData ?? null,
+      geospatialData: insertDPP.geospatialData ?? null,
+      harvestDate: insertDPP.harvestDate ?? null,
+      deforestationFree: insertDPP.deforestationFree ?? null,
+      pdfUrl: insertDPP.pdfUrl ?? null,
+      certifications: insertDPP.certifications || [],
+      chainOfCustody: insertDPP.chainOfCustody || [],
+      complianceProof: insertDPP.complianceProof || {},
+    };
     this.dpps.set(id, dpp);
     return dpp;
   }
@@ -222,7 +269,15 @@ export class MemStorage implements IStorage {
 
   async createLead(insertLead: InsertLead): Promise<Lead> {
     const id = randomUUID();
-    const lead: Lead = { ...insertLead, id, createdAt: new Date() };
+    const lead: Lead = {
+      ...insertLead,
+      id,
+      createdAt: new Date(),
+      country: insertLead.country ?? null,
+      source: insertLead.source ?? null,
+      interests: insertLead.interests || {},
+      subscribed: insertLead.subscribed ?? true,
+    };
     this.leads.set(id, lead);
     return lead;
   }
@@ -248,7 +303,14 @@ export class MemStorage implements IStorage {
 
   async createMetric(insertMetric: InsertMetric): Promise<Metric> {
     const id = randomUUID();
-    const metric: Metric = { ...insertMetric, id, date: new Date() };
+    const metric: Metric = {
+      ...insertMetric,
+      id,
+      date: new Date(),
+      country: insertMetric.country ?? null,
+      value: insertMetric.value || 0,
+      metadata: insertMetric.metadata || {},
+    };
     this.metrics.set(id, metric);
     return metric;
   }

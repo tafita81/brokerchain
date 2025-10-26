@@ -78,6 +78,22 @@ export class DbStorage implements IStorage {
     return result as RFQWithDetails[];
   }
 
+  async getRFQsByFramework(framework: string): Promise<RFQWithDetails[]> {
+    const result = await db
+      .select({
+        rfq: rfqs,
+        buyer: buyers,
+      })
+      .from(rfqs)
+      .leftJoin(buyers, eq(rfqs.buyerId, buyers.id))
+      .where(eq(rfqs.framework, framework));
+    
+    return result.map(row => ({
+      ...row.rfq,
+      buyer: row.buyer || undefined,
+    })) as RFQWithDetails[];
+  }
+
   async createRFQ(rfq: InsertRFQ): Promise<RFQ> {
     const result = await db.insert(rfqs).values(rfq).returning();
     return result[0];

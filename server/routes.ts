@@ -80,13 +80,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // RFQs
   app.get("/api/rfqs", async (req, res) => {
     try {
-      const { status } = req.query;
+      const { status, framework } = req.query;
 
+      // Filter by framework (pfas, buyamerica, eudr)
+      if (framework && typeof framework === "string") {
+        const rfqs = await storage.getRFQsByFramework(framework);
+        return res.json(rfqs);
+      }
+
+      // Filter by status
       if (status && typeof status === "string") {
         const rfqs = await storage.getRFQsByStatus(status);
         return res.json(rfqs);
       }
 
+      // Return all RFQs
       const rfqs = await storage.getAllRFQs();
       res.json(rfqs);
     } catch (error: any) {
