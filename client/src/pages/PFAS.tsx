@@ -6,11 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Shield, CheckCircle2, Loader2, Package } from "lucide-react";
 import type { Supplier } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
+import { useLanguage } from "@/contexts/LanguageContext";
 import pfasPackaging1 from "@assets/stock_images/compostable_food_pac_dd275d77.jpg";
 import pfasPackaging2 from "@assets/stock_images/compostable_food_pac_057a4a06.jpg";
 import pfasPackaging3 from "@assets/stock_images/compostable_food_pac_3ae43ab7.jpg";
 
 export default function PFAS() {
+  const { t } = useLanguage();
   const { data: suppliers = [], isLoading, isError, error } = useQuery<Supplier[]>({
     queryKey: ["/api/suppliers", { framework: "pfas" }],
     queryFn: async () => {
@@ -32,9 +34,9 @@ export default function PFAS() {
                 <Shield className="w-8 h-8 text-primary" />
               </div>
               <div className="space-y-2">
-                <h1 className="text-4xl font-semibold tracking-tight">PFAS & EPR Compliance</h1>
+                <h1 className="text-4xl font-semibold tracking-tight">{t('pfasPageTitle')}</h1>
                 <p className="text-lg text-muted-foreground">
-                  PFAS-free packaging solutions for US food service
+                  {t('pfasPageSubtitle')}
                 </p>
               </div>
             </div>
@@ -44,19 +46,19 @@ export default function PFAS() {
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 gap-2">
                   <CheckCircle2 className="w-4 h-4" />
-                  600+ Suppliers
+                  {t('pfasSuppliersCount').replace('{count}', '600')}
                 </Badge>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 gap-2">
                   <CheckCircle2 className="w-4 h-4" />
-                  10 Countries
+                  {t('pfasCountriesCount').replace('{count}', '10')}
                 </Badge>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 gap-2">
                   <CheckCircle2 className="w-4 h-4" />
-                  100% PFAS-Free
+                  {t('pfasCertification')}
                 </Badge>
               </div>
             </div>
@@ -65,31 +67,30 @@ export default function PFAS() {
           {/* Overview Card */}
           <Card>
             <CardHeader>
-              <CardTitle>The Problem</CardTitle>
+              <CardTitle>{t('theProblem')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground leading-relaxed">
-                Over 20 U.S. states have banned PFAS (per- and polyfluoroalkyl substances) in food packaging. 
-                Non-compliant suppliers risk recalls, fines, and brand destruction.
+                {t('pfasProblemText')}
               </p>
               <div className="pt-4 border-t">
-                <p className="font-medium mb-3">Our Solution:</p>
+                <p className="font-medium mb-3">{t('ourSolution')}</p>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-chart-2 mt-0.5 flex-shrink-0" />
-                    <span>Certified PFAS-free packaging from audited global manufacturers</span>
+                    <span>{t('pfasSolution1')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-chart-2 mt-0.5 flex-shrink-0" />
-                    <span>Full alignment with Sustainable Packaging Coalition (SPC) standards</span>
+                    <span>{t('pfasSolution2')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-chart-2 mt-0.5 flex-shrink-0" />
-                    <span>Real-time material traceability: bio-based resins, molded fiber, bagasse, starch</span>
+                    <span>{t('pfasSolution3')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-chart-2 mt-0.5 flex-shrink-0" />
-                    <span>Live Digital Product Passport generation with chemical composition logs</span>
+                    <span>{t('pfasSolution4')}</span>
                   </li>
                 </ul>
               </div>
@@ -101,13 +102,13 @@ export default function PFAS() {
             <div className="text-center space-y-4">
               <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
                 <Package className="w-5 h-5 text-primary" />
-                <span className="text-sm font-semibold text-primary">Real Products We Broker</span>
+                <span className="text-sm font-semibold text-primary">{t('realProductsWeBroker')}</span>
               </div>
               <h2 className="text-3xl font-bold tracking-tight">
-                PFAS-Free Packaging Products
+                {t('pfasProductsTitle')}
               </h2>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                High-quality sustainable packaging materials available through our verified supplier network
+                {t('pfasProductsSubtitle')}
               </p>
             </div>
 
@@ -219,9 +220,9 @@ export default function PFAS() {
           {/* Certified Suppliers */}
           <div className="space-y-6">
             <div>
-              <h2 className="text-2xl font-semibold tracking-tight mb-2">Certified Suppliers</h2>
+              <h2 className="text-2xl font-semibold tracking-tight mb-2">{t('verifiedSuppliersInNetwork')}</h2>
               <p className="text-muted-foreground">
-                Pre-vetted suppliers with full PFAS-free certifications
+                {t('pfasPageSubtitle')}
               </p>
             </div>
 
@@ -231,7 +232,7 @@ export default function PFAS() {
               </div>
             ) : isError ? (
               <div className="text-center py-16">
-                <p className="text-destructive font-medium">Failed to load suppliers</p>
+                <p className="text-destructive font-medium">{t('errorLoadingSuppliers')}</p>
                 <p className="text-sm text-muted-foreground mt-2">
                   {error instanceof Error ? error.message : "An unexpected error occurred"}
                 </p>
@@ -246,7 +247,7 @@ export default function PFAS() {
 
             {!isLoading && !isError && suppliers.length === 0 && (
               <div className="text-center py-16">
-                <p className="text-muted-foreground">No PFAS/EPR suppliers available at this time.</p>
+                <p className="text-muted-foreground">{t('noSuppliersFound')}</p>
               </div>
             )}
           </div>

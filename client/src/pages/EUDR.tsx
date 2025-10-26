@@ -6,11 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Leaf, CheckCircle2, MapPin, Loader2, Package } from "lucide-react";
 import type { Supplier } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
+import { useLanguage } from "@/contexts/LanguageContext";
 import eudrCommodity1 from "@assets/stock_images/coffee_beans_cocoa_a_31b0e462.jpg";
 import eudrCommodity2 from "@assets/stock_images/coffee_beans_cocoa_a_1671c66c.jpg";
 import eudrCommodity3 from "@assets/stock_images/coffee_beans_cocoa_a_06d27b41.jpg";
 
 export default function EUDR() {
+  const { t } = useLanguage();
   const { data: suppliers = [], isLoading, isError, error } = useQuery<Supplier[]>({
     queryKey: ["/api/suppliers", { framework: "eudr" }],
     queryFn: async () => {
@@ -32,9 +34,9 @@ export default function EUDR() {
                 <Leaf className="w-8 h-8 text-chart-3" />
               </div>
               <div className="space-y-2">
-                <h1 className="text-4xl font-semibold tracking-tight">EUDR Compliance</h1>
+                <h1 className="text-4xl font-semibold tracking-tight">{t('eudrPageTitle')}</h1>
                 <p className="text-lg text-muted-foreground">
-                  Deforestation-free agricultural commodities for EU
+                  {t('eudrPageSubtitle')}
                 </p>
               </div>
             </div>
@@ -44,19 +46,19 @@ export default function EUDR() {
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="bg-chart-3/5 text-chart-3 border-chart-3/20 gap-2">
                   <CheckCircle2 className="w-4 h-4" />
-                  500+ EU Importers
+                  {t('eudrImportersCount').replace('{count}', '500')}
                 </Badge>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="bg-chart-3/5 text-chart-3 border-chart-3/20 gap-2">
                   <MapPin className="w-4 h-4" />
-                  Polygon-Level GPS
+                  {t('eudrGpsTracking')}
                 </Badge>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="bg-chart-3/5 text-chart-3 border-chart-3/20 gap-2">
                   <CheckCircle2 className="w-4 h-4" />
-                  FSC/PEFC Certified
+                  {t('eudrCertification')}
                 </Badge>
               </div>
             </div>
@@ -65,32 +67,30 @@ export default function EUDR() {
           {/* Overview Card */}
           <Card>
             <CardHeader>
-              <CardTitle>The Problem</CardTitle>
+              <CardTitle>{t('theProblem')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground leading-relaxed">
-                As of December 2024, EU Regulation 2023/1115 (EUDR) requires all coffee, soy, palm oil, wood, 
-                cocoa, rubber, and cattle imports to prove no deforestation occurred after December 31, 2020 - 
-                verified down to the polygon level with geospatial coordinates.
+                {t('eudrProblemText')}
               </p>
               <div className="pt-4 border-t">
-                <p className="font-medium mb-3">Our Solution:</p>
+                <p className="font-medium mb-3">{t('ourSolution')}</p>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-chart-2 mt-0.5 flex-shrink-0" />
-                    <span>Satellite-verified geofencing of every farm plot using Sentinel-2 imagery</span>
+                    <span>{t('eudrSolution1')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-chart-2 mt-0.5 flex-shrink-0" />
-                    <span>Dynamic Digital Product Passport (DPP) in PDF format with embedded geocoordinates</span>
+                    <span>{t('eudrSolution2')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-chart-2 mt-0.5 flex-shrink-0" />
-                    <span>Integration with EU TRACES NT and national competent authorities</span>
+                    <span>{t('eudrSolution3')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-chart-2 mt-0.5 flex-shrink-0" />
-                    <span>Complete chain-of-custody documentation with FSC/PEFC certifications</span>
+                    <span>{t('eudrSolution4')}</span>
                   </li>
                 </ul>
               </div>
@@ -102,13 +102,13 @@ export default function EUDR() {
             <div className="text-center space-y-4">
               <div className="inline-flex items-center gap-2 bg-chart-3/10 px-4 py-2 rounded-full">
                 <Package className="w-5 h-5 text-chart-3" />
-                <span className="text-sm font-semibold text-chart-3">Real Products We Broker</span>
+                <span className="text-sm font-semibold text-chart-3">{t('realProductsWeBroker')}</span>
               </div>
               <h2 className="text-3xl font-bold tracking-tight">
-                EUDR Compliant Commodities
+                {t('eudrProductsTitle')}
               </h2>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                Zero-deforestation agricultural commodities with GPS-verified origins for EU import compliance
+                {t('eudrProductsSubtitle')}
               </p>
             </div>
 
@@ -220,9 +220,9 @@ export default function EUDR() {
           {/* Certified Suppliers */}
           <div className="space-y-6">
             <div>
-              <h2 className="text-2xl font-semibold tracking-tight mb-2">Certified Suppliers</h2>
+              <h2 className="text-2xl font-semibold tracking-tight mb-2">{t('verifiedSuppliersInNetwork')}</h2>
               <p className="text-muted-foreground">
-                EUDR-compliant suppliers with satellite-verified deforestation-free proof
+                {t('eudrPageSubtitle')}
               </p>
             </div>
 
@@ -232,7 +232,7 @@ export default function EUDR() {
               </div>
             ) : isError ? (
               <div className="text-center py-16">
-                <p className="text-destructive font-medium">Failed to load suppliers</p>
+                <p className="text-destructive font-medium">{t('errorLoadingSuppliers')}</p>
                 <p className="text-sm text-muted-foreground mt-2">
                   {error instanceof Error ? error.message : "An unexpected error occurred"}
                 </p>
@@ -247,7 +247,7 @@ export default function EUDR() {
 
             {!isLoading && !isError && suppliers.length === 0 && (
               <div className="text-center py-16">
-                <p className="text-muted-foreground">No EUDR suppliers available at this time.</p>
+                <p className="text-muted-foreground">{t('noSuppliersFound')}</p>
               </div>
             )}
           </div>

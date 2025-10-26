@@ -4,52 +4,54 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Shield, Flag, Leaf, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 import { useStats, formatCount } from "@/hooks/use-stats";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function RegulatoryFrameworks() {
   const { data: stats, isLoading } = useStats();
+  const { t } = useLanguage();
 
   const frameworks = [
     {
       id: "pfas",
-      title: "PFAS & EPR Compliance",
+      title: t('pfasFreeCompliance'),
       icon: Shield,
-      description: "PFAS-free packaging solutions for US food service. Over 20 states have banned PFAS in food packaging. Our certified suppliers ensure full compliance with state regulations.",
+      description: t('pfasFreePackagingDesc'),
       getMetrics: () => stats ? [
-        `${formatCount(stats.suppliers.pfas)} Suppliers`,
-        `${stats.countries} Countries`,
-        "100% PFAS-Free"
-      ] : ["Loading..."],
-      certifications: ["BPI Certified", "ASTM D6868", "SPC Aligned"],
+        t('suppliersCount', { count: formatCount(stats.suppliers.pfas) }),
+        t('countries') + ': ' + stats.countries,
+        t('pfasFree')
+      ] : [t('loadingStats')],
+      certifications: [t('bpiCertified'), t('astmD6868'), t('spcAligned')],
       color: "text-primary",
       bgColor: "bg-primary/10",
       link: "/pfas",
     },
     {
       id: "buyamerica",
-      title: "Buy America Act",
+      title: t('buyAmericaActTitle'),
       icon: Flag,
-      description: "100% melted and manufactured in USA components for federal contracts. End-to-end metallurgical traceability from foundry to finished product.",
+      description: t('buyAmericaActDesc'),
       getMetrics: () => stats ? [
-        `${formatCount(stats.buyers.buyamerica)} Contracts`,
-        "ISO 9001",
-        "Zero Offshore"
-      ] : ["Loading..."],
-      certifications: ["IATF 16949", "Buy America Proof", "SAM.gov: N394AKZSR349"],
+        t('contractsCount', { count: formatCount(stats.buyers.buyamerica) }),
+        t('iso9001'),
+        t('zeroOffshore')
+      ] : [t('loadingStats')],
+      certifications: [t('iatf16949'), t('buyAmericaProof'), t('samGovRegistration')],
       color: "text-chart-2",
       bgColor: "bg-chart-2/10",
       link: "/buy-america",
     },
     {
       id: "eudr",
-      title: "EUDR Compliance",
+      title: t('eudrComplianceTitle'),
       icon: Leaf,
-      description: "Deforestation-free agricultural commodities for EU imports. Satellite-verified geofencing and Digital Product Passports for every shipment.",
+      description: t('eudrComplianceDesc'),
       getMetrics: () => stats ? [
-        `${formatCount(stats.buyers.eudr)} Importers`,
-        "Polygon-Level GPS",
-        "FSC/PEFC"
-      ] : ["Loading..."],
-      certifications: ["EU TRACES NT", "Rainforest Alliance", "Zero Deforestation"],
+        t('importersCount', { count: formatCount(stats.buyers.eudr) }),
+        t('polygonLevelGPS'),
+        t('fscPefc')
+      ] : [t('loadingStats')],
+      certifications: [t('euTracesNT'), t('rainforestAlliance'), t('zeroDeforestation')],
       color: "text-chart-3",
       bgColor: "bg-chart-3/10",
       link: "/eudr",
@@ -59,9 +61,9 @@ export function RegulatoryFrameworks() {
     <section className="w-full py-24">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center space-y-4 mb-16">
-          <h2 className="text-3xl font-semibold tracking-tight">The Compliance Trifecta</h2>
+          <h2 className="text-3xl font-semibold tracking-tight">{t('complianceTrifecta')}</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Three Regulations. One Verified Global Chain.
+            {t('threeRegulationsOneChain')}
           </p>
         </div>
 

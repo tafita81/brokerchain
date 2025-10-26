@@ -8,8 +8,10 @@ import { ArrowRight, Recycle, TrendingUp, Award, Shield, Zap, Leaf, CheckCircle2
 import { useQuery } from "@tanstack/react-query";
 import type { Supplier } from "@shared/schema";
 import { formatCount } from "@/hooks/use-stats";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Home() {
+  const { t } = useLanguage();
   const { data: suppliers = [] } = useQuery<Supplier[]>({
     queryKey: ["/api/suppliers"],
   });
@@ -32,13 +34,13 @@ export default function Home() {
             <div className="text-center space-y-4 mb-16">
               <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full mb-4">
                 <Shield className="w-5 h-5 text-primary" />
-                <span className="text-sm font-semibold text-primary">Pure Broker Model - Zero Inventory Risk</span>
+                <span className="text-sm font-semibold text-primary">{t('pureBrokerModel')}</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-black tracking-tight">
-                How BrokerChain Works
+                {t('howItWorks')}
               </h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                We connect buyers with verified suppliers. You get compliant materials, we earn commission.
+                {t('howItWorksDesc')}
               </p>
             </div>
 
@@ -48,30 +50,30 @@ export default function Home() {
                 <div className="w-16 h-16 rounded-xl bg-blue-500/10 flex items-center justify-center mb-6">
                   <Leaf className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h3 className="text-2xl font-bold mb-3">PFAS-Free Packaging</h3>
+                <h3 className="text-2xl font-bold mb-3">{t('pfasFreePackaging')}</h3>
                 <p className="text-muted-foreground mb-6">
-                  Compostable containers, biodegradable films, recycled materials for food service and retail.
+                  {t('pfasPackagingDesc')}
                 </p>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="font-semibold">BPI Certified</div>
-                      <div className="text-sm text-muted-foreground">Verified compostable materials</div>
+                      <div className="font-semibold">{t('bpiCertified')}</div>
+                      <div className="text-sm text-muted-foreground">{t('bpiCertifiedDesc')}</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="font-semibold">20+ State Compliant</div>
-                      <div className="text-sm text-muted-foreground">CA, WA, NY, CO regulations covered</div>
+                      <div className="font-semibold">{t('stateCompliant').replace('{count}', '20')}</div>
+                      <div className="text-sm text-muted-foreground">{t('stateCompliantDesc')}</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="font-semibold">30% Below Market</div>
-                      <div className="text-sm text-muted-foreground">Surplus and secondary materials</div>
+                      <div className="font-semibold">{t('belowMarket').replace('{percent}', '30')}</div>
+                      <div className="text-sm text-muted-foreground">{t('belowMarketDesc')}</div>
                     </div>
                   </div>
                 </div>
@@ -82,30 +84,30 @@ export default function Home() {
                 <div className="w-16 h-16 rounded-xl bg-orange-500/10 flex items-center justify-center mb-6">
                   <Shield className="w-8 h-8 text-orange-600 dark:text-orange-400" />
                 </div>
-                <h3 className="text-2xl font-bold mb-3">Buy America Steel</h3>
+                <h3 className="text-2xl font-bold mb-3">{t('buyAmericaSteel')}</h3>
                 <p className="text-muted-foreground mb-6">
-                  100% domestic steel, fasteners, components for federal contracts and infrastructure.
+                  {t('buyAmericaSteelDesc')}
                 </p>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="font-semibold">SAM.gov Verified</div>
-                      <div className="text-sm text-muted-foreground">Registered federal suppliers</div>
+                      <div className="font-semibold">{t('samGovVerified')}</div>
+                      <div className="text-sm text-muted-foreground">{t('samGovVerifiedDesc')}</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="font-semibold">Metallurgical Proof</div>
-                      <div className="text-sm text-muted-foreground">Full traceability to US mills</div>
+                      <div className="font-semibold">{t('metallurgicalProof')}</div>
+                      <div className="text-sm text-muted-foreground">{t('metallurgicalProofDesc')}</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="font-semibold">IATF 16949</div>
-                      <div className="text-sm text-muted-foreground">Automotive quality certified</div>
+                      <div className="font-semibold">{t('iatfCertified')}</div>
+                      <div className="text-sm text-muted-foreground">{t('iatfCertifiedDesc')}</div>
                     </div>
                   </div>
                 </div>
@@ -116,30 +118,30 @@ export default function Home() {
                 <div className="w-16 h-16 rounded-xl bg-green-500/10 flex items-center justify-center mb-6">
                   <Leaf className="w-8 h-8 text-green-600 dark:text-green-400" />
                 </div>
-                <h3 className="text-2xl font-bold mb-3">EUDR Commodities</h3>
+                <h3 className="text-2xl font-bold mb-3">{t('eudrCommodities')}</h3>
                 <p className="text-muted-foreground mb-6">
-                  Zero-deforestation coffee, cocoa, palm oil with GPS-verified origin data.
+                  {t('eudrCommoditiesDesc')}
                 </p>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="font-semibold">GPS Coordinates</div>
-                      <div className="text-sm text-muted-foreground">Polygon-level farm traceability</div>
+                      <div className="font-semibold">{t('gpsCoordinates')}</div>
+                      <div className="text-sm text-muted-foreground">{t('gpsCoordinatesDesc')}</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="font-semibold">Satellite Verified</div>
-                      <div className="text-sm text-muted-foreground">Sentinel-2 imagery confirmation</div>
+                      <div className="font-semibold">{t('satelliteVerified')}</div>
+                      <div className="text-sm text-muted-foreground">{t('satelliteVerifiedDesc')}</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="font-semibold">EU TRACES NT</div>
-                      <div className="text-sm text-muted-foreground">Digital Product Passport ready</div>
+                      <div className="font-semibold">{t('euTracesNT')}</div>
+                      <div className="text-sm text-muted-foreground">{t('euTracesNTDesc')}</div>
                     </div>
                   </div>
                 </div>
@@ -151,66 +153,66 @@ export default function Home() {
               <div className="text-center space-y-4 mb-8">
                 <div className="inline-flex items-center gap-2 bg-background/80 px-4 py-2 rounded-full">
                   <Zap className="w-5 h-5 text-primary" />
-                  <span className="text-sm font-semibold">World's First Circular Compliance Broker</span>
+                  <span className="text-sm font-semibold">{t('worldsFirstBroker')}</span>
                 </div>
                 <h3 className="text-3xl md:text-4xl font-black">
-                  GS1 + Digital Product Passport + QR Tracking
+                  {t('gs1DppTracking')}
                 </h3>
                 <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                  Every product has a unique GS1 barcode, DPP with full compliance documentation, and QR code for instant verification.
+                  {t('gs1DppTrackingDesc')}
                 </p>
               </div>
 
               <div className="grid md:grid-cols-4 gap-6">
                 <div className="bg-background/80 rounded-xl p-6 text-center">
                   <div className="text-4xl font-black text-primary mb-2">GS1</div>
-                  <div className="text-sm font-semibold">Global Barcode</div>
-                  <div className="text-xs text-muted-foreground mt-1">Unique product ID</div>
+                  <div className="text-sm font-semibold">{t('globalBarcode')}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{t('globalBarcodeDesc')}</div>
                 </div>
                 <div className="bg-background/80 rounded-xl p-6 text-center">
                   <div className="text-4xl font-black text-chart-2 mb-2">DPP</div>
-                  <div className="text-sm font-semibold">Digital Passport</div>
-                  <div className="text-xs text-muted-foreground mt-1">Full compliance docs</div>
+                  <div className="text-sm font-semibold">{t('digitalPassport')}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{t('digitalPassportDesc')}</div>
                 </div>
                 <div className="bg-background/80 rounded-xl p-6 text-center">
                   <div className="text-4xl font-black text-chart-3 mb-2">QR</div>
-                  <div className="text-sm font-semibold">Instant Scan</div>
-                  <div className="text-xs text-muted-foreground mt-1">Mobile verification</div>
+                  <div className="text-sm font-semibold">{t('instantScan')}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{t('instantScanDesc')}</div>
                 </div>
                 <div className="bg-background/80 rounded-xl p-6 text-center">
                   <div className="text-4xl font-black text-chart-4 mb-2">100%</div>
-                  <div className="text-sm font-semibold">Traceable</div>
-                  <div className="text-xs text-muted-foreground mt-1">Origin to delivery</div>
+                  <div className="text-sm font-semibold">{t('traceable')}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{t('traceableDesc')}</div>
                 </div>
               </div>
 
               <div className="mt-8 bg-background/80 rounded-xl p-6">
                 <div className="flex flex-col md:flex-row items-center gap-6">
                   <div className="flex-1">
-                    <h4 className="text-xl font-bold mb-3">How It Works:</h4>
+                    <h4 className="text-xl font-bold mb-3">{t('howItWorksSteps')}</h4>
                     <ol className="space-y-2 text-sm">
                       <li className="flex items-start gap-2">
                         <span className="font-bold text-primary">1.</span>
-                        <span>Supplier registers product with GS1 barcode</span>
+                        <span>{t('step1')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="font-bold text-primary">2.</span>
-                        <span>We create Digital Product Passport with all certifications</span>
+                        <span>{t('step2')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="font-bold text-primary">3.</span>
-                        <span>QR code generated linking to DPP</span>
+                        <span>{t('step3')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="font-bold text-primary">4.</span>
-                        <span>Buyer scans QR → sees complete compliance history</span>
+                        <span>{t('step4')}</span>
                       </li>
                     </ol>
                   </div>
                   <div className="w-48 h-48 bg-background rounded-xl flex items-center justify-center border-2 border-border">
                     <div className="text-center">
                       <div className="text-6xl mb-2">📱</div>
-                      <div className="text-xs text-muted-foreground">Scan to verify</div>
+                      <div className="text-xs text-muted-foreground">{t('scanToVerify')}</div>
                     </div>
                   </div>
                 </div>
@@ -232,39 +234,39 @@ export default function Home() {
               <div className="flex flex-wrap items-center justify-center gap-4 mb-6">
                 <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/30 border-2 border-blue-500/30 rounded-full px-4 py-2">
                   <span className="text-2xl">🇺🇸</span>
-                  <span className="font-bold text-sm text-blue-700 dark:text-blue-300">USA Registered Company</span>
+                  <span className="font-bold text-sm text-blue-700 dark:text-blue-300">{t('usaRegistered')}</span>
                 </div>
                 <div className="flex items-center gap-2 bg-orange-50 dark:bg-orange-950/30 border-2 border-orange-500/30 rounded-full px-4 py-2">
                   <span className="text-xl">🌴</span>
-                  <span className="font-bold text-sm text-orange-700 dark:text-orange-300">Florida-Based</span>
+                  <span className="font-bold text-sm text-orange-700 dark:text-orange-300">{t('floridaBased')}</span>
                 </div>
                 <div className="flex items-center gap-2 bg-green-50 dark:bg-green-950/30 border-2 border-green-500/30 rounded-full px-4 py-2">
                   <Shield className="w-4 h-4 text-green-700 dark:text-green-300" />
-                  <span className="font-bold text-sm text-green-700 dark:text-green-300">SAM.gov: N394AKZSR349</span>
+                  <span className="font-bold text-sm text-green-700 dark:text-green-300">{t('samGovId')}</span>
                 </div>
               </div>
 
               {/* 🔥 URGÊNCIA - BADGE */}
               <div className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500/20 via-amber-500/20 to-yellow-500/20 border-2 border-yellow-500/40 px-5 py-2 rounded-full mb-6 animate-pulse">
                 <Zap className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
-                <span className="text-sm font-black text-yellow-700 dark:text-yellow-300">Limited Time: First 100 Free</span>
+                <span className="text-sm font-black text-yellow-700 dark:text-yellow-300">{t('limitedTimeOffer')}</span>
               </div>
 
               {/* HEADLINE PRINCIPAL */}
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-center mb-6 leading-tight">
-                Start Circular Compliance Sourcing Today
+                {t('ctaHeadline')}
               </h2>
 
               {/* SUBHEADLINE COM SOCIAL PROOF */}
               <p className="text-lg md:text-xl text-center text-muted-foreground mb-8 leading-relaxed">
-                Join <span className="font-black text-blue-600 dark:text-blue-400">{supplierCount}+ verified suppliers</span> and buyers using BrokerChain for circular, compliant supply chains across <span className="font-black text-green-600 dark:text-green-400">PFAS</span>, <span className="font-black text-orange-600 dark:text-orange-400">Buy America</span>, and <span className="font-black text-blue-600 dark:text-blue-400">EUDR</span>.
+                {t('ctaDescription').replace('{supplierCount}', String(supplierCount))}
               </p>
 
               {/* LEAD CAPTURE FORM */}
               <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto mb-8">
                 <input
                   type="email"
-                  placeholder="your.email@company.com"
+                  placeholder={t('emailPlaceholder')}
                   className="flex-1 h-14 px-6 rounded-xl border-2 border-input bg-background text-base font-medium focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                   data-testid="input-lead-email"
                 />
@@ -273,7 +275,7 @@ export default function Home() {
                   className="h-14 px-8 gap-2 font-black text-lg bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 hover:from-blue-500 hover:via-blue-400 hover:to-blue-500 shadow-xl shadow-blue-500/30"
                   data-testid="button-get-started"
                 >
-                  Get Started Free
+                  {t('getStartedFree')}
                   <ArrowRight className="w-5 h-5" />
                 </Button>
               </div>
@@ -282,23 +284,23 @@ export default function Home() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                 <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                   <Shield className="w-4 h-4 text-green-600 dark:text-green-400" />
-                  <span className="font-semibold">No credit card required</span>
+                  <span className="font-semibold">{t('noCreditCard')}</span>
                 </div>
                 <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                   <Leaf className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                  <span className="font-semibold">Free carbon tracking</span>
+                  <span className="font-semibold">{t('freeCarbonTracking')}</span>
                 </div>
                 <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                   <Zap className="w-4 h-4 text-orange-600 dark:text-orange-400" />
-                  <span className="font-semibold">AI consultation included</span>
+                  <span className="font-semibold">{t('aiConsultation')}</span>
                 </div>
               </div>
 
               {/* 🔥 SOCIAL PROOF SUBLIMINAR - URGÊNCIA */}
               <div className="bg-gradient-to-r from-muted/50 to-muted/30 border border-border rounded-xl p-4 text-center">
-                <div className="text-sm text-muted-foreground">
-                  <span className="font-black text-foreground">47 companies</span> joined in the last 7 days • <span className="font-black text-foreground">$2.3M</span> circular materials traded this week
-                </div>
+                <div className="text-sm text-muted-foreground" dangerouslySetInnerHTML={{
+                  __html: t('socialProofRecent').replace('{count}', '47').replace('{amount}', '2.3')
+                }} />
               </div>
             </div>
           </div>
@@ -313,36 +315,36 @@ export default function Home() {
                 <div className="text-6xl md:text-7xl lg:text-8xl font-black bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-2xl">
                   $12.4M+
                 </div>
-                <div className="text-xl md:text-2xl font-bold text-foreground">Circular Materials Traded</div>
+                <div className="text-xl md:text-2xl font-bold text-foreground">{t('circularMaterialsTraded')}</div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
                 <div className="text-center bg-gradient-to-br from-blue-500/10 to-blue-600/5 rounded-2xl p-6 border border-blue-500/20 hover-elevate transition-all" data-testid="stat-suppliers">
                   <div className="text-5xl md:text-6xl font-black text-blue-600 dark:text-blue-400">{supplierCount}+</div>
-                  <div className="text-sm md:text-base font-semibold text-muted-foreground mt-2">Verified Suppliers</div>
+                  <div className="text-sm md:text-base font-semibold text-muted-foreground mt-2">{t('verifiedSuppliers')}</div>
                 </div>
                 <div className="text-center bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-2xl p-6 border border-green-500/20 hover-elevate transition-all" data-testid="stat-countries">
                   <div className="text-5xl md:text-6xl font-black text-green-600 dark:text-green-400">{countries}</div>
-                  <div className="text-sm md:text-base font-semibold text-muted-foreground mt-2">Countries</div>
+                  <div className="text-sm md:text-base font-semibold text-muted-foreground mt-2">{t('countries')}</div>
                 </div>
                 <div className="text-center bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-2xl p-6 border border-orange-500/20 hover-elevate transition-all" data-testid="stat-frameworks">
                   <div className="text-5xl md:text-6xl font-black text-orange-600 dark:text-orange-400">3</div>
-                  <div className="text-sm md:text-base font-semibold text-muted-foreground mt-2">Frameworks</div>
+                  <div className="text-sm md:text-base font-semibold text-muted-foreground mt-2">{t('frameworks')}</div>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 <div className="flex items-center gap-3 bg-muted/50 rounded-xl p-4 border">
                   <Recycle className="w-6 h-6 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-                  <span className="font-semibold text-sm md:text-base">30% avg discount on surplus materials</span>
+                  <span className="font-semibold text-sm md:text-base">{t('avgDiscount')}</span>
                 </div>
                 <div className="flex items-center gap-3 bg-muted/50 rounded-xl p-4 border">
                   <Recycle className="w-6 h-6 text-green-600 dark:text-green-400 flex-shrink-0" />
-                  <span className="font-semibold text-sm md:text-base">AI matches in under 2 minutes</span>
+                  <span className="font-semibold text-sm md:text-base">{t('aiMatchSpeed')}</span>
                 </div>
                 <div className="flex items-center gap-3 bg-muted/50 rounded-xl p-4 border">
                   <Recycle className="w-6 h-6 text-orange-600 dark:text-orange-400 flex-shrink-0" />
-                  <span className="font-semibold text-sm md:text-base">Carbon credits auto-generated</span>
+                  <span className="font-semibold text-sm md:text-base">{t('carbonCredits')}</span>
                 </div>
               </div>
 

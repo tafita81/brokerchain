@@ -6,11 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Flag, CheckCircle2, Loader2, Package } from "lucide-react";
 import type { Supplier } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
+import { useLanguage } from "@/contexts/LanguageContext";
 import steelProduct1 from "@assets/stock_images/steel_manufacturing__9228c3fd.jpg";
 import steelProduct2 from "@assets/stock_images/steel_manufacturing__9b6afee0.jpg";
 import steelProduct3 from "@assets/stock_images/steel_manufacturing__2a1691e0.jpg";
 
 export default function BuyAmerica() {
+  const { t } = useLanguage();
   const { data: suppliers = [], isLoading, isError, error } = useQuery<Supplier[]>({
     queryKey: ["/api/suppliers", { framework: "buyamerica" }],
     queryFn: async () => {
@@ -32,9 +34,9 @@ export default function BuyAmerica() {
                 <Flag className="w-8 h-8 text-chart-2" />
               </div>
               <div className="space-y-2">
-                <h1 className="text-4xl font-semibold tracking-tight">Buy America Act Compliance</h1>
+                <h1 className="text-4xl font-semibold tracking-tight">{t('buyAmericaPageTitle')}</h1>
                 <p className="text-lg text-muted-foreground">
-                  100% melted and manufactured in USA components
+                  {t('buyAmericaPageSubtitle')}
                 </p>
               </div>
             </div>
@@ -44,19 +46,19 @@ export default function BuyAmerica() {
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="bg-chart-2/5 text-chart-2 border-chart-2/20 gap-2">
                   <CheckCircle2 className="w-4 h-4" />
-                  10,000+ Contracts
+                  {t('buyAmericaContractsCount').replace('{count}', '10,000')}
                 </Badge>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="bg-chart-2/5 text-chart-2 border-chart-2/20 gap-2">
                   <CheckCircle2 className="w-4 h-4" />
-                  ISO 9001 Certified
+                  {t('buyAmericaCertification')}
                 </Badge>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="bg-chart-2/5 text-chart-2 border-chart-2/20 gap-2">
                   <CheckCircle2 className="w-4 h-4" />
-                  Zero Offshore Subcontracting
+                  {t('buyAmericaNoOffshore')}
                 </Badge>
               </div>
             </div>
@@ -65,31 +67,30 @@ export default function BuyAmerica() {
           {/* Overview Card */}
           <Card>
             <CardHeader>
-              <CardTitle>The Problem</CardTitle>
+              <CardTitle>{t('theProblem')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground leading-relaxed">
-                Federal contracts require 100% "melted and manufactured in USA" components per the Buy America Act 
-                (41 U.S.C. § 8301–8305). Most suppliers lack verifiable origin proof and proper documentation.
+                {t('buyAmericaProblemText')}
               </p>
               <div className="pt-4 border-t">
-                <p className="font-medium mb-3">Our Solution:</p>
+                <p className="font-medium mb-3">{t('ourSolution')}</p>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-chart-2 mt-0.5 flex-shrink-0" />
-                    <span>End-to-end metallurgical traceability from foundry to finished fastener</span>
+                    <span>{t('buyAmericaSolution1')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-chart-2 mt-0.5 flex-shrink-0" />
-                    <span>IATF 16949 & ISO 9001 certified production facilities</span>
+                    <span>{t('buyAmericaSolution2')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-chart-2 mt-0.5 flex-shrink-0" />
-                    <span>Real-time audit logs of furnace batches, casting dates, and machining records</span>
+                    <span>{t('buyAmericaSolution3')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-chart-2 mt-0.5 flex-shrink-0" />
-                    <span>Zero tolerance for offshore subcontracting or foreign materials</span>
+                    <span>{t('buyAmericaSolution4')}</span>
                   </li>
                 </ul>
               </div>
@@ -101,13 +102,13 @@ export default function BuyAmerica() {
             <div className="text-center space-y-4">
               <div className="inline-flex items-center gap-2 bg-chart-2/10 px-4 py-2 rounded-full">
                 <Package className="w-5 h-5 text-chart-2" />
-                <span className="text-sm font-semibold text-chart-2">Real Products We Broker</span>
+                <span className="text-sm font-semibold text-chart-2">{t('realProductsWeBroker')}</span>
               </div>
               <h2 className="text-3xl font-bold tracking-tight">
-                Buy America Compliant Products
+                {t('buyAmericaProductsTitle')}
               </h2>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                100% melted and manufactured in USA steel, fasteners, and components for federal contracts
+                {t('buyAmericaProductsSubtitle')}
               </p>
             </div>
 
@@ -219,9 +220,9 @@ export default function BuyAmerica() {
           {/* Certified Suppliers */}
           <div className="space-y-6">
             <div>
-              <h2 className="text-2xl font-semibold tracking-tight mb-2">Certified Suppliers</h2>
+              <h2 className="text-2xl font-semibold tracking-tight mb-2">{t('verifiedSuppliersInNetwork')}</h2>
               <p className="text-muted-foreground">
-                Buy America Act compliant manufacturers with full traceability
+                {t('buyAmericaPageSubtitle')}
               </p>
             </div>
 
@@ -231,7 +232,7 @@ export default function BuyAmerica() {
               </div>
             ) : isError ? (
               <div className="text-center py-16">
-                <p className="text-destructive font-medium">Failed to load suppliers</p>
+                <p className="text-destructive font-medium">{t('errorLoadingSuppliers')}</p>
                 <p className="text-sm text-muted-foreground mt-2">
                   {error instanceof Error ? error.message : "An unexpected error occurred"}
                 </p>
@@ -246,7 +247,7 @@ export default function BuyAmerica() {
 
             {!isLoading && !isError && suppliers.length === 0 && (
               <div className="text-center py-16">
-                <p className="text-muted-foreground">No Buy America suppliers available at this time.</p>
+                <p className="text-muted-foreground">{t('noSuppliersFound')}</p>
               </div>
             )}
           </div>
