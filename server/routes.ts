@@ -1260,6 +1260,43 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
     }
   });
 
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // DOCUSIGN TEST ENVELOPE
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  const { sendTestEnvelope } = await import('./services/docusign-contracts.js');
+
+  // POST /api/docusign/test/send
+  // Send a test envelope to verify DocuSign integration
+  app.post("/api/docusign/test/send", async (req, res) => {
+    try {
+      const { email, name } = req.body;
+
+      if (!email || !name) {
+        return res.status(400).json({ 
+          error: 'Missing required fields: email and name' 
+        });
+      }
+
+      console.log(`📧 Sending test envelope to: ${name} (${email})`);
+
+      const result = await sendTestEnvelope(email, name);
+
+      res.json({
+        success: true,
+        message: `Test envelope sent successfully to ${email}`,
+        envelopeId: result.envelopeId,
+        status: result.status,
+      });
+    } catch (error: any) {
+      console.error("❌ Error sending test envelope:", error);
+      res.status(500).json({ 
+        error: error.message,
+        details: 'Make sure DocuSign is connected via /settings page' 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

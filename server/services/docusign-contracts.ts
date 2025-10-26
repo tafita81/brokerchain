@@ -20,80 +20,54 @@
  */
 
 import docusign from 'docusign-esign';
+import { getValidAccessToken } from './docusign-oauth.js';
 
 // DocuSign API Configuration
 let dsApiClient: docusign.ApiClient | null = null;
 
-function getDocuSignClient(): docusign.ApiClient {
+function getDocuSignClient(baseUri?: string): docusign.ApiClient {
   if (!dsApiClient) {
     dsApiClient = new docusign.ApiClient();
     
-    // Sandbox or Production
-    const basePath = process.env.DOCUSIGN_ENV === 'production'
+    // Use base URI from OAuth token or fallback to environment
+    const basePath = baseUri || (process.env.DOCUSIGN_ENV === 'production'
       ? 'https://www.docusign.net/restapi'
-      : 'https://demo.docusign.net/restapi';
+      : 'https://demo.docusign.net/restapi');
     
     dsApiClient.setBasePath(basePath);
     
-    console.log(`✅ DocuSign client initialized (${process.env.DOCUSIGN_ENV || 'sandbox'})`);
+    console.log(`✅ DocuSign client initialized (baseUri: ${basePath})`);
   }
   return dsApiClient;
 }
 
 /**
- * AUTHENTICATE WITH DOCUSIGN
+ * AUTHENTICATE WITH DOCUSIGN USING OAUTH
  * 
- * Uses JWT authentication (recommended for server-to-server)
+ * Uses OAuth tokens from database (automatically refreshed)
  */
-async function authenticateDocuSign(): Promise<string> {
-  const client = getDocuSignClient();
+async function authenticateDocuSign(): Promise<{ accessToken: string; accountId: string; baseUri: string }> {
+  console.log('🔑 Authenticating with DocuSign using OAuth tokens...');
   
-  // Check credentials
-  if (!process.env.DOCUSIGN_INTEGRATION_KEY || 
-      !process.env.DOCUSIGN_USER_ID ||
-      !process.env.DOCUSIGN_PRIVATE_KEY) {
-    throw new Error('DocuSign credentials not configured. Set DOCUSIGN_INTEGRATION_KEY, DOCUSIGN_USER_ID, DOCUSIGN_PRIVATE_KEY');
+  // Get valid access token from OAuth service
+  const tokenData = await getValidAccessToken();
+  
+  if (!tokenData) {
+    throw new Error('DocuSign not connected. Please connect DocuSign via /settings page.');
   }
   
-  try {
-    // JWT authentication
-    const jwtLifeSec = 3600; // 1 hour
-    const scopes = ['signature', 'impersonation'];
-    
-    // Get private key
-    let privateKey = process.env.DOCUSIGN_PRIVATE_KEY;
-    
-    // Ensure proper newlines for both RSA and PKCS#8 formats
-    if (!privateKey.includes('\n')) {
-      // Support both formats: RSA PRIVATE KEY (PKCS#1) and PRIVATE KEY (PKCS#8)
-      privateKey = privateKey
-        .replace('-----BEGIN RSA PRIVATE KEY-----', '-----BEGIN RSA PRIVATE KEY-----\n')
-        .replace('-----END RSA PRIVATE KEY-----', '\n-----END RSA PRIVATE KEY-----')
-        .replace('-----BEGIN PRIVATE KEY-----', '-----BEGIN PRIVATE KEY-----\n')
-        .replace('-----END PRIVATE KEY-----', '\n-----END PRIVATE KEY-----')
-        .replace(/(.{64})/g, '$1\n');
-    }
-    
-    console.log(`🔑 Using private key format: ${privateKey.includes('RSA PRIVATE') ? 'PKCS#1 (RSA)' : 'PKCS#8'}`);
-    
-    const results = await client.requestJWTUserToken(
-      process.env.DOCUSIGN_INTEGRATION_KEY,
-      process.env.DOCUSIGN_USER_ID,
-      scopes,
-      privateKey, // Pass as string, not Buffer
-      jwtLifeSec
-    );
-    
-    const accessToken = results.body.access_token;
-    client.addDefaultHeader('Authorization', `Bearer ${accessToken}`);
-    
-    console.log('✅ DocuSign authenticated successfully');
-    return accessToken;
-    
-  } catch (error: any) {
-    console.error('❌ DocuSign authentication failed:', error.message);
-    throw new Error(`DocuSign auth failed: ${error.message}`);
-  }
+  // Initialize client with OAuth token
+  const client = getDocuSignClient(tokenData.baseUri);
+  client.addDefaultHeader('Authorization', `Bearer ${tokenData.accessToken}`);
+  
+  console.log('✅ DocuSign authenticated via OAuth');
+  console.log(`   Account ID: ${tokenData.accountId}`);
+  
+  return {
+    accessToken: tokenData.accessToken,
+    accountId: tokenData.accountId,
+    baseUri: tokenData.baseUri,
+  };
 }
 
 /**
@@ -151,14 +125,9 @@ export async function create3PartyContract(
   console.log(`   Amount: $${(terms.totalAmount / 100).toFixed(2)}`);
   
   try {
-    // Step 1: Authenticate with DocuSign
-    await authenticateDocuSign();
-    
-    // Step 2: Get account ID
-    const accountId = process.env.DOCUSIGN_ACCOUNT_ID;
-    if (!accountId) {
-      throw new Error('DOCUSIGN_ACCOUNT_ID not configured');
-    }
+    // Step 1: Authenticate with DocuSign OAuth
+    const authData = await authenticateDocuSign();
+    const accountId = authData.accountId;
     
     // Step 3: Generate contract HTML document
     const contractHtml = generateContractHTML(buyer, supplier, broker, terms);
@@ -552,3 +521,109 @@ export async function voidContract(
  *   console.log('Contract signed! Releasing escrow payment...');
  * }
  */
+
+/**
+ * SEND TEST ENVELOPE
+ * 
+ * Sends a simple test document to verify DocuSign is working
+ */
+export async function sendTestEnvelope(recipientEmail: string, recipientName: string): Promise<{
+  envelopeId: string;
+  status: string;
+}> {
+  console.log('📧 Sending test envelope to:', recipientEmail);
+  
+  try {
+    // Authenticate with DocuSign OAuth
+    const authData = await authenticateDocuSign();
+    const accountId = authData.accountId;
+    
+    // Simple HTML document for testing
+    const testDocument = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 40px; }
+            h1 { color: #2563eb; }
+            .info { background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0; }
+          </style>
+        </head>
+        <body>
+          <h1>🎉 DocuSign Integration Test</h1>
+          
+          <div class="info">
+            <p><strong>Platform:</strong> BrokerChain</p>
+            <p><strong>Test Date:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
+            <p><strong>Authentication:</strong> OAuth 2.0 Authorization Code Grant</p>
+          </div>
+          
+          <p>Este é um documento de teste para verificar a integração OAuth 2.0 com DocuSign.</p>
+          
+          <p>Características implementadas:</p>
+          <ul>
+            <li>✅ OAuth 2.0 Authorization Code Grant</li>
+            <li>✅ CSRF Protection (state parameter)</li>
+            <li>✅ Automatic token refresh</li>
+            <li>✅ Secure database storage</li>
+          </ul>
+          
+          <p><strong>Por favor, assine abaixo para confirmar o teste:</strong></p>
+          
+          <br/><br/>
+          <p>____________________________________</p>
+          <p>Assinatura Digital</p>
+        </body>
+      </html>
+    `;
+    
+    // Create envelope definition
+    const envelopeDefinition = {
+      emailSubject: '🎉 BrokerChain - Teste de Integração DocuSign',
+      documents: [{
+        documentBase64: Buffer.from(testDocument).toString('base64'),
+        name: 'Teste DocuSign OAuth Integration',
+        fileExtension: 'html',
+        documentId: '1',
+      }],
+      recipients: {
+        signers: [{
+          email: recipientEmail,
+          name: recipientName,
+          recipientId: '1',
+          tabs: {
+            signHereTabs: [{
+              documentId: '1',
+              pageNumber: '1',
+              xPosition: '100',
+              yPosition: '400',
+            }],
+          },
+        }],
+      },
+      status: 'sent',
+    };
+    
+    // Create envelope via API
+    const client = getDocuSignClient();
+    const envelopesApi = new docusign.EnvelopesApi(client);
+    
+    const results = await envelopesApi.createEnvelope(accountId, {
+      envelopeDefinition: envelopeDefinition as any,
+    });
+    
+    const envelopeId = results.envelopeId!;
+    console.log(`✅ Test envelope sent successfully!`);
+    console.log(`   Envelope ID: ${envelopeId}`);
+    console.log(`   Recipient: ${recipientName} (${recipientEmail})`);
+    
+    return {
+      envelopeId,
+      status: 'sent',
+    };
+    
+  } catch (error: any) {
+    console.error('❌ Failed to send test envelope:', error);
+    throw new Error(`DocuSign test failed: ${error.message}`);
+  }
+}
