@@ -280,9 +280,10 @@ export async function scrapeSAMGovOpportunities(
         break;
       }
       
-      // Rate limiting: wait 500ms between requests to be respectful to SAM.gov API
+      // Rate limiting: wait 10 seconds between requests to avoid 429 errors from SAM.gov API
       if (i < numBatches - 1) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        console.log(`   ⏳ Waiting 10 seconds before next batch...`);
+        await new Promise(resolve => setTimeout(resolve, 10000));
       }
     }
     
