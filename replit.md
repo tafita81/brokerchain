@@ -135,10 +135,15 @@ The codebase does not currently implement authentication/authorization mechanism
 **DocuSign Integration (OAuth 2.0 - FULLY IMPLEMENTED)**:
 - 3-party contract signing (buyer + supplier + broker)
 - OAuth 2.0 Authorization Code Grant flow with CSRF protection
-- Automatic token refresh 5 minutes before expiration
+- **AUTOMATIC TOKEN RENEWAL - NEVER EXPIRES**: Background job runs every 6 hours to renew tokens before expiration
+  - Access tokens (8 hours): Renewed every 6 hours = always valid (1 hour safety buffer)
+  - Refresh tokens (30 days inactivity): Used every 6 hours = never inactive, never expires
+  - System logs: `⏰ Starting automatic DocuSign token renewal (every 6 hours)`
 - Tokens stored in PostgreSQL oauth_tokens table
 - User-friendly connection UI at /settings page
 - Test endpoint: POST /api/docusign/test/send
+- Contract generation with 3-party signing workflow (buyer, supplier, broker)
+- Envelope status tracking with complete signing timeline
 - Environment variables: `DOCUSIGN_INTEGRATION_KEY`, `DOCUSIGN_SECRET_KEY`, `DOCUSIGN_REDIRECT_URI`
 - Account ID: fb86833f-9a89-4da8-97b9-58b0a4ef0188 (RAFAEL OLIVEIRA)
 - Successfully tested: envelope sent and signed in sandbox environment

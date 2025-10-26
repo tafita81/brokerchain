@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { emailService } from "./services/email-service";
 import { scheduleSAMGovScraping } from "./services/sam-gov-scraper";
+import { startAutomaticTokenRenewal } from "./services/docusign-oauth";
 import { storage } from "./storage";
 
 const app = express();
@@ -119,5 +120,10 @@ app.use((req, res, next) => {
     // Rate limits: 1,000 requests/day with API key, 100 records per request
     // Scrapes ONLY yesterday's RFQs (dia anterior) to minimize API calls
     scheduleSAMGovScraping(24, 1, storage);
+    
+    // 🔐 DocuSign OAuth: Auto-renew tokens every 6 hours to NEVER expire
+    // - Access token (8h) → renewed every 6h = always valid
+    // - Refresh token (30d inactivity) → used every 6h = never expires
+    startAutomaticTokenRenewal();
   });
 })();

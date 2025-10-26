@@ -73,10 +73,22 @@ async function authenticateDocuSign(): Promise<{ accessToken: string; accountId:
 /**
  * INTERFACES
  */
+
 export interface ContractParty {
   name: string;
   email: string;
+  company: string;
   role: 'buyer' | 'supplier' | 'broker';
+}
+
+export interface ContractDetails {
+  rfqId: string;
+  quoteId: string;
+  buyerId: string;
+  supplierId: string;
+  totalAmount: number; // cents
+  brokerCommission: number; // cents
+  contractTerms: any;
   company: string;
 }
 

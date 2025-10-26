@@ -339,6 +339,80 @@ async function refreshAccessToken(refreshToken: string): Promise<{
 }
 
 /**
+ * AUTOMATIC TOKEN RENEWAL JOB
+ * 
+ * Renews DocuSign tokens every 6 hours to NEVER expire
+ * - Access token expires in 8 hours → renewed every 6 hours = always valid
+ * - Refresh token expires after 30 days of inactivity → used every 6 hours = never inactive
+ */
+export function startAutomaticTokenRenewal(): void {
+  const RENEWAL_INTERVAL = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
+  
+  console.log('⏰ Starting automatic DocuSign token renewal (every 6 hours)');
+  console.log('   This ensures tokens NEVER expire!');
+  
+  // Run renewal immediately on startup
+  renewTokenIfNeeded();
+  
+  // Then run every 6 hours
+  setInterval(async () => {
+    await renewTokenIfNeeded();
+  }, RENEWAL_INTERVAL);
+}
+
+async function renewTokenIfNeeded(): Promise<void> {
+  try {
+    // Fetch current token
+    const tokens = await db
+      .select()
+      .from(oauthTokens)
+      .where(eq(oauthTokens.provider, 'docusign'))
+      .limit(1);
+
+    if (tokens.length === 0) {
+      console.log('⚠️  No DocuSign token to renew');
+      return;
+    }
+
+    const token = tokens[0];
+    const now = new Date();
+    const hoursUntilExpiry = (token.expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60);
+    
+    // Always renew if less than 7 hours until expiry (gives 1 hour buffer)
+    if (hoursUntilExpiry < 7) {
+      console.log(`🔄 Auto-renewing DocuSign token (${hoursUntilExpiry.toFixed(1)} hours until expiry)`);
+      
+      if (!token.refreshToken) {
+        console.log('❌ No refresh token available for renewal');
+        return;
+      }
+
+      const newToken = await refreshAccessToken(token.refreshToken);
+      
+      await db
+        .update(oauthTokens)
+        .set({
+          accessToken: newToken.accessToken,
+          expiresAt: new Date(Date.now() + newToken.expiresIn * 1000),
+          updatedAt: new Date(),
+        })
+        .where(eq(oauthTokens.id, token.id));
+
+      const newExpiry = new Date(Date.now() + newToken.expiresIn * 1000);
+      console.log('✅ DocuSign token auto-renewed successfully!');
+      console.log(`   New expiry: ${newExpiry.toISOString()}`);
+      console.log(`   Next auto-renewal: in 6 hours (${new Date(Date.now() + RENEWAL_INTERVAL).toLocaleString('pt-BR')})`);
+    } else {
+      console.log(`✅ DocuSign token still valid (${hoursUntilExpiry.toFixed(1)} hours remaining)`);
+    }
+  } catch (error: any) {
+    console.error('❌ Failed to auto-renew DocuSign token:', error.message);
+  }
+}
+
+const RENEWAL_INTERVAL = 6 * 60 * 60 * 1000; // 6 hours (needed for logging)
+
+/**
  * VALIDATE STATE (CSRF Protection)
  * 
  * Verifies that the state parameter matches one we generated
