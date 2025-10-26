@@ -5,6 +5,8 @@ export interface SupplierMatch {
   score: number;
   reasons: string[];
   priority: "urgent" | "high" | "medium" | "low";
+  supplierType: "new" | "surplus";
+  discountPercent?: number; // for surplus suppliers
 }
 
 /**
@@ -79,18 +81,38 @@ export class MatchingEngine {
       // 5. PRIORITY BASED ON TIMELINE
       const priority = this.calculatePriority(timeline, score);
 
+      // 6. SUPPLIER TYPE & DISCOUNT
+      const supplierType = (supplier.supplierType as "new" | "surplus") || "new";
+      const discountPercent = supplierType === "surplus" ? (supplier.discountPercentage || 40) : undefined;
+
+      if (supplierType === "surplus" && discountPercent) {
+        reasons.push(`✓ ${discountPercent}% below market (surplus inventory)`);
+      }
+
       matches.push({
         supplier,
         score: Math.min(score, 100), // Cap at 100
         reasons,
         priority,
+        supplierType,
+        discountPercent,
       });
     }
 
-    // Sort by score (highest first)
-    matches.sort((a, b) => b.score - a.score);
+    // Separate new and surplus suppliers
+    const newSuppliers = matches.filter(m => m.supplierType === "new");
+    const surplusSuppliers = matches.filter(m => m.supplierType === "surplus");
 
-    return matches;
+    // Sort both groups by score (highest first)
+    newSuppliers.sort((a, b) => b.score - a.score);
+    surplusSuppliers.sort((a, b) => b.score - a.score);
+
+    // Return top 3 from each group (6 total quotes)
+    const top3New = newSuppliers.slice(0, 3);
+    const top3Surplus = surplusSuppliers.slice(0, 3);
+
+    // Combine: 3 new first, then 3 surplus
+    return [...top3New, ...top3Surplus];
   }
 
   /**

@@ -59,13 +59,21 @@ Preferred communication style: Simple, everyday language.
 **ORM**: Drizzle ORM for type-safe database queries and schema management. The schema is defined in TypeScript with automatic type inference.
 
 **Schema Design**:
-- **Suppliers**: Core entity storing supplier information, country, regulatory framework specialization, product offerings, and certifications
+- **Suppliers**: Core entity with supplier type (new/surplus), discounts for surplus (30-50%), certifications, products
 - **Buyers**: Organizations seeking compliant suppliers
-- **RFQs**: Request for quotes with generated content, status tracking, and buyer-supplier relationships
-- **Generated Content**: AI-generated SEO content for different countries and languages with status tracking
-- **Digital Product Passports (DPPs)**: Geospatial compliance data, certifications, and supply chain documentation
+- **RFQs**: Expanded status workflow (15 states: draft → sent → responded → negotiating → contract_signed → payment_received → delivered → completed)
+- **Supplier Quotes**: Quotes from suppliers with pricing, MOQ, lead time, margin calculations (5-15%)
+- **Negotiations**: AI-powered negotiation rounds with target margins and conversation logs
+- **Contracts**: DocuSign integration with 3-party signing (buyer + supplier + broker)
+- **Payments**: Escrow payments via Stripe with tracking and automated releases
+- **Commissions**: BrokerChain commission tracking (5-15%) with Payoneer integration
+- **Email Logs**: Full tracking of automated emails (sent, delivered, opened, clicked)
+- **Generated Content**: AI-generated SEO content for lead generation
+- **Digital Product Passports (DPPs)**: Geospatial compliance data and supply chain tracking
 - **Leads**: Marketing funnel data from content engagement
 - **Metrics**: Operational analytics and KPIs
+- **Conversation Threads**: Multi-turn AI negotiations with buyers and suppliers
+- **Company Context**: Real-time data for AI conversations (inventory, pricing, capabilities)
 
 **Session Management**: PostgreSQL-backed sessions using connect-pg-simple for production-grade session persistence
 

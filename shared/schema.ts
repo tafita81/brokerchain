@@ -5,9 +5,15 @@ import { z } from "zod";
 
 // Regulatory framework types
 export type RegulatoryFramework = "pfas" | "buyamerica" | "eudr" | "secondary";
-export type RFQStatus = "draft" | "sent" | "responded" | "negotiating" | "closed" | "rejected";
+export type RFQStatus = "draft" | "sent" | "responded" | "negotiating" | "awaiting_buyer" | "buyer_selected" | "contract_pending" | "contract_signed" | "payment_pending" | "payment_received" | "in_fulfillment" | "delivered" | "completed" | "closed" | "rejected";
 export type SupplierCertification = "BPI" | "TUV_OK_COMPOST" | "ASTM_D6868" | "IATF_16949" | "ISO_9001" | "FSC" | "PEFC" | "RAINFOREST_ALLIANCE";
 export type ContentStatus = "generating" | "generated" | "published" | "error";
+export type SupplierType = "new" | "surplus";
+export type QuoteStatus = "pending" | "received" | "selected" | "rejected";
+export type NegotiationStatus = "active" | "completed" | "failed";
+export type ContractStatus = "draft" | "sent" | "signed_buyer" | "signed_supplier" | "signed_broker" | "fully_signed" | "cancelled";
+export type PaymentStatus = "pending" | "escrowed" | "released" | "refunded" | "cancelled";
+export type CommissionStatus = "pending" | "paid" | "failed";
 
 // Countries supported by Amazon OneLink + China
 export const COUNTRIES = [
@@ -38,11 +44,13 @@ export const suppliers = pgTable("suppliers", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
   country: text("country").notNull(),
-  framework: text("framework").notNull(), // pfas, buyamerica, eudr
+  framework: text("framework").notNull(), // pfas, buyamerica, eudr, secondary
+  supplierType: text("supplier_type").notNull().default("new"), // new or surplus
   products: jsonb("products").notNull().default([]), // array of product types
   certifications: jsonb("certifications").notNull().default([]), // array of certification types
   contactEmail: text("contact_email"),
   description: text("description"),
+  discountPercentage: integer("discount_percentage"), // for surplus suppliers (30-50%)
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -167,6 +175,105 @@ export const companyContext = pgTable("company_context", {
   lastUpdated: timestamp("last_updated").defaultNow().notNull(),
 });
 
+// Supplier Quotes - Cotações recebidas de suppliers via email ou web form
+export const supplierQuotes = pgTable("supplier_quotes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  rfqId: text("rfq_id").notNull(),
+  supplierId: text("supplier_id").notNull(),
+  status: text("status").notNull().default("pending"), // pending, received, selected, rejected
+  pricePerUnit: integer("price_per_unit"), // cents
+  minimumOrderQuantity: integer("minimum_order_quantity"),
+  leadTimeDays: integer("lead_time_days"),
+  validUntil: timestamp("valid_until"),
+  rawQuoteText: text("raw_quote_text"), // original email/form content
+  parsedData: jsonb("parsed_data").notNull().default({}),
+  brokerMarginPercent: integer("broker_margin_percent"), // 5-15%
+  finalPriceToBuyer: integer("final_price_to_buyer"), // cents (includes margin)
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Negotiations - AI-powered negotiation rounds
+export const negotiations = pgTable("negotiations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  rfqId: text("rfq_id").notNull(),
+  quoteId: text("quote_id").notNull(),
+  status: text("status").notNull().default("active"), // active, completed, failed
+  targetMargin: integer("target_margin"), // minimum margin % we need (5-15%)
+  currentMargin: integer("current_margin"),
+  negotiationRounds: integer("negotiation_rounds").notNull().default(0),
+  aiStrategy: text("ai_strategy"), // description of AI negotiation approach
+  conversationLog: jsonb("conversation_log").notNull().default([]),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+});
+
+// Contracts - DocuSign contracts (3-party: buyer + supplier + broker)
+export const contracts = pgTable("contracts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  rfqId: text("rfq_id").notNull(),
+  quoteId: text("quote_id").notNull(),
+  buyerId: text("buyer_id").notNull(),
+  supplierId: text("supplier_id").notNull(),
+  status: text("status").notNull().default("draft"), // draft, sent, signed_buyer, signed_supplier, signed_broker, fully_signed, cancelled
+  docusignEnvelopeId: text("docusign_envelope_id").unique(),
+  docusignPdfUrl: text("docusign_pdf_url"),
+  totalAmount: integer("total_amount"), // cents
+  brokerCommission: integer("broker_commission"), // cents
+  contractTerms: jsonb("contract_terms").notNull().default({}),
+  signedByBuyerAt: timestamp("signed_by_buyer_at"),
+  signedBySupplierAt: timestamp("signed_by_supplier_at"),
+  signedByBrokerAt: timestamp("signed_by_broker_at"),
+  fullySignedAt: timestamp("fully_signed_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Payments - Escrow payments and releases
+export const payments = pgTable("payments", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  contractId: text("contract_id").notNull(),
+  status: text("status").notNull().default("pending"), // pending, escrowed, released, refunded, cancelled
+  totalAmount: integer("total_amount").notNull(), // cents
+  brokerCommission: integer("broker_commission").notNull(), // cents
+  supplierPayout: integer("supplier_payout").notNull(), // cents
+  stripePaymentIntentId: text("stripe_payment_intent_id"),
+  stripeEscrowId: text("stripe_escrow_id"),
+  trackingNumber: text("tracking_number"), // shipment tracking
+  buyerPaidAt: timestamp("buyer_paid_at"),
+  escrowedAt: timestamp("escrowed_at"),
+  releasedAt: timestamp("released_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Commissions - BrokerChain commission tracking
+export const commissions = pgTable("commissions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  paymentId: text("payment_id").notNull(),
+  contractId: text("contract_id").notNull(),
+  status: text("status").notNull().default("pending"), // pending, paid, failed
+  amount: integer("amount").notNull(), // cents
+  percentage: integer("percentage").notNull(), // 5-15%
+  payoneerBatchId: text("payoneer_batch_id"),
+  payoneerPaymentId: text("payoneer_payment_id"),
+  paidAt: timestamp("paid_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Email Logs - Tracking all automated emails
+export const emailLogs = pgTable("email_logs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  rfqId: text("rfq_id"),
+  recipientEmail: text("recipient_email").notNull(),
+  subject: text("subject").notNull(),
+  body: text("body").notNull(),
+  emailType: text("email_type").notNull(), // rfq_to_supplier, quote_to_buyer, reminder, confirmation, etc.
+  sendgridMessageId: text("sendgrid_message_id"),
+  status: text("status").notNull().default("pending"), // pending, sent, delivered, opened, clicked, bounced, failed
+  sentAt: timestamp("sent_at"),
+  deliveredAt: timestamp("delivered_at"),
+  openedAt: timestamp("opened_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Insert Schemas (for validation)
 export const insertSupplierSchema = createInsertSchema(suppliers).omit({ id: true, createdAt: true });
 export const insertBuyerSchema = createInsertSchema(buyers).omit({ id: true, createdAt: true });
@@ -178,6 +285,12 @@ export const insertMetricSchema = createInsertSchema(metrics).omit({ id: true, d
 export const insertConversationThreadSchema = createInsertSchema(conversationThreads).omit({ id: true, createdAt: true, lastMessageAt: true });
 export const insertConversationMessageSchema = createInsertSchema(conversationMessages).omit({ id: true, createdAt: true });
 export const insertCompanyContextSchema = createInsertSchema(companyContext).omit({ id: true, lastUpdated: true });
+export const insertSupplierQuoteSchema = createInsertSchema(supplierQuotes).omit({ id: true, createdAt: true });
+export const insertNegotiationSchema = createInsertSchema(negotiations).omit({ id: true, createdAt: true, completedAt: true });
+export const insertContractSchema = createInsertSchema(contracts).omit({ id: true, createdAt: true, signedByBuyerAt: true, signedBySupplierAt: true, signedByBrokerAt: true, fullySignedAt: true });
+export const insertPaymentSchema = createInsertSchema(payments).omit({ id: true, createdAt: true, buyerPaidAt: true, escrowedAt: true, releasedAt: true });
+export const insertCommissionSchema = createInsertSchema(commissions).omit({ id: true, createdAt: true, paidAt: true });
+export const insertEmailLogSchema = createInsertSchema(emailLogs).omit({ id: true, createdAt: true, sentAt: true, deliveredAt: true, openedAt: true });
 
 // TypeScript types
 export type InsertSupplier = z.infer<typeof insertSupplierSchema>;
@@ -209,6 +322,24 @@ export type ConversationMessage = typeof conversationMessages.$inferSelect;
 
 export type InsertCompanyContext = z.infer<typeof insertCompanyContextSchema>;
 export type CompanyContext = typeof companyContext.$inferSelect;
+
+export type InsertSupplierQuote = z.infer<typeof insertSupplierQuoteSchema>;
+export type SupplierQuote = typeof supplierQuotes.$inferSelect;
+
+export type InsertNegotiation = z.infer<typeof insertNegotiationSchema>;
+export type Negotiation = typeof negotiations.$inferSelect;
+
+export type InsertContract = z.infer<typeof insertContractSchema>;
+export type Contract = typeof contracts.$inferSelect;
+
+export type InsertPayment = z.infer<typeof insertPaymentSchema>;
+export type Payment = typeof payments.$inferSelect;
+
+export type InsertCommission = z.infer<typeof insertCommissionSchema>;
+export type Commission = typeof commissions.$inferSelect;
+
+export type InsertEmailLog = z.infer<typeof insertEmailLogSchema>;
+export type EmailLog = typeof emailLogs.$inferSelect;
 
 // Extended types for frontend use
 export interface RFQWithDetails extends RFQ {
