@@ -1,5 +1,6 @@
 import { Navigation } from "@/components/Navigation";
 import { HeroCarousel } from "@/components/HeroCarousel";
+import { CountryBanner } from "@/components/CountryBanner";
 import { RegulatoryFrameworks } from "@/components/RegulatoryFrameworks";
 import { MetricsCard } from "@/components/MetricsCard";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,9 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section with 4K Carousel */}
         <HeroCarousel />
+
+        {/* Country Banner - Infinite Scroll */}
+        <CountryBanner />
 
         {/* 🎯 SERVIÇOS CLAROS - O QUE FAZEMOS */}
         <section className="w-full py-20 bg-gradient-to-b from-background via-muted/30 to-background">

@@ -10,6 +10,20 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+  
+  /* Infinite horizontal scroll animation for country flags */
+  .animate-scroll {
+    animation: scroll 40s linear infinite;
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
 }
 
 /* LIGHT MODE */
