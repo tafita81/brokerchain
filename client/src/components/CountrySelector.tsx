@@ -2,9 +2,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { COUNTRY_FLAGS, getFlagUrl } from "@/lib/i18n";
 
+// Real countries with verified suppliers/buyers (600+ companies across 3 frameworks)
 const COUNTRIES = [
-  "USA", "Canada", "UK", "Germany", "France", "Italy", "Spain",
-  "Japan", "Australia", "Brazil", "Mexico", "Netherlands", "Singapore", "UAE", "China"
+  "USA", "Brazil", "China", "Australia", "Indonesia", 
+  "Singapore", "Netherlands", "Switzerland", "Ivory Coast", "Nigeria"
 ] as const;
 
 export function CountrySelector() {

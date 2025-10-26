@@ -1,38 +1,29 @@
 // Internationalization system - Auto-translates entire site based on selected country
+// Real countries with 600+ verified suppliers across PFAS, Buy America, EUDR frameworks
 export const COUNTRY_FLAGS = {
   "USA": "us",
-  "Canada": "ca",
-  "UK": "gb",
-  "Germany": "de",
-  "France": "fr",
-  "Italy": "it",
-  "Spain": "es",
-  "Japan": "jp",
-  "Australia": "au",
   "Brazil": "br",
-  "Mexico": "mx",
-  "Netherlands": "nl",
-  "Singapore": "sg",
-  "UAE": "ae",
   "China": "cn",
+  "Australia": "au",
+  "Indonesia": "id",
+  "Singapore": "sg",
+  "Netherlands": "nl",
+  "Switzerland": "ch",
+  "Ivory Coast": "ci",
+  "Nigeria": "ng",
 } as const;
 
 export const COUNTRY_LANGUAGES = {
   "USA": "en",
-  "Canada": "en",
-  "UK": "en",
-  "Germany": "de",
-  "France": "fr",
-  "Italy": "it",
-  "Spain": "es",
-  "Japan": "ja",
-  "Australia": "en",
   "Brazil": "pt",
-  "Mexico": "es",
-  "Netherlands": "en",
-  "Singapore": "en",
-  "UAE": "en",
   "China": "zh",
+  "Australia": "en",
+  "Indonesia": "en",
+  "Singapore": "en",
+  "Netherlands": "en",
+  "Switzerland": "en",
+  "Ivory Coast": "fr",
+  "Nigeria": "en",
 } as const;
 
 // Get flag SVG URL in high resolution (vector, scales to any size including 1080p+)
