@@ -5,8 +5,17 @@ import { MetricsCard } from "@/components/MetricsCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, Recycle, TrendingUp, Award, Shield, Zap, Leaf, CheckCircle2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import type { Supplier } from "@shared/schema";
 
 export default function Home() {
+  const { data: suppliers = [] } = useQuery<Supplier[]>({
+    queryKey: ["/api/suppliers"],
+  });
+
+  const supplierCount = suppliers.length;
+  const countries = [...new Set(suppliers.map(s => s.country))].length;
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
@@ -53,7 +62,7 @@ export default function Home() {
 
               {/* SUBHEADLINE COM SOCIAL PROOF */}
               <p className="text-lg md:text-xl text-center text-muted-foreground mb-8 leading-relaxed">
-                Join <span className="font-black text-blue-600 dark:text-blue-400">600+ verified suppliers</span> and buyers using BrokerChain for circular, compliant supply chains across <span className="font-black text-green-600 dark:text-green-400">PFAS</span>, <span className="font-black text-orange-600 dark:text-orange-400">Buy America</span>, and <span className="font-black text-blue-600 dark:text-blue-400">EUDR</span>.
+                Join <span className="font-black text-blue-600 dark:text-blue-400">{supplierCount}+ verified suppliers</span> and buyers using BrokerChain for circular, compliant supply chains across <span className="font-black text-green-600 dark:text-green-400">PFAS</span>, <span className="font-black text-orange-600 dark:text-orange-400">Buy America</span>, and <span className="font-black text-blue-600 dark:text-blue-400">EUDR</span>.
               </p>
 
               {/* LEAD CAPTURE FORM */}
@@ -113,15 +122,15 @@ export default function Home() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-                <div className="text-center bg-gradient-to-br from-blue-500/10 to-blue-600/5 rounded-2xl p-6 border border-blue-500/20 hover-elevate transition-all">
-                  <div className="text-5xl md:text-6xl font-black text-blue-600 dark:text-blue-400">600+</div>
+                <div className="text-center bg-gradient-to-br from-blue-500/10 to-blue-600/5 rounded-2xl p-6 border border-blue-500/20 hover-elevate transition-all" data-testid="stat-suppliers">
+                  <div className="text-5xl md:text-6xl font-black text-blue-600 dark:text-blue-400">{supplierCount}+</div>
                   <div className="text-sm md:text-base font-semibold text-muted-foreground mt-2">Verified Suppliers</div>
                 </div>
-                <div className="text-center bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-2xl p-6 border border-green-500/20 hover-elevate transition-all">
-                  <div className="text-5xl md:text-6xl font-black text-green-600 dark:text-green-400">14</div>
+                <div className="text-center bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-2xl p-6 border border-green-500/20 hover-elevate transition-all" data-testid="stat-countries">
+                  <div className="text-5xl md:text-6xl font-black text-green-600 dark:text-green-400">{countries}</div>
                   <div className="text-sm md:text-base font-semibold text-muted-foreground mt-2">Countries</div>
                 </div>
-                <div className="text-center bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-2xl p-6 border border-orange-500/20 hover-elevate transition-all">
+                <div className="text-center bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-2xl p-6 border border-orange-500/20 hover-elevate transition-all" data-testid="stat-frameworks">
                   <div className="text-5xl md:text-6xl font-black text-orange-600 dark:text-orange-400">3</div>
                   <div className="text-sm md:text-base font-semibold text-muted-foreground mt-2">Frameworks</div>
                 </div>

@@ -176,7 +176,7 @@ export default function Metrics() {
                   <TrendingUp className="w-5 h-5" />
                   Content Generation
                 </CardTitle>
-                <CardDescription>SEO content across 14 countries</CardDescription>
+                <CardDescription>SEO content across 10 countries</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-2 gap-6">

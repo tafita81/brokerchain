@@ -47,7 +47,7 @@ export default function PFAS() {
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 gap-2">
                   <CheckCircle2 className="w-4 h-4" />
-                  14 Countries
+                  10 Countries
                 </Badge>
               </div>
               <div className="flex items-center gap-2">

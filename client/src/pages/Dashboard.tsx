@@ -33,7 +33,7 @@ export default function Dashboard() {
               title="Content Generated"
               value="134"
               trend={{ value: 23, isPositive: true }}
-              subtitle="Across 14 countries"
+              subtitle="Across 10 countries"
             />
             <MetricsCard
               title="Suppliers Connected"

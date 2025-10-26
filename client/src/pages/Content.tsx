@@ -20,7 +20,7 @@ export default function Content() {
               <div>
                 <h1 className="text-4xl font-bold tracking-tight">AI Content Generation</h1>
                 <p className="text-muted-foreground mt-1">
-                  ChatGPT 4o mini powered SEO content for Amazon OneLink in 14 countries
+                  ChatGPT 4o mini powered SEO content for Amazon OneLink in 10 countries
                 </p>
               </div>
             </div>
@@ -34,9 +34,9 @@ export default function Content() {
                 <Globe className="w-4 h-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">14</div>
+                <div className="text-2xl font-bold">10</div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  USA, Canada, UK, Germany, France, Italy, Spain, Japan, Brazil, India, Mexico, Australia, Netherlands, Poland
+                  USA, Brazil, China, Australia, Indonesia, Singapore, Netherlands, Switzerland, Ivory Coast, Nigeria
                 </p>
               </CardContent>
             </Card>
