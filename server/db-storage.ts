@@ -1,4 +1,4 @@
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, and } from 'drizzle-orm';
 import { db } from './db';
 import {
   suppliers,
@@ -43,6 +43,21 @@ export class DbStorage implements IStorage {
   }
 
   async createSupplier(supplier: InsertSupplier): Promise<Supplier> {
+    // Check for existing supplier with same name, country, and framework to prevent duplicates
+    const existing = await db.select().from(suppliers).where(
+      and(
+        eq(suppliers.name, supplier.name),
+        eq(suppliers.country, supplier.country),
+        eq(suppliers.framework, supplier.framework)
+      )
+    );
+    
+    // If supplier already exists, return the existing one instead of creating duplicate
+    if (existing.length > 0) {
+      console.log(`⚠️  Duplicate supplier prevented: ${supplier.name} (${supplier.country}, ${supplier.framework})`);
+      return existing[0];
+    }
+    
     const result = await db.insert(suppliers).values(supplier).returning();
     return result[0];
   }
@@ -58,6 +73,18 @@ export class DbStorage implements IStorage {
   }
 
   async createBuyer(buyer: InsertBuyer): Promise<Buyer> {
+    // Check for existing buyer with same email to prevent duplicates
+    if (buyer.contactEmail) {
+      const existing = await db.select().from(buyers).where(
+        eq(buyers.contactEmail, buyer.contactEmail)
+      );
+      
+      if (existing.length > 0) {
+        console.log(`⚠️  Duplicate buyer prevented: ${buyer.name} (${buyer.contactEmail})`);
+        return existing[0];
+      }
+    }
+    
     const result = await db.insert(buyers).values(buyer).returning();
     return result[0];
   }
