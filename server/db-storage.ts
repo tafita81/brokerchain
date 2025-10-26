@@ -96,13 +96,36 @@ export class DbStorage implements IStorage {
   }
 
   async getAllRFQs(): Promise<RFQWithDetails[]> {
-    const result = await db.select().from(rfqs);
-    return result as RFQWithDetails[];
+    // JOIN com buyers para sempre retornar email do comprador
+    const result = await db
+      .select({
+        rfq: rfqs,
+        buyer: buyers,
+      })
+      .from(rfqs)
+      .leftJoin(buyers, eq(rfqs.buyerId, buyers.id));
+    
+    return result.map(row => ({
+      ...row.rfq,
+      buyer: row.buyer || undefined,
+    })) as RFQWithDetails[];
   }
 
   async getRFQsByStatus(status: string): Promise<RFQWithDetails[]> {
-    const result = await db.select().from(rfqs).where(eq(rfqs.status, status));
-    return result as RFQWithDetails[];
+    // JOIN com buyers para sempre retornar email do comprador
+    const result = await db
+      .select({
+        rfq: rfqs,
+        buyer: buyers,
+      })
+      .from(rfqs)
+      .leftJoin(buyers, eq(rfqs.buyerId, buyers.id))
+      .where(eq(rfqs.status, status));
+    
+    return result.map(row => ({
+      ...row.rfq,
+      buyer: row.buyer || undefined,
+    })) as RFQWithDetails[];
   }
 
   async getRFQsByFramework(framework: string): Promise<RFQWithDetails[]> {
@@ -122,7 +145,33 @@ export class DbStorage implements IStorage {
   }
 
   async createRFQ(rfq: InsertRFQ): Promise<RFQ> {
+    // ANTI-DUPLICAÇÃO: Verificar se RFQ já existe (por subject OU solicitationNumber)
+    const requirements = rfq.requirements as any;
+    const solicitationNumber = requirements?.solicitationNumber;
+    
+    if (solicitationNumber) {
+      // Buscar RFQs existentes com mesmo solicitationNumber
+      const existingRfqs = await db.select().from(rfqs);
+      const duplicate = existingRfqs.find((r: any) => {
+        const req = r.requirements as any;
+        return req?.solicitationNumber === solicitationNumber;
+      });
+      
+      if (duplicate) {
+        console.log(`⚠️  Duplicate RFQ prevented: Solicitation ${solicitationNumber}`);
+        return duplicate;
+      }
+    }
+    
+    // Se não tem solicitationNumber, verificar por subject exato
+    const existing = await db.select().from(rfqs).where(eq(rfqs.subject, rfq.subject));
+    if (existing.length > 0) {
+      console.log(`⚠️  Duplicate RFQ prevented: "${rfq.subject.substring(0, 60)}..."`);
+      return existing[0];
+    }
+    
     const result = await db.insert(rfqs).values(rfq).returning();
+    console.log(`✅ New RFQ saved: "${rfq.subject.substring(0, 60)}..." (Buyer: ${rfq.buyerId})`);
     return result[0];
   }
 
