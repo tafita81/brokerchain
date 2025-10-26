@@ -34,8 +34,8 @@ export function Navigation() {
               <Link key={item.path} href={item.path} data-testid={`link-${item.testId}`}>
                 <Button
                   variant={location === item.path ? "secondary" : "ghost"}
-                  size="sm"
-                  className="font-medium"
+                  size="default"
+                  className="font-medium text-base"
                 >
                   {item.label}
                 </Button>
