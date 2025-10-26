@@ -60,11 +60,22 @@ async function authenticateDocuSign(): Promise<string> {
     const jwtLifeSec = 3600; // 1 hour
     const scopes = ['signature', 'impersonation'];
     
+    // Ensure private key is in proper format (with newlines)
+    let privateKey = process.env.DOCUSIGN_PRIVATE_KEY;
+    
+    // If the key doesn't have proper line breaks, format it
+    if (!privateKey.includes('\n')) {
+      privateKey = privateKey
+        .replace('-----BEGIN RSA PRIVATE KEY-----', '-----BEGIN RSA PRIVATE KEY-----\n')
+        .replace('-----END RSA PRIVATE KEY-----', '\n-----END RSA PRIVATE KEY-----')
+        .replace(/(.{64})/g, '$1\n');
+    }
+    
     const results = await client.requestJWTUserToken(
       process.env.DOCUSIGN_INTEGRATION_KEY,
       process.env.DOCUSIGN_USER_ID,
       scopes,
-      Buffer.from(process.env.DOCUSIGN_PRIVATE_KEY, 'utf-8'),
+      Buffer.from(privateKey, 'utf-8'),
       jwtLifeSec
     );
     
