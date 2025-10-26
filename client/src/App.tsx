@@ -13,6 +13,7 @@ import Suppliers from "@/pages/Suppliers";
 import Content from "@/pages/Content";
 import Metrics from "@/pages/Metrics";
 import Admin from "@/pages/Admin";
+import AdminRFQs from "@/pages/AdminRFQs";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/content" component={Content} />
       <Route path="/metrics" component={Metrics} />
       <Route path="/admin" component={Admin} />
+      <Route path="/admin/rfqs" component={AdminRFQs} />
       <Route component={NotFound} />
     </Switch>
   );
