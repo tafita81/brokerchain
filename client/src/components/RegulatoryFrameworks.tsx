@@ -22,7 +22,7 @@ const frameworks = [
     icon: Flag,
     description: "100% melted and manufactured in USA components for federal contracts. End-to-end metallurgical traceability from foundry to finished product.",
     metrics: ["10,000+ Contracts", "ISO 9001", "Zero Offshore"],
-    certifications: ["IATF 16949", "Buy America Proof", "SAM.gov Verified"],
+    certifications: ["IATF 16949", "Buy America Proof", "SAM.gov: N394AKZSR349"],
     color: "text-chart-2",
     bgColor: "bg-chart-2/10",
     link: "/buy-america",

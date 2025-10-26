@@ -6,6 +6,12 @@ BrokerChain is a B2B compliance broker platform designed to connect buyers with 
 
 The application serves procurement officers, compliance directors, and federal buyers who require institutional-grade compliance verification and supplier discovery capabilities.
 
+**Official Registration:**
+- Email: contact@brokerchain.business
+- SAM.gov ID: N394AKZSR349
+- Location: Florida-Based
+- SPC Member (Sustainable Packaging Coalition)
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.

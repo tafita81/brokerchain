@@ -40,7 +40,7 @@ export function Hero() {
               </div>
               <div className="flex items-center gap-2">
                 <Factory className="w-4 h-4 text-primary" />
-                <span className="font-medium">SAM.gov Registered</span>
+                <span className="font-medium">SAM.gov: N394AKZSR349</span>
               </div>
               <div className="flex items-center gap-2">
                 <Leaf className="w-4 h-4 text-primary" />
