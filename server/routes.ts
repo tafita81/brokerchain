@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { generateRFQ, generateSEOContent } from "./openai";
+import { matchingEngine } from "./matching";
 import { insertSupplierSchema, insertBuyerSchema, insertRFQSchema, insertContentSchema, insertDPPSchema, insertLeadSchema, insertConversationMessageSchema, LANGUAGES } from "@shared/schema";
 import { z } from "zod";
 import { populateDatabaseWithRealData } from "./scrapers/populate-database";
@@ -337,6 +338,35 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
 
       res.json(updated);
     } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // 🎯 MATCHING ENGINE: Get matched suppliers for an RFQ
+  app.get("/api/rfqs/:id/matches", async (req, res) => {
+    try {
+      const rfq = await storage.getRFQ(req.params.id);
+      if (!rfq) {
+        return res.status(404).json({ error: "RFQ not found" });
+      }
+
+      // Get all suppliers for this framework
+      const allSuppliers = await storage.getSuppliersByFramework(rfq.framework);
+
+      // Get timeline from query params (if provided during matching call)
+      const timeline = req.query.timeline as string | undefined;
+
+      // Run matching engine
+      const matches = matchingEngine.matchSuppliers(rfq, allSuppliers, timeline);
+
+      res.json({
+        rfqId: rfq.id,
+        framework: rfq.framework,
+        totalMatches: matches.length,
+        matches: matches.slice(0, 10), // Return top 10
+      });
+    } catch (error: any) {
+      console.error("Matching error:", error);
       res.status(500).json({ error: error.message });
     }
   });

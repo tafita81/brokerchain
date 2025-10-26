@@ -557,14 +557,17 @@ export default function Home() {
       {/* Footer */}
       <footer className="w-full border-t py-12 bg-background">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-muted-foreground">
-              © 2025 BrokerChain. SAM.gov Registered | SPC Member
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="text-sm text-muted-foreground space-y-1">
+              <div>© 2025 BrokerChain. SAM.gov Registered | SPC Member</div>
+              <div className="font-semibold text-foreground">
+                📧 <a href="mailto:contact@brokerchain.business" className="hover:text-primary transition-colors" data-testid="link-contact-email">contact@brokerchain.business</a>
+              </div>
             </div>
             <div className="flex gap-6 text-sm text-muted-foreground">
               <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
               <a href="#" className="hover:text-foreground transition-colors">Terms</a>
-              <a href="#" className="hover:text-foreground transition-colors">Contact</a>
+              <a href="mailto:contact@brokerchain.business" className="hover:text-foreground transition-colors font-semibold">Contact</a>
             </div>
           </div>
         </div>
