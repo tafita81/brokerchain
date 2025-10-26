@@ -17,10 +17,10 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
-// Import product images
-import pfasProduct1 from "@assets/stock_images/compostable_food_pac_dd275d77.jpg";
-import pfasProduct2 from "@assets/stock_images/compostable_food_pac_3ae43ab7.jpg";
-import pfasProduct3 from "@assets/stock_images/sustainable_packagin_e77be9fd.jpg";
+// Import product images - MELHORES FOTOS PFAS
+import pfasProduct1 from "@assets/stock_images/compostable_food_pac_057a4a06.jpg";
+import pfasProduct2 from "@assets/stock_images/compostable_food_pac_dd275d77.jpg";
+import pfasProduct3 from "@assets/stock_images/compostable_food_pac_3ae43ab7.jpg";
 
 import buyamericaProduct1 from "@assets/stock_images/steel_manufacturing__9b6afee0.jpg";
 import buyamericaProduct2 from "@assets/stock_images/industrial_manufactu_cb33623d.jpg";
@@ -37,9 +37,9 @@ interface RFQGeneratorProps {
 
 const frameworkProducts = {
   pfas: [
-    { image: pfasProduct1, name: "Compostable Bowls & Containers" },
-    { image: pfasProduct2, name: "PFAS-Free Food Packaging" },
-    { image: pfasProduct3, name: "Sustainable Fiber Packaging" },
+    { image: pfasProduct1, name: "PFAS-Free Compostable Bowls" },
+    { image: pfasProduct2, name: "Certified Food Service Packaging" },
+    { image: pfasProduct3, name: "BPI-Certified Fiber Containers" },
   ],
   buyamerica: [
     { image: buyamericaProduct1, name: "100% USA Steel Pipes" },
@@ -57,9 +57,11 @@ export function RFQGenerator({ framework, onGenerate }: RFQGeneratorProps) {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     buyerName: "",
+    email: "",
     industry: "",
     productType: "",
     quantity: "",
+    timeline: "",
     requirements: "",
   });
   const [generatedRFQ, setGeneratedRFQ] = useState<{ subject: string; content: string } | null>(null);
@@ -266,7 +268,7 @@ export function RFQGenerator({ framework, onGenerate }: RFQGeneratorProps) {
                 </Label>
                 <Input
                   id="buyerName"
-                  placeholder="e.g., Tesla Inc."
+                  placeholder="e.g., Whole Foods Market"
                   value={formData.buyerName}
                   onChange={(e) => setFormData({ ...formData, buyerName: e.target.value })}
                   required
@@ -274,6 +276,25 @@ export function RFQGenerator({ framework, onGenerate }: RFQGeneratorProps) {
                   data-testid="input-buyer-name"
                 />
                 <p className="text-xs text-muted-foreground">We'll use this in your professional RFQ</p>
+              </div>
+
+              {/* Email - NOVO CAMPO CRÍTICO */}
+              <div className="space-y-3">
+                <Label htmlFor="email" className="text-base font-bold flex items-center gap-2">
+                  Business Email
+                  <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="e.g., procurement@company.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  required
+                  className="h-12 text-lg border-2"
+                  data-testid="input-email"
+                />
+                <p className="text-xs text-muted-foreground">Suppliers will send quotes to this email</p>
               </div>
 
               {/* Industry - ENHANCED */}
@@ -331,6 +352,29 @@ export function RFQGenerator({ framework, onGenerate }: RFQGeneratorProps) {
                   data-testid="input-quantity"
                 />
                 <p className="text-xs text-muted-foreground">Suppliers love clear volume commitments</p>
+              </div>
+
+              {/* Timeline - NOVO CAMPO PARA NEGOCIAÇÃO */}
+              <div className="space-y-3">
+                <Label htmlFor="timeline" className="text-base font-bold">
+                  When Do You Need This?
+                </Label>
+                <Select
+                  value={formData.timeline}
+                  onValueChange={(value) => setFormData({ ...formData, timeline: value })}
+                >
+                  <SelectTrigger id="timeline" className="h-12 text-lg border-2" data-testid="select-timeline">
+                    <SelectValue placeholder="Select timeline" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="urgent" data-testid="option-timeline-urgent">🔥 URGENT - Within 2 weeks</SelectItem>
+                    <SelectItem value="1month" data-testid="option-timeline-1month">⚡ Within 1 month</SelectItem>
+                    <SelectItem value="3months" data-testid="option-timeline-3months">📅 Within 3 months</SelectItem>
+                    <SelectItem value="6months" data-testid="option-timeline-6months">🗓️ Within 6 months</SelectItem>
+                    <SelectItem value="planning" data-testid="option-timeline-planning">💡 Just planning ahead</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">Helps suppliers prioritize your request</p>
               </div>
             </div>
 
@@ -409,7 +453,7 @@ export function RFQGenerator({ framework, onGenerate }: RFQGeneratorProps) {
           <CardFooter className="flex flex-col sm:flex-row gap-4 pt-6 border-t">
             <Button
               type="submit"
-              disabled={generateMutation.isPending || !formData.buyerName || !formData.productType}
+              disabled={generateMutation.isPending || !formData.buyerName || !formData.email || !formData.productType}
               className={`w-full sm:flex-1 h-14 text-lg font-bold gap-3 bg-gradient-to-r ${frameworkColors[framework]} hover:opacity-90 shadow-xl transition-all hover:scale-105`}
               data-testid="button-generate-rfq"
             >
@@ -433,9 +477,11 @@ export function RFQGenerator({ framework, onGenerate }: RFQGeneratorProps) {
                 onClick={() => {
                   setFormData({
                     buyerName: "",
+                    email: "",
                     industry: "",
                     productType: "",
                     quantity: "",
+                    timeline: "",
                     requirements: "",
                   });
                   setGeneratedRFQ(null);
