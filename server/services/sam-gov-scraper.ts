@@ -207,44 +207,88 @@ export async function scrapeSAMGovOpportunities(
   totalLimit: number = 10,
   naicsCode?: string
 ): Promise<SAMOpportunity[]> {
+  // SAM.gov Contract Opportunities API endpoint
+  const baseUrl = 'https://api.sam.gov/opportunities/v2/search';
+  
+  // Build date range for last 3 days
+  // SAM.gov API expects date format: MM/DD/YYYY
+  const today = new Date();
+  const threeDaysAgo = new Date(today);
+  threeDaysAgo.setDate(today.getDate() - 3);
+  
+  // Format today's date
+  const todayMonth = String(today.getMonth() + 1).padStart(2, '0');
+  const todayDay = String(today.getDate()).padStart(2, '0');
+  const todayYear = today.getFullYear();
+  const formattedToday = `${todayMonth}/${todayDay}/${todayYear}`;
+  
+  // Format 3 days ago date
+  const fromMonth = String(threeDaysAgo.getMonth() + 1).padStart(2, '0');
+  const fromDay = String(threeDaysAgo.getDate()).padStart(2, '0');
+  const fromYear = threeDaysAgo.getFullYear();
+  const formattedFrom = `${fromMonth}/${fromDay}/${fromYear}`;
+  
   try {
-    const allOpportunities: SAMOpportunity[] = [];
-    const batchSize = 10; // SAM.gov API limitation - maximum 10 per request
-    const numBatches = Math.ceil(totalLimit / batchSize);
+    // STEP 1: Pre-query metadata to get total count
+    console.log(`🔍 SAM.gov scraping: querying metadata for period ${formattedFrom} to ${formattedToday}...`);
     
-    console.log(`🔍 SAM.gov scraping: fetching ${totalLimit} opportunities from last 3 days in ${numBatches} batches of ${batchSize}...`);
+    const metadataParams = new URLSearchParams({
+      limit: '1',  // Only need 1 result to get totalRecords
+      offset: '0',
+      postedFrom: formattedFrom,
+      postedTo: formattedToday,
+    });
+    
+    if (naicsCode) {
+      metadataParams.set('naicsCode', naicsCode);
+    }
+    
+    const metadataUrl = `${baseUrl}?${metadataParams.toString()}`;
+    
+    const metadataResponse = await fetch(metadataUrl, {
+      headers: {
+        'User-Agent': 'BrokerChain/1.0 (contact@brokerchain.business)',
+        'Accept': 'application/json',
+        ...(process.env.SAM_GOV_API_KEY ? { 'X-Api-Key': process.env.SAM_GOV_API_KEY } : {}),
+      },
+    });
+    
+    if (!metadataResponse.ok) {
+      throw new Error(`SAM.gov API error: ${metadataResponse.status} ${metadataResponse.statusText}`);
+    }
+    
+    const metadataResult: SAMApiResponse = await metadataResponse.json();
+    const totalAvailable = metadataResult.totalRecords;
+    
+    console.log(`   📊 Metadata retrieved: ${totalAvailable} total RFQs available in period`);
+    
+    // STEP 2: Calculate number of pages needed
+    const recordsToFetch = Math.min(totalLimit, totalAvailable);
+    const numBatches = Math.ceil(recordsToFetch / 10); // SAM.gov API limit is 10 per request
+    
+    console.log(`   📄 Will fetch ${recordsToFetch} RFQs in ${numBatches} batches (10 per batch, 10s delay between batches)`);
+    
+    if (totalAvailable === 0) {
+      console.log(`   ⚠️  No opportunities available for this period`);
+      return [];
+    }
+    
+    // Wait 10 seconds before starting pagination requests
+    console.log(`   ⏳ Waiting 10 seconds before starting pagination...`);
+    await new Promise(resolve => setTimeout(resolve, 10000));
+    
+    // STEP 3: Fetch all pages with deduplication
+    const allOpportunities: SAMOpportunity[] = [];
+    const seenIds = new Set<string>(); // Track IDs to avoid duplicates
     
     for (let i = 0; i < numBatches; i++) {
-      const offset = i * batchSize;
-      const limit = Math.min(batchSize, totalLimit - offset);
-      
-      // SAM.gov Contract Opportunities API endpoint
-      const baseUrl = 'https://api.sam.gov/opportunities/v2/search';
-      
-      // Build query parameters
-      // IMPORTANTE: Buscar oportunidades DOS ÚLTIMOS 3 DIAS
-      // SAM.gov API expects date format: MM/DD/YYYY
-      const today = new Date();
-      const threeDaysAgo = new Date(today);
-      threeDaysAgo.setDate(today.getDate() - 3);
-      
-      // Format today's date
-      const todayMonth = String(today.getMonth() + 1).padStart(2, '0');
-      const todayDay = String(today.getDate()).padStart(2, '0');
-      const todayYear = today.getFullYear();
-      const formattedToday = `${todayMonth}/${todayDay}/${todayYear}`;
-      
-      // Format 3 days ago date
-      const fromMonth = String(threeDaysAgo.getMonth() + 1).padStart(2, '0');
-      const fromDay = String(threeDaysAgo.getDate()).padStart(2, '0');
-      const fromYear = threeDaysAgo.getFullYear();
-      const formattedFrom = `${fromMonth}/${fromDay}/${fromYear}`;
+      const offset = i * 10;
       
       const params = new URLSearchParams({
-        limit: limit.toString(),
+        limit: '10',
         offset: offset.toString(),
-        postedFrom: formattedFrom,   // Últimos 3 dias (MM/DD/YYYY format)
-        postedTo: formattedToday,     // Até hoje (MM/DD/YYYY format)
+        postedFrom: formattedFrom,
+        postedTo: formattedToday,
       });
       
       if (naicsCode) {
@@ -253,13 +297,12 @@ export async function scrapeSAMGovOpportunities(
       
       const url = `${baseUrl}?${params.toString()}`;
       
-      console.log(`   📦 Batch ${i + 1}/${numBatches}: offset=${offset}, limit=${limit}, period=${formattedFrom} to ${formattedToday}`);
+      console.log(`   📦 Batch ${i + 1}/${numBatches}: offset=${offset}, limit=10`);
       
       const response = await fetch(url, {
         headers: {
           'User-Agent': 'BrokerChain/1.0 (contact@brokerchain.business)',
           'Accept': 'application/json',
-          // SAM.gov API key from environment
           ...(process.env.SAM_GOV_API_KEY ? { 'X-Api-Key': process.env.SAM_GOV_API_KEY } : {}),
         },
       });
@@ -270,12 +313,20 @@ export async function scrapeSAMGovOpportunities(
       
       const data: SAMApiResponse = await response.json();
       
-      console.log(`   ✅ Batch ${i + 1}: fetched ${data.opportunitiesData.length} opportunities (${data.totalRecords} total available)`);
+      // Deduplicate by noticeId
+      let newCount = 0;
+      for (const opp of data.opportunitiesData) {
+        if (!seenIds.has(opp.noticeId)) {
+          seenIds.add(opp.noticeId);
+          allOpportunities.push(opp);
+          newCount++;
+        }
+      }
       
-      allOpportunities.push(...data.opportunitiesData);
+      console.log(`   ✅ Batch ${i + 1}: fetched ${data.opportunitiesData.length} opportunities (${newCount} new, ${data.opportunitiesData.length - newCount} duplicates skipped)`);
       
       // Stop if we got fewer results than requested (no more data available)
-      if (data.opportunitiesData.length < limit) {
+      if (data.opportunitiesData.length < 10) {
         console.log(`   ⚠️  Received fewer results than requested - reached end of available data`);
         break;
       }
@@ -287,7 +338,7 @@ export async function scrapeSAMGovOpportunities(
       }
     }
     
-    console.log(`✅ SAM.gov scraping complete: ${allOpportunities.length} opportunities fetched`);
+    console.log(`✅ SAM.gov scraping complete: ${allOpportunities.length} unique opportunities fetched (${seenIds.size} total unique IDs)`);
     
     return allOpportunities;
   } catch (error: any) {

@@ -104,14 +104,17 @@ The codebase does not currently implement authentication/authorization mechanism
 **SAM.gov Automated RFQ Discovery (STEP ZERO)**:
 - Automatic scraping of federal procurement opportunities from SAM.gov API v2
 - Fetches opportunities from last 3 days (rolling 3-day window)
+- Pre-query metadata: First queries SAM.gov to get total RFQ count, then calculates exact number of pages needed
 - Pagination handling: Fetches in batches of 10 (SAM.gov API limitation)
+- Rate limiting: 10-second delay between batches to avoid 429 Too Many Requests errors
+- Deduplication: Tracks noticeId to skip duplicate RFQs within same scraping session
 - Framework-based filtering: Only processes PFAS, Buy America Act, and EUDR opportunities (rejects non-relevant categories)
 - Intelligent keyword detection to classify opportunities by compliance framework
 - Anti-duplication: Verifies buyer (by email) and RFQ (by subject) before database insertion
 - Auto-creates buyer records from federal agency contact information
 - Auto-generates RFQs with solicitation details, NAICS codes, and compliance requirements
 - Scheduled execution: Runs every 6 hours to discover new opportunities
-- Manual trigger: POST /api/admin/scrape-sam-gov endpoint (admin token required)
+- Manual trigger: POST /api/admin/scrape-sam-gov endpoint (no authentication required)
 - Environment variable: `SAM_GOV_API_KEY` (obtain from https://open.gsa.gov/api/opportunities-api/)
 - Statistics tracking: Logs breakdown by framework (PFAS/Buy America/EUDR), duplicates skipped, and rejected opportunities
 
