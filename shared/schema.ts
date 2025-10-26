@@ -4,7 +4,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // Regulatory framework types
-export type RegulatoryFramework = "pfas" | "buyamerica" | "eudr";
+export type RegulatoryFramework = "pfas" | "buyamerica" | "eudr" | "secondary";
 export type RFQStatus = "draft" | "sent" | "responded" | "negotiating" | "closed" | "rejected";
 export type SupplierCertification = "BPI" | "TUV_OK_COMPOST" | "ASTM_D6868" | "IATF_16949" | "ISO_9001" | "FSC" | "PEFC" | "RAINFOREST_ALLIANCE";
 export type ContentStatus = "generating" | "generated" | "published" | "error";
