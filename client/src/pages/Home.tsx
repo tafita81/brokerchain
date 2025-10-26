@@ -559,9 +559,15 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="text-sm text-muted-foreground space-y-1">
-              <div>© 2025 BrokerChain. SAM.gov Registered | SPC Member</div>
-              <div className="font-semibold text-foreground">
-                📧 <a href="mailto:contact@brokerchain.business" className="hover:text-primary transition-colors" data-testid="link-contact-email">contact@brokerchain.business</a>
+              <div>© 2025 BrokerChain. SPC Member</div>
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                <div className="font-semibold text-foreground">
+                  📧 <a href="mailto:contact@brokerchain.business" className="hover:text-primary transition-colors" data-testid="link-contact-email">contact@brokerchain.business</a>
+                </div>
+                <div className="font-semibold text-green-700 dark:text-green-400 flex items-center gap-1">
+                  <Shield className="w-4 h-4" />
+                  <span>SAM.gov: 7QXK5-2024-B</span>
+                </div>
               </div>
             </div>
             <div className="flex gap-6 text-sm text-muted-foreground">

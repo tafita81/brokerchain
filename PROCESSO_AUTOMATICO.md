@@ -252,21 +252,52 @@ Metric saved: revenue +$4,000
 
 ## 🎯 RESUMO: O QUE FUNCIONA vs O QUE FALTA
 
-### ✅ IMPLEMENTADO (30% do processo):
+### ✅ IMPLEMENTADO (40% do processo):
 1. ✅ RFQ Generation (OpenAI + PostgreSQL)
 2. ✅ Data Persistence (buyers, rfqs, metrics)
 3. ✅ 76+ Suppliers cadastrados
 4. ✅ Schema completo no banco
 5. ✅ Email e Timeline fields no form
+6. ✅ Matching Engine (supplier-buyer scoring)
+7. ✅ PricingEngine (validação de margem + breakdown)
+8. ✅ Contact email na landing page
 
-### ❌ FALTA IMPLEMENTAR (70% do processo):
-1. ❌ Matching Engine (supplier-buyer algorithm)
-2. ❌ Email Automation (envio automático de RFQs)
-3. ❌ Response Tracking (capturar respostas)
-4. ❌ Pipeline Workflow (status automation)
-5. ❌ DocuSign Integration (contratos digitais)
-6. ❌ Payoneer Integration (comissões automáticas)
-7. ❌ Analytics Dashboard (visualização)
+### ❌ FALTA IMPLEMENTAR (60% do processo):
+1. ❌ **CRÍTICO**: Confirmação do fornecedor ANTES de responder ao comprador
+2. ❌ Email Automation SMTP/IMAP (envio + recebimento)
+3. ❌ Formulário web de confirmação do fornecedor
+4. ❌ Pipeline Workflow (10 estados diferentes)
+5. ❌ DocuSign Integration (contrato triplo: comprador + fornecedor + broker)
+6. ❌ Escrow Integration (pagamento protegido)
+7. ❌ Payoneer Integration (comissões automáticas)
+8. ❌ Analytics Dashboard (visualização)
+
+### ⚠️ WORKFLOW CORRETO (NOVO):
+```
+Comprador gera RFQ
+  ↓
+Matching encontra 10 suppliers
+  ↓
+🚨 ENVIA EMAIL AOS FORNECEDORES (confirmação de preços/prazos)
+  ↓
+Aguarda respostas (48h deadline)
+  ↓
+Valida pricing (margem ≥5%)
+  ↓
+Só AGORA envia 6 opções ao comprador
+  ↓
+Comprador escolhe
+  ↓
+DocuSign gera contrato (3 assinaturas)
+  ↓
+Escrow (comprador deposita)
+  ↓
+Fornecedor entrega
+  ↓
+Prazo de devolução
+  ↓
+Escrow libera pagamento + comissão
+```
 
 ---
 
