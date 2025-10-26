@@ -1001,6 +1001,62 @@ For production use with full AI capabilities, configure OPENAI_API_KEY`
     }
   });
 
+  // Admin endpoint to check SAM.gov RFQ count (metadata only, no scraping)
+  app.get("/api/admin/sam-gov-count", async (_req, res) => {
+    try {
+      const baseUrl = 'https://api.sam.gov/opportunities/v2/search';
+      
+      // Build date range for last 3 days
+      const today = new Date();
+      const threeDaysAgo = new Date(today);
+      threeDaysAgo.setDate(today.getDate() - 3);
+      
+      const formatDate = (date: Date) => {
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${month}/${day}/${year}`;
+      };
+      
+      const formattedFrom = formatDate(threeDaysAgo);
+      const formattedToday = formatDate(today);
+      
+      const metadataParams = new URLSearchParams({
+        limit: '1',
+        offset: '0',
+        postedFrom: formattedFrom,
+        postedTo: formattedToday,
+      });
+      
+      const metadataUrl = `${baseUrl}?${metadataParams.toString()}`;
+      
+      const metadataResponse = await fetch(metadataUrl, {
+        headers: {
+          'User-Agent': 'BrokerChain/1.0 (contact@brokerchain.business)',
+          'Accept': 'application/json',
+          ...(process.env.SAM_GOV_API_KEY ? { 'X-Api-Key': process.env.SAM_GOV_API_KEY } : {}),
+        },
+      });
+      
+      if (!metadataResponse.ok) {
+        throw new Error(`SAM.gov API error: ${metadataResponse.status} ${metadataResponse.statusText}`);
+      }
+      
+      const metadataResult = await metadataResponse.json();
+      
+      res.json({
+        totalAvailable: metadataResult.totalRecords,
+        dateRange: {
+          from: formattedFrom,
+          to: formattedToday,
+        },
+        message: `${metadataResult.totalRecords} RFQs disponíveis no SAM.gov (últimos 3 dias)`,
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
