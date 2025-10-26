@@ -72,28 +72,28 @@ export function HeroCarousel() {
                 
                 {/* 🌍 GLOBAL PRESENCE BADGES */}
                 <div className="flex flex-wrap items-center gap-2 pl-0 sm:pl-16 md:pl-20 lg:pl-24">
-                  <div className="flex items-center gap-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-1.5">
+                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-1.5">
                     <Globe className="w-4 h-4 text-blue-300" />
                     <span className="text-xs sm:text-sm font-bold text-white">14 Countries</span>
                   </div>
-                  <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
-                    <span className="text-base sm:text-lg">🇺🇸</span>
+                  <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
+                    <img src="https://flagcdn.com/us.svg" alt="USA" className="w-6 h-4 object-cover rounded" />
                     <span className="text-xs font-semibold text-white/80">USA</span>
                   </div>
-                  <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
-                    <span className="text-base sm:text-lg">🇩🇪</span>
+                  <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
+                    <img src="https://flagcdn.com/de.svg" alt="Germany" className="w-6 h-4 object-cover rounded" />
                     <span className="text-xs font-semibold text-white/80">Germany</span>
                   </div>
-                  <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
-                    <span className="text-base sm:text-lg">🇨🇳</span>
+                  <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
+                    <img src="https://flagcdn.com/cn.svg" alt="China" className="w-6 h-4 object-cover rounded" />
                     <span className="text-xs font-semibold text-white/80">China</span>
                   </div>
-                  <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
-                    <span className="text-base sm:text-lg">🇧🇷</span>
+                  <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
+                    <img src="https://flagcdn.com/br.svg" alt="Brazil" className="w-6 h-4 object-cover rounded" />
                     <span className="text-xs font-semibold text-white/80">Brazil</span>
                   </div>
-                  <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
-                    <span className="text-base sm:text-lg">🇮🇳</span>
+                  <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
+                    <img src="https://flagcdn.com/in.svg" alt="India" className="w-6 h-4 object-cover rounded" />
                     <span className="text-xs font-semibold text-white/80">India</span>
                   </div>
                   <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
