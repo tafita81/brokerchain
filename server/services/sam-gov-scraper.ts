@@ -196,15 +196,17 @@ function extractRFQInfo(opportunity: SAMOpportunity, framework: 'pfas' | 'buyame
 /**
  * Scrape federal procurement opportunities from SAM.gov API
  * 
- * SAM.gov API LIMIT: Maximum 10 records per request
- * This function handles pagination automatically to fetch the desired total
+ * SAM.gov API LIMITS:
+ * - Maximum 100 records per request
+ * - Maximum 10 API calls per day total (1 metadata + 9 data batches)
+ * - This means: 9 batches × 100 records = 900 RFQs maximum per day
  * 
- * @param totalLimit - Total number of opportunities to fetch (will be fetched in batches of 10)
+ * @param totalLimit - Total number of opportunities to fetch (max 900 due to API limits)
  * @param naicsCode - Filter by NAICS code (optional)
  * @returns Array of SAM.gov opportunities
  */
 export async function scrapeSAMGovOpportunities(
-  totalLimit: number = 10,
+  totalLimit: number = 900,
   naicsCode?: string
 ): Promise<SAMOpportunity[]> {
   // SAM.gov Contract Opportunities API endpoint
@@ -261,11 +263,16 @@ export async function scrapeSAMGovOpportunities(
     console.log(`   📊 Metadata retrieved: ${totalAvailable} total RFQs available in period`);
     
     // STEP 2: Calculate number of pages needed
-    const recordsToFetch = Math.min(totalLimit, totalAvailable);
+    // CRITICAL: Maximum 9 batches per day (API limit: 1 metadata + 9 data calls = 10 total)
     const BATCH_SIZE = 100; // SAM.gov API supports up to 100 records per request
-    const numBatches = Math.ceil(recordsToFetch / BATCH_SIZE);
+    const MAX_BATCHES = 9; // API limit: only 9 data calls allowed per day
+    const MAX_RECORDS = MAX_BATCHES * BATCH_SIZE; // 900 RFQs maximum
+    
+    const recordsToFetch = Math.min(totalLimit, totalAvailable, MAX_RECORDS);
+    const numBatches = Math.min(Math.ceil(recordsToFetch / BATCH_SIZE), MAX_BATCHES);
     
     console.log(`   📄 Will fetch ${recordsToFetch} RFQs in ${numBatches} batches (${BATCH_SIZE} per batch, 15s delay between batches)`);
+    console.log(`   ⚠️  API Limit: ${numBatches}/9 batches used today (1 metadata + ${numBatches} data = ${numBatches + 1}/10 total calls)`);
     
     if (totalAvailable === 0) {
       console.log(`   ⚠️  No opportunities available for this period`);
@@ -351,15 +358,17 @@ export async function scrapeSAMGovOpportunities(
  * Auto-process SAM.gov opportunities into buyers and RFQs
  * 
  * This function:
- * 1. Scrapes SAM.gov opportunities
+ * 1. Scrapes SAM.gov opportunities (max 900 per day due to API limits)
  * 2. Extracts buyer information
  * 3. Creates RFQs automatically
  * 4. Returns data ready for database insertion
  * 
- * @param limit - Number of opportunities to process
+ * API Limits: 10 calls/day total (1 metadata + 9 batches × 100 records = 900 max)
+ * 
+ * @param limit - Number of opportunities to process (default 900, max 900)
  * @returns Object with buyers and RFQs ready for insertion
  */
-export async function autoProcessSAMGovOpportunities(limit: number = 10): Promise<{
+export async function autoProcessSAMGovOpportunities(limit: number = 900): Promise<{
   buyers: Partial<InsertBuyer>[];
   rfqs: Array<Omit<Partial<InsertRFQ>, 'buyerId'>>;
   opportunities: SAMOpportunity[];
@@ -436,9 +445,10 @@ export function scheduleSAMGovScraping(intervalHours: number = 24, extraSeconds:
   const intervalMs = (intervalHours * 60 * 60 * 1000) + (extraSeconds * 1000);
   
   console.log(`⏰ Scheduling SAM.gov scraping every ${intervalHours} hours + ${extraSeconds}s (ONLY yesterday's RFQs)`);
+  console.log(`   📊 API Limits: 10 calls/day max (1 metadata + 9 batches × 100 = 900 RFQs max)`);
   
-  // Initial scrape on startup
-  autoProcessSAMGovOpportunities(50).then(async (result) => {
+  // Initial scrape on startup (max 900 RFQs due to API limits)
+  autoProcessSAMGovOpportunities(900).then(async (result) => {
     if (storageInstance && result.buyers.length > 0) {
       try {
         let inserted = 0;
@@ -482,7 +492,7 @@ export function scheduleSAMGovScraping(intervalHours: number = 24, extraSeconds:
   setInterval(async () => {
     console.log('⏰ Running scheduled SAM.gov scrape...');
     try {
-      const result = await autoProcessSAMGovOpportunities(50);
+      const result = await autoProcessSAMGovOpportunities(900);
       console.log(`✅ Scheduled scrape completed: ${result.buyers.length} buyers, ${result.rfqs.length} RFQs`);
       
       // Auto-insert into database if storage instance provided
