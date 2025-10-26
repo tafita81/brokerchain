@@ -11,7 +11,7 @@ export function CountryBanner() {
 
   return (
     <div className="relative w-full overflow-hidden bg-muted/30 border-y border-border py-3" data-testid="country-banner">
-      <div className="flex animate-marquee gap-8">
+      <div className="flex animate-marquee-reverse gap-8">
         {displayCountries.map((country, index) => (
           <div 
             key={`${country}-${index}`}

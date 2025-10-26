@@ -19,6 +19,15 @@
   .animate-marquee:hover {
     animation-play-state: paused;
   }
+  
+  /* Marquee animation - reverse direction */
+  .animate-marquee-reverse {
+    animation: marquee-reverse 20s linear infinite;
+  }
+  
+  .animate-marquee-reverse:hover {
+    animation-play-state: paused;
+  }
 }
 
 @keyframes marquee {
@@ -27,6 +36,15 @@
   }
   100% {
     transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-reverse {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
   }
 }
 
