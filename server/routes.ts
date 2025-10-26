@@ -119,11 +119,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI-Powered RFQ Generation
   app.post("/api/rfqs/generate", async (req, res) => {
     try {
-      const { framework, buyerName, industry, productType, quantity, requirements } = req.body;
+      const { framework, buyerName, email, industry, productType, quantity, timeline, requirements } = req.body;
 
-      if (!framework || !buyerName || !productType) {
+      if (!framework || !buyerName || !email || !productType) {
         return res.status(400).json({
-          error: "Missing required fields: framework, buyerName, productType",
+          error: "Missing required fields: framework, buyerName, email, productType",
         });
       }
 
@@ -133,9 +133,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         generated = await generateRFQ({
           framework,
           buyerName,
+          email,
           industry: industry || "General",
           productType,
           quantity,
+          timeline,
           requirements,
         });
       } catch (openaiError: any) {

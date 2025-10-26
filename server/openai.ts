@@ -12,9 +12,11 @@ export const openai = new OpenAI({
 export interface RFQGenerationParams {
   framework: "pfas" | "buyamerica" | "eudr";
   buyerName: string;
+  email: string;
   industry: string;
   productType: string;
   quantity?: string;
+  timeline?: string;
   requirements?: string;
 }
 
@@ -58,9 +60,11 @@ ${frameworkContext[params.framework]}
 
 Buyer Details:
 - Company: ${params.buyerName}
+- Contact Email: ${params.email}
 - Industry: ${params.industry}
 - Product/Material: ${params.productType}
 ${params.quantity ? `- Quantity: ${params.quantity}` : ''}
+${params.timeline ? `- Timeline: ${params.timeline}` : ''}
 ${params.requirements ? `- Special Requirements: ${params.requirements}` : ''}
 
 Generate a professional RFQ with:
