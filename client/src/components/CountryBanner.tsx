@@ -6,23 +6,23 @@ const COUNTRIES = [
 ] as const;
 
 export function CountryBanner() {
-  // Duplicate countries 2x for seamless infinite scroll
-  const allCountries = [...COUNTRIES, ...COUNTRIES];
+  // Triplicate for seamless infinite loop (3 copies = -33.33% transform)
+  const displayCountries = [...COUNTRIES, ...COUNTRIES, ...COUNTRIES];
 
   return (
-    <div className="w-full overflow-x-hidden bg-muted/30 border-y border-border py-4" data-testid="country-banner">
-      <div className="animate-scroll">
-        {allCountries.map((country, index) => (
+    <div className="w-full overflow-hidden bg-muted/30 border-y border-border py-3" data-testid="country-banner">
+      <div className="animate-scroll whitespace-nowrap">
+        {displayCountries.map((country, index) => (
           <div 
             key={`${country}-${index}`}
-            className="inline-flex items-center gap-3 px-6 flex-shrink-0"
+            className="inline-flex items-center gap-2 px-4 mr-2"
           >
             <img
               src={getFlagUrl(country)}
               alt={`${country} flag`}
-              className="w-8 h-6 object-cover rounded-sm shadow-sm"
+              className="w-7 h-5 object-cover rounded-sm shadow-sm inline-block"
             />
-            <span className="font-mono text-sm font-semibold text-foreground whitespace-nowrap">
+            <span className="font-mono text-xs font-bold text-foreground uppercase tracking-wider inline-block">
               {country}
             </span>
           </div>

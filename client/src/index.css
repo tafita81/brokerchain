@@ -11,20 +11,25 @@
     display: none;
   }
   
-  /* Infinite horizontal scroll animation for country flags */
+  /* Infinite horizontal scroll animation for country flags - ticker style */
   .animate-scroll {
-    animation: scroll 30s linear infinite;
-    display: flex;
-    width: max-content;
+    animation: scroll 25s linear infinite;
+    display: inline-flex;
+    width: fit-content;
+    will-change: transform;
+  }
+  
+  .animate-scroll:hover {
+    animation-play-state: paused;
   }
 }
 
 @keyframes scroll {
   0% {
-    transform: translateX(0);
+    transform: translateX(0%);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translateX(-33.33%);
   }
 }
 
