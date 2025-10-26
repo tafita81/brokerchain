@@ -240,7 +240,7 @@ export default function Home() {
                 </div>
                 <div className="flex items-center gap-2 bg-green-50 dark:bg-green-950/30 border-2 border-green-500/30 rounded-full px-4 py-2">
                   <Shield className="w-4 h-4 text-green-700 dark:text-green-300" />
-                  <span className="font-bold text-sm text-green-700 dark:text-green-300">SAM.gov: 7QXK5-2024-B</span>
+                  <span className="font-bold text-sm text-green-700 dark:text-green-300">SAM.gov: N394AKZSR349</span>
                 </div>
               </div>
 
@@ -566,7 +566,7 @@ export default function Home() {
                 </div>
                 <div className="font-semibold text-green-700 dark:text-green-400 flex items-center gap-1">
                   <Shield className="w-4 h-4" />
-                  <span>SAM.gov: 7QXK5-2024-B</span>
+                  <span>SAM.gov: N394AKZSR349</span>
                 </div>
               </div>
             </div>

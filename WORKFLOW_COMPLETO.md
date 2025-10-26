@@ -223,7 +223,7 @@ PARTE 2 (FORNECEDOR):
 PARTE 3 (BROKER):
 - Nome: BrokerChain LLC
 - Email: contact@brokerchain.business
-- SAM.gov ID: 7QXK5-2024-B
+- SAM.gov ID: N394AKZSR349
 - Tax ID: ___________
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
