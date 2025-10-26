@@ -13,7 +13,9 @@
   
   /* Infinite horizontal scroll animation for country flags */
   .animate-scroll {
-    animation: scroll 40s linear infinite;
+    animation: scroll 30s linear infinite;
+    display: flex;
+    width: max-content;
   }
 }
 
@@ -22,7 +24,7 @@
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-33.333%);
+    transform: translateX(-50%);
   }
 }
 
