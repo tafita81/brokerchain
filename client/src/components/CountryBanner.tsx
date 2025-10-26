@@ -6,16 +6,16 @@ const COUNTRIES = [
 ] as const;
 
 export function CountryBanner() {
-  // Triplicate for seamless infinite loop (3 copies = -33.33% transform)
-  const displayCountries = [...COUNTRIES, ...COUNTRIES, ...COUNTRIES];
+  // Duplicate for seamless loop
+  const displayCountries = [...COUNTRIES, ...COUNTRIES];
 
   return (
-    <div className="w-full overflow-hidden bg-muted/30 border-y border-border py-3" data-testid="country-banner">
-      <div className="animate-scroll whitespace-nowrap">
+    <div className="relative w-full overflow-hidden bg-muted/30 border-y border-border py-3" data-testid="country-banner">
+      <div className="flex animate-marquee whitespace-nowrap">
         {displayCountries.map((country, index) => (
           <div 
             key={`${country}-${index}`}
-            className="inline-flex items-center gap-2 px-4 mr-2"
+            className="inline-flex items-center gap-2 mx-6"
           >
             <img
               src={getFlagUrl(country)}
