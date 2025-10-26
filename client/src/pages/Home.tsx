@@ -4,7 +4,7 @@ import { RegulatoryFrameworks } from "@/components/RegulatoryFrameworks";
 import { MetricsCard } from "@/components/MetricsCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowRight, Recycle, TrendingUp, Award } from "lucide-react";
+import { ArrowRight, Recycle, TrendingUp, Award, Shield, Zap, Leaf, CheckCircle2 } from "lucide-react";
 
 export default function Home() {
   return (
@@ -14,6 +14,91 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section with 4K Carousel */}
         <HeroCarousel />
+
+        {/* 🚀 LEAD CAPTURE - ENGENHARIA DE ATENÇÃO EXTREMA */}
+        <section className="w-full py-20 bg-gradient-to-b from-muted/50 via-background to-muted/50 relative overflow-hidden">
+          {/* Background Effects */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-green-500/5 to-orange-500/5" />
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-green-500 to-orange-500" />
+          
+          <div className="relative max-w-4xl mx-auto px-6">
+            <div className="bg-card/95 backdrop-blur-xl border-2 border-primary/30 rounded-3xl p-8 md:p-12 shadow-2xl hover-elevate transition-all">
+              
+              {/* 🇺🇸 AMERICAN COMPANY BADGE - TRUST SIGNAL */}
+              <div className="flex flex-wrap items-center justify-center gap-4 mb-6">
+                <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/30 border-2 border-blue-500/30 rounded-full px-4 py-2">
+                  <span className="text-2xl">🇺🇸</span>
+                  <span className="font-bold text-sm text-blue-700 dark:text-blue-300">USA Registered Company</span>
+                </div>
+                <div className="flex items-center gap-2 bg-orange-50 dark:bg-orange-950/30 border-2 border-orange-500/30 rounded-full px-4 py-2">
+                  <span className="text-xl">🌴</span>
+                  <span className="font-bold text-sm text-orange-700 dark:text-orange-300">Florida-Based</span>
+                </div>
+                <div className="flex items-center gap-2 bg-green-50 dark:bg-green-950/30 border-2 border-green-500/30 rounded-full px-4 py-2">
+                  <Shield className="w-4 h-4 text-green-700 dark:text-green-300" />
+                  <span className="font-bold text-sm text-green-700 dark:text-green-300">SAM.gov: 7QXK5-2024-B</span>
+                </div>
+              </div>
+
+              {/* 🔥 URGÊNCIA - BADGE */}
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500/20 via-amber-500/20 to-yellow-500/20 border-2 border-yellow-500/40 px-5 py-2 rounded-full mb-6 animate-pulse">
+                <Zap className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+                <span className="text-sm font-black text-yellow-700 dark:text-yellow-300">Limited Time: First 100 Free</span>
+              </div>
+
+              {/* HEADLINE PRINCIPAL */}
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-center mb-6 leading-tight">
+                Start Circular Compliance Sourcing Today
+              </h2>
+
+              {/* SUBHEADLINE COM SOCIAL PROOF */}
+              <p className="text-lg md:text-xl text-center text-muted-foreground mb-8 leading-relaxed">
+                Join <span className="font-black text-blue-600 dark:text-blue-400">600+ verified suppliers</span> and buyers using BrokerChain for circular, compliant supply chains across <span className="font-black text-green-600 dark:text-green-400">PFAS</span>, <span className="font-black text-orange-600 dark:text-orange-400">Buy America</span>, and <span className="font-black text-blue-600 dark:text-blue-400">EUDR</span>.
+              </p>
+
+              {/* LEAD CAPTURE FORM */}
+              <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto mb-8">
+                <input
+                  type="email"
+                  placeholder="your.email@company.com"
+                  className="flex-1 h-14 px-6 rounded-xl border-2 border-input bg-background text-base font-medium focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                  data-testid="input-lead-email"
+                />
+                <Button
+                  size="lg"
+                  className="h-14 px-8 gap-2 font-black text-lg bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 hover:from-blue-500 hover:via-blue-400 hover:to-blue-500 shadow-xl shadow-blue-500/30"
+                  data-testid="button-get-started"
+                >
+                  Get Started Free
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </div>
+
+              {/* TRUST SIGNALS - REMOVER FRICÇÃO */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <Shield className="w-4 h-4 text-green-600 dark:text-green-400" />
+                  <span className="font-semibold">No credit card required</span>
+                </div>
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <Leaf className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <span className="font-semibold">Free carbon tracking</span>
+                </div>
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <Zap className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                  <span className="font-semibold">AI consultation included</span>
+                </div>
+              </div>
+
+              {/* 🔥 SOCIAL PROOF SUBLIMINAR - URGÊNCIA */}
+              <div className="bg-gradient-to-r from-muted/50 to-muted/30 border border-border rounded-xl p-4 text-center">
+                <div className="text-sm text-muted-foreground">
+                  <span className="font-black text-foreground">47 companies</span> joined in the last 7 days • <span className="font-black text-foreground">$2.3M</span> circular materials traded this week
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* 📊 STATS SECTION - SOCIAL PROOF EXTREMO */}
         <section className="w-full py-16 bg-gradient-to-b from-background via-muted/30 to-background relative overflow-hidden">
